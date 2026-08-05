@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Green Dragon — Boston, 1741</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="frame">
+
+  <!-- ===================== HUD ===================== -->
+  <header class="hud">
+    <div class="hud-l">
+      <span class="hud-label">Purse</span>
+      <span id="purse" class="hud-val">3s</span>
+    </div>
+    <div class="hud-c">
+      <span class="sign">The Green Dragon &mdash; Union Street</span>
+      <span class="hud-sub">Monday, 14 September 1741 &middot; patron <span id="progress">0 of 6</span></span>
+    </div>
+    <div class="hud-r">
+      <span class="hud-label">Notice taken</span>
+      <span id="suspicion" class="pips"></span>
+      <button id="bookBtn" class="ghost">Recipe Book</button>
+    </div>
+  </header>
+
+  <!-- ===================== STAGE ===================== -->
+  <div class="stage-wrap">
+    <canvas id="stage" width="384" height="216"></canvas>
+  </div>
+
+  <!-- ===================== DIALOGUE ===================== -->
+  <div id="dialogue" class="dialogue" hidden>
+    <div id="speaker" class="speaker"></div>
+    <div id="line" class="line"></div>
+    <div id="choices" class="choices"></div>
+    <div id="advance" class="advance" hidden>click to continue &#9656;</div>
+  </div>
+
+  <!-- ===================== TITLE ===================== -->
+  <div id="title" class="overlay title-screen">
+    <div class="title-inner">
+      <div class="title-rule"></div>
+      <h1>The Green Dragon</h1>
+      <h2>A Coffee House in Boston, 1741</h2>
+      <div class="title-rule"></div>
+      <p>You keep the coffee house on Union Street. Tonight six people will sit
+         at your counter: a cooper who has just been converted, a minister who
+         wishes he had not been, a printer's apprentice reading Locke by
+         candlelight, a captain whose cargo will not survive an honest question,
+         a merchant's daughter caught between them, and a customs officer who
+         has been reading the books.</p>
+      <p>You have <b>three shillings</b>. Rent is <b>five shillings and sixpence</b>,
+         due at closing. The cheapest sweetener on your shelf is the one the law says
+         you may not buy.</p>
+      <p class="quiet">Every drink here was really drunk in New England in the
+         1740s. None of them are alcoholic. Click any <span class="gloss-demo">underlined
+         term</span> to see what it means.</p>
+      <button id="beginBtn" class="big-btn">Read the morning paper</button>
+    </div>
+  </div>
+
+  <!-- ===================== BROADSHEET ===================== -->
+  <div id="broadsheet" class="overlay paper" hidden>
+    <div class="paper-inner">
+      <div id="paperBody"></div>
+      <p class="quiet paper-note">Written for this game in the manner of the
+         period press. The events reported &mdash; Whitefield on the Common, the
+         dissolution of the Land Bank, the Molasses Act &mdash; are real.</p>
+      <button id="openShopBtn" class="big-btn">Open the shop</button>
+    </div>
+  </div>
+
+  <!-- ===================== BREW ===================== -->
+  <div id="brew" class="overlay brew" hidden>
+    <div class="brew-inner">
+      <div class="order-card">
+        <div id="orderWho" class="order-who"></div>
+        <div id="orderEcho" class="order-echo"></div>
+      </div>
+
+      <div class="shelves">
+        <section>
+          <h3>Base <span>what goes in the pot</span></h3>
+          <div id="baseShelf" class="shelf"></div>
+        </section>
+        <section>
+          <h3>Sweetener <span>and this is where the law lives</span></h3>
+          <div id="sweetShelf" class="shelf"></div>
+        </section>
+        <section>
+          <h3>One thing more</h3>
+          <div id="addShelf" class="shelf"></div>
+        </section>
+      </div>
+
+      <div class="cup-card">
+        <div class="cup-head">
+          <span id="cupName" class="cup-name">&mdash;</span>
+          <span id="cupNew" class="cup-new" hidden>new recipe</span>
+        </div>
+        <div id="cupDesc" class="cup-desc">Choose a base, a sweetener, and one thing more.</div>
+        <div id="cupCost" class="cup-cost"></div>
+        <button id="serveBtn" class="big-btn" disabled>Serve it</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== RECIPE BOOK ===================== -->
+  <div id="book" class="overlay book" hidden>
+    <div class="book-inner">
+      <button id="bookClose" class="x">close</button>
+      <div id="bookBody"></div>
+    </div>
+  </div>
+
+  <!-- ===================== GLOSSARY ===================== -->
+  <div id="gloss" class="overlay gloss-pop" hidden>
+    <div class="gloss-inner">
+      <h3 id="glossTerm"></h3>
+      <p id="glossDef"></p>
+      <button id="glossClose" class="big-btn">Got it</button>
+    </div>
+  </div>
+
+  <!-- ===================== CLOSING ===================== -->
+  <div id="closing" class="overlay closing" hidden>
+    <div id="closeBody" class="closing-inner"></div>
+  </div>
+
+</div>
+
+<script src="js/art.js"></script>
+<script src="js/data.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
