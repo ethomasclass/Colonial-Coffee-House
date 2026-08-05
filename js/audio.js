@@ -205,8 +205,48 @@
     s.start(t); s.stop(t + 0.2);
   }
 
+  /* Cloth on wood or on metal. Rate-limited, because a pointermove storm
+     would otherwise stack a hundred voices and turn into a buzz. */
+  var lastScrub = 0;
+  function scrub(intensity) {
+    if (!on || !ctx) return;
+    var t = ctx.currentTime;
+    if (t - lastScrub < 0.055) return;
+    lastScrub = t;
+    var s = noiseSource(false);
+    var bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass';
+    bp.frequency.value = 900 + Math.random() * 900 + intensity * 700;
+    bp.Q.value = 0.9;
+    var g = ctx.createGain();
+    var lvl = 0.012 + intensity * 0.035;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(lvl, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+    s.connect(bp); bp.connect(g); g.connect(master);
+    s.start(t); s.stop(t + 0.2);
+  }
+
+  /* Two notes for a job finished. Small, not a fanfare. */
+  function chime() {
+    if (!on || !ctx) return;
+    var t = ctx.currentTime;
+    [659.25, 987.77].forEach(function (f, i) {
+      var o = ctx.createOscillator();
+      o.type = 'triangle'; o.frequency.value = f;
+      var g = ctx.createGain();
+      var when = t + i * 0.13;
+      g.gain.setValueAtTime(0.0001, when);
+      g.gain.exponentialRampToValueAtTime(0.08, when + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, when + 1.1);
+      o.connect(g); g.connect(master);
+      o.start(when); o.stop(when + 1.2);
+    });
+  }
+
   global.Sound = {
-    setEnabled: setEnabled, isOn: isOn, preference: preference, knock: knock
+    setEnabled: setEnabled, isOn: isOn, preference: preference,
+    knock: knock, scrub: scrub, chime: chime
   };
 
 })(window);

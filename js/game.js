@@ -9,7 +9,8 @@
 (function (global) {
   'use strict';
 
-  var D = global.Data, S = global.Scenes, A = global.Art, Snd = global.Sound;
+  var D = global.Data, S = global.Scenes, A = global.Art;
+  var Snd = global.Sound, Chores = global.Chores;
 
   var ORDER = D.runningOrder();
 
@@ -30,7 +31,7 @@
     patron: null,
     expr: 'neutral',
     servedCup: null,
-    mode: 'idle',              /* 'idle' | 'wipe' — drives canvas interaction */
+    chores: 0,
     log: [],
     discovered: {},
     journal: [],
@@ -54,7 +55,6 @@
     else A.drawEmptySeat(frame);
     if (st.servedCup) A.drawServedCup(296, frame, st.servedCup.tint);
     A.applyNightWash();
-    A.drawCloth(frame);
     A.present();
     requestAnimationFrame(loop);
   }
@@ -341,8 +341,7 @@
                   chocolate: '#4a2c1c', sage: '#6f7a4e', water: '#8fa3b5' };
     st.servedCup = { tint: tints[s.base] };
     A.addRing(); A.addRing();
-    A.addTarnish();
-    if (Math.random() < 0.6) A.addTarnish();
+    A.addTarnish(); A.addTarnish();
     if (Snd) Snd.knock(300, 0.07);
 
     el.brew.hidden = true;
@@ -357,56 +356,61 @@
 
   function openInterstitial() {
     st.phase = 'between';
-    st.mode = 'idle';
     el.dialogue.hidden = true;
     el.between.hidden = false;
     updateBetween();
   }
 
   function updateBetween() {
-    var left = A.ringCount();
-    el.choresNote.textContent = left
-      ? left + (left === 1 ? ' mark' : ' marks') + ' left on the counter and the pewter.'
-      : 'Counter wiped, pewter bright. Nothing to do but wait.';
-    el.wipeBtn.hidden = false;
-    el.wipeBtn.disabled = left === 0 && st.mode !== 'wipe';
-    el.wipeBtn.textContent = st.mode === 'wipe' ? 'Put the cloth down' : 'Take up the cloth';
-    el.betweenHint.textContent = st.mode === 'wipe'
-      ? 'Drag across the counter and the cupboard to wipe them down.'
-      : 'Click anything in the room to look at it more closely.';
-    document.body.classList.toggle('wiping', st.mode === 'wipe');
+    var bar = A.countKind('ring'), pew = A.countKind('tarnish');
+    var bits = [];
+    if (bar) bits.push(bar + (bar === 1 ? ' ring' : ' rings') + ' on the bar');
+    if (pew) bits.push(pew + (pew === 1 ? ' piece' : ' pieces') + ' of pewter gone dull');
+    el.choresNote.textContent = bits.length
+      ? bits.join(', ') + '.'
+      : 'Bar wiped, pewter bright. Nothing to do but wait.';
+    el.wipeBtn.disabled = !bar;
+    el.polishBtn.disabled = !pew;
   }
 
-  function toggleWipe() {
-    st.mode = st.mode === 'wipe' ? 'idle' : 'wipe';
-    el.between.classList.toggle('slim', st.mode === 'wipe');
-    if (st.mode !== 'wipe') A.setCloth(null);
-    else A.setCloth({ x: 192, y: A.COUNTER_Y + 6 });   /* so it appears at once */
-    if (Snd) Snd.knock(240, 0.05);
+  /* Each chore opens its own scene. Finishing one clears the matching marks
+     from the room, so when you come back the bar really is clean. */
+  function openChore(which) {
+    st.phase = 'chore';
+    el.between.hidden = true;
+    el.chore.hidden = false;
+    el.choreTitle.textContent = which === 'pewter'
+      ? 'A tankard, and a good deal of tarnish'
+      : 'The bar, from above';
+    el.choreDone.textContent = 'Leave it for now';
+    el.choreDone.classList.remove('finished');
+    Chores.resize();
+    Chores.open(which, function () { closeChore(which, true); }, function (pct, fin) {
+      el.choreBar.style.width = Math.round(pct * 100) + '%';
+      el.chorePct.textContent = Math.round(pct * 100) + '%';
+      if (fin) {
+        el.choreDone.textContent = 'Put the cloth down';
+        el.choreDone.classList.add('finished');
+      }
+    });
+  }
+
+  function closeChore(which, finished) {
+    Chores.close();
+    el.chore.hidden = true;
+    if (finished) {
+      A.clearRings(which === 'pewter' ? 'tarnish' : 'ring');
+      st.chores++;
+    }
+    st.phase = 'between';
+    el.between.hidden = false;
     updateBetween();
   }
 
-  /* Dragging the cloth. Works with mouse and with a finger.
-     downAt/dragged let us tell a wipe from a click, so that finishing a wipe
-     does not immediately pop open whatever was under the cursor. */
-  var wiping = false, downAt = null, dragged = false;
-  function wipeFrom(ev) {
-    if (st.mode !== 'wipe') return;
-    var pt = A.toLogical(ev);
-    var got = A.wipeAt(pt.x, pt.y, 11);
-    if (got && Snd) Snd.knock(420 + Math.random() * 200, 0.03);
-    if (got) updateBetween();
-    if (A.ringCount() === 0 && st.mode === 'wipe') {
-      st.mode = 'idle';
-      A.setCloth(null);
-      el.between.classList.remove('slim');
-      updateBetween();
-    }
-  }
+  var currentChore = null;
 
   function examine(ev) {
-    if (st.phase !== 'between' || st.mode === 'wipe') return;
-    if (dragged) { dragged = false; return; }
+    if (st.phase !== 'between') return;
     var pt = A.toLogical(ev);
     var id = A.hitTest(pt.x, pt.y);
     if (!id || !D.ROOM[id]) return;
@@ -483,7 +487,7 @@
       localStorage.setItem(SAVE, JSON.stringify({
         purse: st.purse, suspicion: st.suspicion, honeyLeft: st.honeyLeft,
         frenchUses: st.frenchUses, britishUses: st.britishUses, wasted: st.wasted,
-        confessions: st.confessions, patronIndex: st.patronIndex,
+        confessions: st.confessions, chores: st.chores, patronIndex: st.patronIndex,
         log: st.log, discovered: st.discovered, journal: st.journal
       }));
     } catch (e) {}
@@ -571,7 +575,8 @@
       '<div><span class="big">' + st.suspicion + '/' + D.LEDGER.suspicionCap + '</span>notice taken by the Customs</div>' +
       '<div><span class="big">' + st.confessions + '/6</span>told you something private</div>' +
       '<div><span class="big">' + Object.keys(st.discovered).length + '/' + D.RECIPES.length + '</span>recipes discovered</div>' +
-      '<div><span class="big">' + Object.keys(st.seenRoom).length + '/' + Object.keys(D.ROOM).length + '</span>things looked at</div></div>';
+      '<div><span class="big">' + Object.keys(st.seenRoom).length + '/' + Object.keys(D.ROOM).length + '</span>things looked at</div>' +
+      '<div><span class="big">' + st.chores + '</span>times you cleaned up</div></div>';
 
     var verdict;
     if (madeRent && st.frenchUses === 0) {
@@ -610,7 +615,8 @@
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
-     'between', 'choresNote', 'wipeBtn', 'betweenHint', 'settings', 'bookCount']
+     'between', 'choresNote', 'wipeBtn', 'polishBtn', 'betweenHint', 'settings',
+     'bookCount', 'chore', 'choreTitle', 'choreBar', 'chorePct', 'choreDone']
       .forEach(function (id) { el[id] = $(id); });
 
     A.init($('stage'));
@@ -624,43 +630,18 @@
     $('brewBookBtn').onclick = openBook;
 
     /* between-patron panel */
-    el.wipeBtn.onclick = toggleWipe;
+    Chores.init($('choreCanvas'));
+    el.wipeBtn.onclick = function () { currentChore = 'bar'; openChore('bar'); };
+    el.polishBtn.onclick = function () { currentChore = 'pewter'; openChore('pewter'); };
+    el.choreDone.onclick = function () { closeChore(currentChore, Chores.isDone()); };
     $('paperAgainBtn').onclick = function () { openBroadsheet(true); };
     $('nextPatronBtn').onclick = function () {
       el.between.hidden = true;
-      el.between.classList.remove('slim');
-      st.mode = 'idle';
-      A.setCloth(null);
-      document.body.classList.remove('wiping');
       nextPatron();
     };
 
-    /* canvas: wipe by dragging, examine by clicking */
-    var stage = $('stage');
-    function down(e) {
-      if (st.mode === 'wipe') A.setCloth(A.toLogical(e));
-      wiping = true; dragged = false;
-      var t = e.touches ? e.touches[0] : e;
-      downAt = { x: t.clientX, y: t.clientY };
-      wipeFrom(e);
-    }
-    function move(e) {
-      if (st.mode === 'wipe') A.setCloth(A.toLogical(e));
-      if (!wiping) return;
-      var t = e.touches ? e.touches[0] : e;
-      if (downAt && Math.abs(t.clientX - downAt.x) + Math.abs(t.clientY - downAt.y) > 6) dragged = true;
-      wipeFrom(e);
-    }
-    stage.addEventListener('mouseleave', function () {
-      if (st.mode === 'wipe') A.setCloth(null);
-    });
-    stage.addEventListener('mousedown', down);
-    stage.addEventListener('mousemove', move);
-    global.addEventListener('mouseup', function () { wiping = false; });
-    stage.addEventListener('touchstart', function (e) { down(e); e.preventDefault(); }, { passive: false });
-    stage.addEventListener('touchmove', function (e) { move(e); e.preventDefault(); }, { passive: false });
-    global.addEventListener('touchend', function () { wiping = false; });
-    stage.addEventListener('click', examine);
+    /* the room canvas is for looking at things; scrubbing has its own scene */
+    $('stage').addEventListener('click', examine);
 
     /* sound, off until somebody asks for it */
     var soundBtn = $('soundBtn');

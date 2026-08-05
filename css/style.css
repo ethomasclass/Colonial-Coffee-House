@@ -371,18 +371,12 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   box-shadow: 0 8px 0 rgba(0,0,0,.55);
   transition: opacity .18s;
 }
-/* While the cloth is in hand the panel gets out of the way of the counter. */
-.between.slim .between-inner { opacity: .35; }
-.between.slim .between-inner:hover { opacity: 1; }
 .between-head { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; }
 .between-title { font-size: 1.1rem; color: var(--linen); }
 .between-sub { font-size: .9rem; color: var(--dim); font-style: italic; }
 .between-acts { display: flex; gap: .6rem; margin-top: .7rem; flex-wrap: wrap; align-items: center; }
 .between-acts .big-btn { margin-top: 0; margin-left: auto; }
 .between-hint { margin-top: .5rem; font-size: .82rem; color: var(--dim); }
-
-body.wiping #stage { cursor: grab; }
-body.wiping #stage:active { cursor: grabbing; }
 
 .ghost-btn {
   font-family: var(--serif); font-size: .95rem;
@@ -437,3 +431,47 @@ body.wiping #stage:active { cursor: grabbing; }
 /* undiscovered recipes now carry a hint rather than a blank */
 .recs li.unk { color: var(--dim); letter-spacing: 0; }
 .recs li.unk b { color: #6d5c4a; font-weight: normal; font-style: italic; }
+
+
+/* ===================== THE CLEANING GAME =====================
+   Its own scene: the bar seen from above, or a tankard close enough to see
+   the tarnish. Quiet framing, because the point is the scrubbing. */
+.chore { background: rgba(6,4,8,.96); }
+.chore-inner { width: min(64rem, 100%); text-align: center; }
+.chore-head { margin-bottom: .8rem; }
+.chore-title { display: block; font-size: 1.35rem; color: var(--amber-lit); letter-spacing: .04em; }
+.chore-hint { display: block; font-size: .85rem; color: var(--dim); font-style: italic; margin-top: .2rem; }
+
+.chore-stage {
+  display: flex; justify-content: center;
+  height: min(56vh, 30rem);
+}
+#choreCanvas {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  display: block;
+  cursor: none;
+  touch-action: none;
+  box-shadow: 0 0 0 3px var(--wood), 0 0 50px rgba(0,0,0,.9), 0 0 90px rgba(217,144,56,.10);
+}
+
+.chore-foot {
+  display: flex; align-items: center; gap: .9rem;
+  max-width: 42rem; margin: 1rem auto 0;
+}
+.meter {
+  flex: 1 1 auto; height: 14px;
+  background: #2b2028; border: 2px solid var(--wood-hi); border-radius: 3px;
+  overflow: hidden;
+}
+.meter-fill {
+  height: 100%; width: 0%;
+  background: linear-gradient(90deg, #a86d24, var(--amber-lit));
+  transition: width .12s linear;
+}
+.chore-pct { font-size: .95rem; color: var(--linen); min-width: 3.2rem; font-variant-numeric: tabular-nums; }
+.chore-foot .ghost-btn { flex: 0 0 auto; }
+.chore-foot .ghost-btn.finished {
+  background: linear-gradient(var(--amber), #a86d24); color: #241a10;
+  border-color: #6d4718; font-weight: bold;
+}

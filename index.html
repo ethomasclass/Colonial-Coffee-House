@@ -133,11 +133,30 @@
         <span id="choresNote" class="between-sub"></span>
       </div>
       <div class="between-acts">
-        <button id="wipeBtn" class="ghost-btn">Take up the cloth</button>
+        <button id="wipeBtn" class="ghost-btn">Wipe down the bar</button>
+        <button id="polishBtn" class="ghost-btn">Polish the pewter</button>
         <button id="paperAgainBtn" class="ghost-btn">Read the paper again</button>
         <button id="nextPatronBtn" class="big-btn">Open the door</button>
       </div>
-      <div id="betweenHint" class="between-hint"></div>
+      <div id="betweenHint" class="between-hint">Click anything in the room — hearth, window, sign, cupboard, candle — to look at it more closely.</div>
+    </div>
+  </div>
+
+  <!-- ===================== THE CLEANING GAME ===================== -->
+  <div id="chore" class="overlay chore" hidden>
+    <div class="chore-inner">
+      <div class="chore-head">
+        <span id="choreTitle" class="chore-title"></span>
+        <span id="choreHint" class="chore-hint">Press and drag the cloth. It takes a few passes.</span>
+      </div>
+      <div class="chore-stage">
+        <canvas id="choreCanvas" width="384" height="216"></canvas>
+      </div>
+      <div class="chore-foot">
+        <div class="meter"><div id="choreBar" class="meter-fill"></div></div>
+        <span id="chorePct" class="chore-pct">0%</span>
+        <button id="choreDone" class="ghost-btn">Leave it for now</button>
+      </div>
     </div>
   </div>
 
@@ -188,6 +207,7 @@
 
 <script src="js/art.js"></script>
 <script src="js/audio.js"></script>
+<script src="js/chores.js"></script>
 <script src="js/data.js"></script>
 <script src="js/scenes.js"></script>
 <script src="js/game.js"></script>

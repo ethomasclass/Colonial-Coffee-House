@@ -180,7 +180,15 @@
     });
     return before - rings.length;
   }
-  function clearRings() { rings = []; }
+  /* Cleared wholesale when the corresponding chore is finished, so the room
+     visibly reflects the work you just did in the close-up. */
+  function clearRings(kind) {
+    if (!kind) { rings = []; return; }
+    rings = rings.filter(function (g) { return g.kind !== kind; });
+  }
+  function countKind(kind) {
+    return rings.filter(function (g) { return g.kind === kind; }).length;
+  }
 
   /* Things in the room worth looking at. Logical-space rectangles. */
   var HITS = [
@@ -205,29 +213,6 @@
     var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - b.left;
     var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - b.top;
     return { x: cx / b.width * W, y: cy / b.height * H };
-  }
-
-  /* The cloth in your hand. Drawn last of all, over the night wash, so it is
-     always the brightest thing on screen while you are wiping. */
-  var cloth = null;
-  function setCloth(pt) { cloth = pt; }
-
-  function drawCloth(f) {
-    if (!cloth) return;
-    var x = Math.round(cloth.x), y = Math.round(cloth.y);
-    /* a smear of damp under the rag, so it looks like it is doing something */
-    ell(x, y + 6, 14, 5, 'rgba(255,240,200,0.10)');
-    /* folded linen, with a shadow so it sits above the wood */
-    r(x - 11, y - 5, 22, 14, C.linenDim);
-    r(x - 11, y - 6, 22, 4, C.cream);
-    r(x - 9, y - 3, 18, 3, C.linen);
-    r(x - 11, y + 7, 22, 2, C.shadow);
-    /* creases */
-    hl(x - 8, y + 1, 7, C.linenDim);
-    hl(x + 1, y + 3, 7, C.linenDim);
-    /* a corner lifting, animated, so it reads as cloth and not a brick */
-    var lift = (f % 40 < 20) ? 0 : 1;
-    r(x + 8, y - 8 - lift, 5, 4, C.cream);
   }
 
   /* Laid over everything once the room and the people are drawn, so the whole
@@ -729,7 +714,7 @@
     drawEmptySeat: drawEmptySeat, CAST_ART: CAST_ART, EXPR: EXPR,
     setPhase: setPhase, getPhase: getPhase, applyNightWash: applyNightWash,
     addRing: addRing, addTarnish: addTarnish, wipeAt: wipeAt, clearRings: clearRings, ringCount: ringCount,
-    hitTest: hitTest, toLogical: toLogical, setCloth: setCloth, drawCloth: drawCloth,
+    hitTest: hitTest, toLogical: toLogical, countKind: countKind,
     ctx: function () { return bctx; }
   };
 

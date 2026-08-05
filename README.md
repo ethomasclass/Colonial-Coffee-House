@@ -49,18 +49,40 @@ iPads, and anything else with a browser.
    admits the customs officer has already tried to turn him informer. A student
    who brews carelessly never hears any of it, and the closing screen tells them
    how many they missed. This is what makes two students' notes different.
-5. **Between patrons**, the room is empty. Take up the cloth — a rag appears
-   in hand and follows the cursor — and drag it across the bar to wipe away
-   drink rings, or over the cupboard to bring the tarnished pewter back. It is
-   optional and rewards nothing; it is there because it is satisfying. You can
-   also re-read the paper, or click anything in the room — hearth, window,
-   trade sign, cupboard, candle — for a short note on what it was and why.
+5. **Between patrons**, the room is empty, and there are chores. You can also
+   re-read the paper, or click anything in the room — hearth, window, trade
+   sign, cupboard, candle — for a short note on what it was and why.
 6. **Two patrons come back** before closing. Ezra has been dismissed by his
    master over the meetings and is not sorry. Patience has told her father and
    made up her mind.
 7. **The closing ledger.** Every drink, what it cost, what it fetched, what got
    poured away, and whether rent got paid. Designed to be read off the screen
    while filling in a paper worksheet.
+
+### The cleaning game
+
+Two scenes of its own, because scrubbing a counter you are looking at edge-on
+never felt like anything:
+
+- **The bar, from above** — plank grain, nail heads, drink rings, spills and a
+  general film of grime.
+- **A pewter tankard, close up** — tarnished all over, with an owner's mark
+  that only surfaces once you have polished down to it.
+
+Dirt is a grid, not a list of stains. Each cell holds a grime level and the
+cloth knocks it down by one per pass, so a heavy ring takes about four sweeps
+and **you watch it fade rather than blink out**. Cleaning is metered by
+distance travelled — holding still does nothing; it is the scrubbing that
+lifts it. The rag eases after the cursor and leans into the direction of
+travel, with a damp trail behind it and a corner that lifts as it moves.
+
+A progress meter fills as you go, it finishes itself at 92% so nobody has to
+hunt the last few pixels, and the surface throws off a few sparkles when it is
+done. Then it hands you back to the room — where the bar you just wiped is
+visibly clean and its button has greyed out.
+
+It is entirely optional and rewards nothing. The counter only tracks how many
+times you bothered.
 
 ### The night visibly passes
 
@@ -171,7 +193,9 @@ index.html        markup and all the panels
 css/style.css     candlelight, pewter, dark wood
 js/art.js         pixel renderer, the room, the shared character sheet,
                   the night phase, the chore marks, click regions
-js/audio.js       rain, hearth and a slow tune, synthesised — no sound files
+js/audio.js       rain, hearth, a slow tune, scrubbing and a chime —
+                  all synthesised, no sound files
+js/chores.js      the cleaning game: both scenes, the dirt grid, the rag
 js/data.js        shelf, 32 recipes, cast, running order, newspaper,
                   glossary, room notes, ledger economics
 js/scenes.js      the eight conversations and the six confessions
