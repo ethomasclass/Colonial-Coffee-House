@@ -143,6 +143,75 @@
 
   var COUNTER_Y = 172;
 
+  /* How far through the evening we are, 0 at opening and 1 at closing. The
+     candles burn down, the fire sinks, and the window darkens against it. */
+  var phase = 0;
+  function setPhase(p) { phase = Math.max(0, Math.min(1, p)); }
+  function getPhase() { return phase; }
+
+  /* Rings and spills the patrons leave. Wiped away by hand, and they stay
+     wiped until somebody else puts a cup down. */
+  var rings = [];
+  var seed = 0;
+  function addRing(x) {
+    seed++;
+    rings.push({ kind: 'ring',
+                 x: x + Math.round((rnd(seed * 5.3) - 0.5) * 26),
+                 y: COUNTER_Y + 8 + Math.round(rnd(seed * 9.1) * 18),
+                 r: 5 + Math.round(rnd(seed * 3.7) * 3) });
+  }
+
+  /* Pewter dulls as the evening goes on. Same cloth, different surface. */
+  function addTarnish() {
+    seed++;
+    var row = Math.floor(rnd(seed * 2.9) * 3), col = Math.floor(rnd(seed * 6.1) * 5);
+    rings.push({ kind: 'tarnish', x: 299 + col * 16 + 5, y: 28 + row * 38 + 21, r: 7 });
+  }
+  function ringCount() { return rings.length; }
+  function wipeAt(lx, ly, radius) {
+    var before = rings.length;
+    rings = rings.filter(function (g) {
+      var dx = g.x - lx, dy = g.y - ly;
+      return Math.sqrt(dx * dx + dy * dy) > (radius + g.r);
+    });
+    return before - rings.length;
+  }
+  function clearRings() { rings = []; }
+
+  /* Things in the room worth looking at. Logical-space rectangles. */
+  var HITS = [
+    { id: 'hearth', x: 6,   y: 42,  w: 74, h: 110 },
+    { id: 'window', x: 109, y: 19,  w: 64, h: 74  },
+    { id: 'sign',   x: 196, y: 18,  w: 66, h: 26  },
+    { id: 'shelf',  x: 292, y: 20,  w: 86, h: 132 },
+    { id: 'candle', x: 30,  y: 148, w: 14, h: 26  }
+  ];
+  function hitTest(lx, ly) {
+    for (var i = 0; i < HITS.length; i++) {
+      var h = HITS[i];
+      if (lx >= h.x && lx <= h.x + h.w && ly >= h.y && ly <= h.y + h.h) return h.id;
+    }
+    return null;
+  }
+
+  /* Turn a browser event into buffer coordinates, so clicking and wiping
+     line up with the pixels regardless of how far the canvas is scaled. */
+  function toLogical(ev) {
+    var b = view.getBoundingClientRect();
+    var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - b.left;
+    var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - b.top;
+    return { x: cx / b.width * W, y: cy / b.height * H };
+  }
+
+  /* Laid over everything once the room and the people are drawn, so the whole
+     scene sinks together rather than the customer floating in a dark room. */
+  function applyNightWash() {
+    var a = 0.34 * phase;
+    if (a <= 0.002) return;
+    bctx.fillStyle = 'rgba(14,9,16,' + a.toFixed(3) + ')';
+    bctx.fillRect(0, 0, W, H);
+  }
+
   function drawRoom(f) {
     var flick = 0.6 + 0.4 * Math.sin(f * 0.09) * Math.sin(f * 0.031);
 
@@ -153,12 +222,6 @@
     for (var i = 0; i < 26; i++) {
       var wx = (i * 37) % W, wy = 16 + ((i * 53) % (COUNTER_Y - 30));
       p(wx, wy, C.plasterLit);
-    }
-    /* a little warmth bleeding off the hearth onto the plaster beside it */
-    for (var g = 0; g < 30; g++) {
-      var wy = 46 + g * 3;
-      var reach = Math.round(14 * (1 - Math.abs(g - 15) / 20) * (0.6 + 0.4 * flick));
-      if (reach > 0) r(80, wy, reach, 3, C.plasterLit);
     }
 
     /* --- ceiling beam ----------------------------------------------------- */
@@ -193,10 +256,12 @@
   function drawWindow(x, y, f) {
     var w = 58, h = 62;
     r(x - 3, y - 3, w + 6, h + 6, C.woodDark);
-    r(x, y, w, h, C.night);
-    /* wet glow of a street lantern outside */
-    ell(x + 40, y + 44, 16, 12, C.slate);
-    ell(x + 40, y + 44, 8, 6, C.slateLit);
+    r(x, y, w, h, phase > 0.66 ? C.ink : C.night);
+    /* the street lantern outside gutters out toward the small hours */
+    if (phase < 0.85) {
+      ell(x + 40, y + 44, 16 - Math.round(phase * 6), 12 - Math.round(phase * 5), C.slate);
+      if (phase < 0.6) ell(x + 40, y + 44, 8, 6, C.slateLit);
+    }
     /* rain streaks */
     for (var i = 0; i < 30; i++) {
       var rx = x + 2 + Math.floor(rnd(i * 3.1) * (w - 4));
@@ -235,16 +300,25 @@
     r(fx + 6, fy + fh - 12, fw - 12, 6, C.woodDark);
     r(fx + 10, fy + fh - 18, fw - 24, 6, C.brown);
 
-    /* flame, flickering */
-    var fl = Math.round(flick * 7);
-    ell(fx + fw / 2, fy + fh - 20, 16, 12 + fl, C.ember);
-    ell(fx + fw / 2, fy + fh - 22, 11, 9 + fl, C.amber);
-    ell(fx + fw / 2, fy + fh - 24, 6, 6 + fl, C.flame);
-    ell(fx + fw / 2, fy + fh - 25, 3, 3 + Math.round(fl / 2), C.flameHot);
-    /* sparks */
-    for (var s = 0; s < 5; s++) {
-      var sy = fy + fh - 30 - ((f + s * 13) % 26);
-      p(fx + 12 + ((s * 11 + Math.floor(f / 4)) % (fw - 24)), sy, C.amberLit);
+    /* flame, flickering, and sinking toward embers as the evening wears on */
+    var burn = 1 - phase * 0.72;
+    var fl = Math.round(flick * 7 * burn);
+    ell(fx + fw / 2, fy + fh - 20, Math.round(16 * burn) + 4, Math.round((12 + fl) * burn) + 2, C.ember);
+    if (burn > 0.45) {
+      ell(fx + fw / 2, fy + fh - 22, Math.round(11 * burn), Math.round((9 + fl) * burn), C.amber);
+      ell(fx + fw / 2, fy + fh - 24, Math.round(6 * burn), Math.round((6 + fl) * burn), C.flame);
+    }
+    if (burn > 0.7) ell(fx + fw / 2, fy + fh - 25, 3, 3 + Math.round(fl / 2), C.flameHot);
+    /* a few coals still glowing even once the flame is gone */
+    for (var cg = 0; cg < 4; cg++) {
+      p(fx + 10 + cg * 9, fy + fh - 10, (cg + Math.floor(f / 20)) % 3 === 0 ? C.amber : C.ember);
+    }
+    /* sparks, which stop once there is nothing left to throw them */
+    if (burn > 0.5) {
+      for (var s = 0; s < 5; s++) {
+        var sy = fy + fh - 30 - ((f + s * 13) % 26);
+        p(fx + 12 + ((s * 11 + Math.floor(f / 4)) % (fw - 24)), sy, C.amberLit);
+      }
     }
 
     /* crane and hanging kettle */
@@ -262,13 +336,19 @@
   }
 
   function drawCandle(x, y, f) {
-    r(x, y + 8, 4, 8, C.cream);
+    /* A tallow candle burns down over the evening. The stub sinks toward the
+       stick and the flame goes with it, so the room quietly gets darker. */
+    var used = Math.round(phase * 6);
+    var top = y + 8 + used, len = 8 - used;
+    if (len > 0) r(x, top, 4, len, C.cream);
+    if (used > 2) { p(x - 1, top + 1, C.linenDim); p(x + 4, top + 2, C.linenDim); }
     r(x - 2, y + 16, 8, 2, C.pewter);
     var w = (f % 24 < 12) ? 0 : 1;
-    p(x + 1 + w, y + 5, C.amberLit);
-    p(x + 1 + w, y + 4, C.flame);
-    p(x + 1 + w, y + 3, C.flameHot);
-    p(x + 2 + w, y + 5, C.amber);
+    var fy = top - 3;
+    p(x + 1 + w, fy + 2, C.amberLit);
+    p(x + 1 + w, fy + 1, C.flame);
+    if (phase < 0.8) p(x + 1 + w, fy, C.flameHot);
+    p(x + 2 + w, fy + 2, C.amber);
   }
 
   /* --- cupboard of pewter and stoneware ----------------------------------- */
@@ -295,6 +375,13 @@
         }
       }
     }
+    /* dulled pewter, waiting for a cloth */
+    rings.forEach(function (g) {
+      if (g.kind !== 'tarnish') return;
+      ell(g.x, g.y, g.r, g.r - 1, C.pewterDim);
+      ell(g.x - 1, g.y - 1, g.r - 3, g.r - 3, C.shadow);
+    });
+
     /* hanging bunches of dried herbs */
     for (var hb = 0; hb < 3; hb++) {
       var hx = x - 12, hy = y + 10 + hb * 34;
@@ -330,6 +417,13 @@
       var gx = (i * 29) % W, gy = COUNTER_Y + 12 + ((i * 17) % 40);
       hl(gx, gy, 10 + (i % 9), C.wood);
     }
+    /* rings and spills left behind by whoever has been drinking */
+    rings.forEach(function (g) {
+      if (g.kind !== 'ring') return;
+      ell(g.x, g.y, g.r, Math.max(1, Math.round(g.r * 0.45)), C.woodDark);
+      ell(g.x, g.y, g.r - 2, Math.max(1, Math.round(g.r * 0.28)), C.wood);
+    });
+
     /* front edge shadow so the band reads as foreground */
     r(0, H - 12, W, 12, C.shadow);
     /* candle at each end of the bar */
@@ -598,6 +692,9 @@
     init: init, resize: resize, present: present,
     drawRoom: drawRoom, drawPerson: drawPerson, drawServedCup: drawServedCup,
     drawEmptySeat: drawEmptySeat, CAST_ART: CAST_ART, EXPR: EXPR,
+    setPhase: setPhase, getPhase: getPhase, applyNightWash: applyNightWash,
+    addRing: addRing, addTarnish: addTarnish, wipeAt: wipeAt, clearRings: clearRings, ringCount: ringCount,
+    hitTest: hitTest, toLogical: toLogical,
     ctx: function () { return bctx; }
   };
 

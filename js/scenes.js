@@ -72,6 +72,21 @@
       { say: "Mr. Whitefield stood on the Common last autumn and twenty thousand people came. Twenty thousand. There are not twenty thousand people in Boston.", expr: 'bright' },
       { say: "They came in from everywhere. That is what the ministers have not reckoned with, I think. Not the shouting. The walking.", expr: 'thoughtful' }
     ],
+    confession: [
+      { narrate: 'He turns the cup in his hands. When he speaks again it is much quieter.' },
+      { say: "May I tell you the thing I have not told anybody?", expr: 'worried' },
+      { say: "I am frightened it will wear off.", expr: 'downcast' },
+      { say: "On Tuesday I knew. I knew the way you know your own name. And this morning I woke and it was — thinner. Still there. Thinner.", expr: 'downcast' },
+      { choose: [
+        { label: '"Perhaps that\'s just what a Wednesday feels like."',
+          then: [ { say: "That is nearly a comfort. Nearly.", expr: 'thoughtful' } ] },
+        { label: '"So you go back and hear him again."',
+          then: [ { say: "That is what I mean to do. And I have begun to wonder whether that is faith or whether it is only wanting the feeling back.", expr: 'worried' } ] },
+        { label: '"Nobody stays certain of anything."',
+          then: [ { say: "Our minister would say the same and I would have hated him for it. From you it goes down easier.", expr: 'thoughtful' } ] }
+      ]},
+      { say: "That is the trouble with a thing that comes on you all at once. You have no idea how to keep it.", expr: 'downcast' }
+    ],
     exit: [
       { say: "I must go before I am missed worse than I am already. Thank you for the cup, and for not laughing at me.", expr: 'warm' },
       { narrate: 'He puts his wet hat back on and goes out into it.' }
@@ -132,6 +147,23 @@
       { say: "Take that away and what is left? Every man his own church. Every woman her own preacher. Every apprentice certain that God has told him something his master has not heard.", expr: 'worried' },
       { narrate: 'He turns the cup around on the counter without drinking from it.' },
       { say: "I may be wrong. I have written a great deal in my life about how carefully a man ought to hold that possibility. It is harder to practise than to write.", expr: 'thoughtful' }
+    ],
+    confession: [
+      { narrate: 'He drinks, sets the cup down precisely, and does not pick it up again.' },
+      { say: "I am going to say something to you that I would not say in my own house.", expr: 'thoughtful' },
+      { say: "I think we are losing. Not the argument — the argument I can win in a room of educated men any afternoon. I mean the thing underneath it.", expr: 'downcast' },
+      { choose: [
+        { label: '"What thing underneath it?"',
+          then: [
+            { say: "That people would rather be *moved* than instructed. And I have spent forty years instructing.", expr: 'downcast' },
+            { say: "I have written sermons I was proud of that emptied a room. That boy in the field made a farmhand weep and walk fifteen miles. I do not think he is right. I am no longer certain that matters as much as I was taught it did.", expr: 'worried' } ] },
+        { label: '"You don\'t sound like a man who thinks he\'s right."',
+          then: [
+            { say: "I think I am right. I am not certain I am *useful*, which is a different and worse thing to lie awake about.", expr: 'downcast' } ] }
+      ]},
+      { say: "If they are wrong and they carry the country, then order was never as solid as we said it was. And if they are right — ", expr: 'worried' },
+      { narrate: 'He does not finish it.' },
+      { say: "Well. There is no comfortable end to that sentence.", expr: 'downcast' }
     ],
     exit: [
       { say: "Good night. Keep the fire up — you will have more of them in before you close, and they will all want to talk.", expr: 'warm' }
@@ -196,6 +228,23 @@
           then: [ { say: "Not an objection. A note. I set type for a living — I notice when a word is used carefully and when it is used loosely. Liberty gets used both ways in the same paragraph, sometimes.", expr: 'stern' } ] }
       ]},
       { say: "Still. It is a better argument than they mean it to be. That is the useful thing about printing something. Once it is set, anyone at all can read it.", expr: 'thoughtful' }
+    ],
+    confession: [
+      { say: "Can I tell you what I would set, if it were my press and not his?", expr: 'thoughtful' },
+      { choose: [
+        { label: '"Go on."', then: [] },
+        { label: '"I won\'t repeat it."',
+          then: [ { say: "I know you won't. That is rather why I am still sitting here.", expr: 'warm' } ] }
+      ]},
+      { say: "Nothing grand. No pamphlet. I would set a plain page with the argument laid out in order, the way he lays out his — premise, premise, conclusion — and I would not put a name to it, and I would not soften the last line.", expr: 'bright' },
+      { say: "And the last line would be that a man who cannot consent cannot be said to have agreed. That is not my idea. It is *his*. I only followed it one step further than the gentlemen quoting him care to walk.", expr: 'stern' },
+      { choose: [
+        { label: '"That would get printed one day."',
+          then: [ { say: "It will. Not by me and not this year. But the type exists, and the argument exists, and somebody is going to put the two together.", expr: 'thoughtful' } ] },
+        { label: '"That would get you in a great deal of trouble."',
+          then: [ { say: "Yes. That is the other reason it is still in my head and not in a forme.", expr: 'downcast' } ] }
+      ]},
+      { say: "Anyway. I set advertisements for lost horses. That is the work.", expr: 'warm' }
     ],
     exit: [
       { say: "The candle is going. I had better go with it. Good night — and thank you for the corner.", expr: 'warm' }
@@ -264,6 +313,25 @@
       { say: "I will say one thing more and then I will stop, because it is not a thing I care to dwell on. That molasses is boiled off sugar cane. Somebody cut that cane. They did not choose the work and they are not paid for it, and I have seen the fields, and I know what I am carrying.", expr: 'downcast' },
       { say: "The whole of it runs on that. The rum, the profit, this argument about sixpence — all of it sits on top of that, and everybody in this town knows, and nobody says.", expr: 'downcast' },
       { say: "Well. I have said it. Now I shall go to bed.", expr: 'neutral' }
+    ],
+    confession: [
+      { narrate: 'He looks at the door for a moment before he says it.' },
+      { say: "The new Customs man came to me on Friday.", expr: 'worried' },
+      { say: "Not to seize anything. To *talk*. Very civil. Said he understood how the trade worked and had no wish to ruin honest men, and that a master who told him which coves were busy would find his own entries went very smooth indeed.", expr: 'downcast' },
+      { choose: [
+        { label: '"What did you tell him?"',
+          then: [
+            { say: "I told him I would think on it. Which is not no.", expr: 'downcast' },
+            { say: "And I have thought on it every hour since, which is worse than being seized would have been.", expr: 'worried' } ] },
+        { label: '"He\'s offering to make you an informer."',
+          then: [
+            { say: "He is offering to make me *safe*. That is how it is put, and that is why it works.", expr: 'stern' } ] },
+        { label: '"Every captain in the harbour would know."',
+          then: [
+            { say: "Every captain in the harbour would know by Michaelmas and I would never load a cargo in this town again. He knows that too. He is not a fool.", expr: 'worried' } ] }
+      ]},
+      { say: "That is how the law finally gets kept, if it ever does. Not by catching us. By making it worth one of us to hand over the rest.", expr: 'downcast' },
+      { say: "I have a daughter in Charlestown and a mast that wants replacing. Ask me again in a month.", expr: 'downcast' }
     ],
     exit: [
       { say: "If a customs man comes in asking questions, you never met me and the Dolphin sails on Thursday. Good night to you.", expr: 'warm' }
@@ -372,6 +440,26 @@
             { say: "...Something like that. It sounds thinner out loud than it does in my head.", expr: 'warm' } ] }
       ]}
     ],
+    confession: [
+      { narrate: 'She has been holding the cup with both hands for some time.' },
+      { say: "It is not my father. I want to be honest with you, because I have not been quite honest with myself.", expr: 'thoughtful' },
+      { say: "I could bear my father. I have borne my father about a great many things.", expr: 'neutral' },
+      { choose: [
+        { label: '"Then what is it?"',
+          then: [ { say: "I am afraid I shall stand up on Thursday and feel *nothing*.", expr: 'downcast' } ] },
+        { label: '"Something else frightens you more."',
+          then: [ { say: "Yes. I am afraid I shall stand up on Thursday and feel nothing at all.", expr: 'downcast' } ] }
+      ]},
+      { say: "That I shall open my mouth in front of those women and hear my own voice saying the words, and know, standing there, that whatever came into me in that field has gone out again — and that I am simply a merchant's daughter making a scene.", expr: 'downcast' },
+      { choose: [
+        { label: '"Feeling it once was still real."',
+          then: [ { say: "Was it? I have no way to check. That is the difficulty with a thing that happens entirely inside you.", expr: 'worried' } ] },
+        { label: '"Then say that. Say you are not sure."',
+          then: [ { narrate: 'She looks up sharply, and then, slowly, stops looking frightened.' },
+                  { say: "...I had not thought I was allowed to.", expr: 'surprised' } ] }
+      ]},
+      { say: "Nobody warns you that the worst part is not the disapproval. It is the wondering whether you made it up.", expr: 'downcast' }
+    ],
     exit: [
       { say: "I don't know entirely what Thursday will bring. But I am glad to have said it aloud somewhere first, before I say it there.", expr: 'warm' },
       { say: "Good night — and thank you, truly.", expr: 'warm' },
@@ -461,12 +549,114 @@
 
       { say: "I shall be here some years, I expect. You will see a good deal of me.", expr: 'neutral' }
     ],
+    confession: [
+      { narrate: 'He looks at the closed ledger for a while.' },
+      { say: "I wrote to the Board in June and asked to be posted somewhere else. Anywhere. I said Antigua.", expr: 'downcast' },
+      { choose: [
+        { label: '"Why?"',
+          then: [ { say: "Because I had read the Boston entry books before I sailed, and I could already see what the job was going to be.", expr: 'downcast' } ] },
+        { label: '"They said no."',
+          then: [ { say: "They said the post was mine and the ship left on the tide. Yes.", expr: 'stern' } ] }
+      ]},
+      { say: "Every man I meet here is decent and every man I meet here is breaking the law, and those two facts do not cancel. They simply sit next to each other and I am expected to do something about it.", expr: 'worried' },
+      { say: "I have a number in that book that I have not sent to London. If I send it, somebody will act on it, and the acting will not be gentle, and it will not be done by me — it will be done by a frigate.", expr: 'downcast' },
+      { choose: [
+        { label: '"Then don\'t send it."',
+          then: [ { say: "Then I am the fifth officer in a row who did not, and the next man inherits a worse number than I did.", expr: 'stern' } ] },
+        { label: '"You will send it."',
+          then: [ { say: "I expect I shall. Not tonight. But I have never yet not done a thing I was appointed to do, and I have no reason to think this is where I begin.", expr: 'downcast' } ] }
+      ]},
+      { say: "Somebody will send it eventually. That is the only part I am sure of.", expr: 'neutral' }
+    ],
     exit: [
       { narrate: 'He closes the ledger, tucks it under his arm, and puts his hat back on at the door.' },
       { say: "Good night. Keep better books than your neighbours. It will matter sooner than you think.", expr: 'neutral' }
     ],
     journal: { title: "Mr. Aldis Pym, His Majesty's Customs",
       text: 'Read two years of entry books and found that Boston claims to import more British molasses than the British islands produce. Understands that enforcing the Molasses Act would close the port, and that not enforcing it teaches colonists that laws from London are optional. Cannot see a way through, and says so.' }
+  }
+
+  ,
+
+  /* =====================================================================
+     RETURN — EZRA HALE, later the same evening
+     Short. No order; he is not here for a drink.
+     ===================================================================== */
+  convert_return: {
+    enter: [
+      { narrate: 'The door goes again. It is the cooper, without his hat this time, and wetter than before.' },
+      { say: "He put me out.", expr: 'surprised' },
+      { choose: [
+        { label: '"Your master?"',
+          then: [ { say: "My master. Three days of meetings and a fourth of arguing about them. He said he keeps a cooperage, not a congregation.", expr: 'downcast' } ] },
+        { label: '"Sit down. You\'re soaked again."',
+          then: [ { say: "I have been walking about. I did not want to stop walking about, and then I saw your light again.", expr: 'worried' } ] },
+        { label: '"You knew that was coming."',
+          then: [ { say: "I knew. Knowing a thing is coming turns out not to help when it arrives.", expr: 'downcast' } ] }
+      ]}
+    ],
+    talk: [
+      { say: "Here is what I cannot get straight. I am ruined — I have no place, and a cooper with no place is a labourer, and a labourer is nobody.", expr: 'downcast' },
+      { say: "And I am not sorry. I keep waiting to be sorry and it does not come.", expr: 'surprised' },
+      { choose: [
+        { label: '"Then you\'re not ruined. You\'re just poorer."',
+          then: [ { say: "That is a hard sentence and I think it may be a true one.", expr: 'thoughtful' } ] },
+        { label: '"Was it worth a trade?"',
+          then: [ { say: "Ask me in the winter. Tonight I would say yes, and tonight I am not a reliable witness about anything.", expr: 'worried' } ] },
+        { label: '"Where will you sleep?"',
+          then: [ { say: "There are men from the meeting who will take me in. That is the odd part — three weeks ago I did not know one of them, and now I have thirty who would open a door.", expr: 'thoughtful' } ] }
+      ]},
+      { say: "That is what nobody says about it. They talk of the shouting and the weeping. Nobody mentions that afterwards you have somewhere to go, and that the somewhere is not your master's house and does not answer to him.", expr: 'neutral' },
+      { say: "I think that frightens them more than the weeping does.", expr: 'thoughtful' }
+    ],
+    exit: [
+      { say: "I only wanted to say it out loud to somebody who would not tell me what it meant. Good night.", expr: 'warm' }
+    ],
+    journal: { title: 'Ezra Hale, again',
+      text: 'Dismissed by his master over the revival meetings. Not sorry — and notes that the movement gave him thirty households that would take him in, none of which answer to his master. Suggests the Awakening\'s real threat to the social order was not the emotion but the new networks of authority it created outside existing ones.' }
+  },
+
+  /* =====================================================================
+     RETURN — PATIENCE MARSH, before closing
+     ===================================================================== */
+  patience_return: {
+    enter: [
+      { narrate: 'She comes back in with her gloves already off, which she did not manage the first time.' },
+      { say: "I have been home. I have spoken to my father.", expr: 'neutral' },
+      { choose: [
+        { label: '"How did it go?"',
+          then: [ { say: "Badly, and then not as badly as I expected, and then badly again at the end.", expr: 'thoughtful' } ] },
+        { label: '"You told him."',
+          then: [ { say: "I told him. I had got all the way to the door twice before I managed it.", expr: 'worried' } ] },
+        { label: '"You look different."',
+          then: [ { say: "Do I? I have been told tonight that I look a great many things.", expr: 'warm' } ] }
+      ]}
+    ],
+    talk: [
+      { say: "He did not forbid me. I had my whole answer ready for being forbidden and he would not do it.", expr: 'surprised' },
+      { say: "He said: do as you think right, and understand what it will cost this house, and do not pretend afterwards that you did not know.", expr: 'downcast' },
+      { choose: [
+        { label: '"That\'s worse than forbidding you."',
+          then: [ { say: "It is *much* worse. He handed me the whole weight of it and went to bed.", expr: 'downcast' } ] },
+        { label: '"He gave you the choice."',
+          then: [ { say: "He gave me the choice and the bill for it in the same breath. My father is a merchant to his bones.", expr: 'thoughtful' } ] }
+      ]},
+      { say: "So I sat in the hall and thought about the sugar, and the customs men, and what a name gets worth in this town, and how quickly it stops being worth it.", expr: 'neutral' },
+      { say: "And I am going on Thursday.", expr: 'bright' },
+      { choose: [
+        { label: '"You\'re certain?"',
+          then: [ { say: "No. But I have stopped waiting to be, and that turns out to be a different thing and quite enough.", expr: 'warm' } ] },
+        { label: '"Good."',
+          then: [ { say: "You are the first person to say so without adding a condition to it. Thank you.", expr: 'warm' } ] }
+      ]},
+      { say: "I came here first because there was nowhere else where I could say it and not be argued with. I am not sure what that makes this room, but I am glad it exists.", expr: 'warm' }
+    ],
+    exit: [
+      { narrate: 'She pauses at the door.' },
+      { say: "If it goes badly, I shall come and tell you that too. Good night.", expr: 'warm' }
+    ],
+    journal: { title: 'Patience Marsh, again',
+      text: 'Told her father. He refused to forbid her, and instead handed her the decision along with an itemised account of what it would cost the family business — a merchant\'s way of applying pressure. She is going anyway. The Awakening and the trade collide inside one household, and she is the one standing where they meet.' }
   }
 
   };

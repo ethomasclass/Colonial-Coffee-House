@@ -1,14 +1,17 @@
 /* ===========================================================================
    game.js — state, the render loop, the dialogue player, brewing, the ledger.
 
-   One evening. Six patrons. No fail state: every cup is accepted and paid for.
-   What a wrong cup costs you is the conversation, not the game.
+   One evening. Eight scenes, six of which want a drink. No fail state: every
+   cup is accepted and paid for. What a wrong cup costs you is the
+   conversation — a well-matched cup earns a confession nobody else hears.
    =========================================================================== */
 
 (function (global) {
   'use strict';
 
-  var D = global.Data, S = global.Scenes, A = global.Art;
+  var D = global.Data, S = global.Scenes, A = global.Art, Snd = global.Sound;
+
+  var ORDER = D.runningOrder();
 
   /* =======================================================================
      STATE
@@ -21,17 +24,21 @@
     honeyLeft: D.byId(D.SWEETENERS, 'honey').stock,
     frenchUses: 0,
     britishUses: 0,
+    wasted: 0,
+    confessions: 0,
     patronIndex: -1,
     patron: null,
     expr: 'neutral',
     servedCup: null,
+    mode: 'idle',              /* 'idle' | 'wipe' — drives canvas interaction */
     log: [],
     discovered: {},
     journal: [],
+    seenRoom: {},
     sel: { base: null, sweet: null, add: null }
   };
 
-  var frame = 0, el = {};
+  var frame = 0, el = {}, SAVE = 'greendragon.save';
 
   function $(id) { return document.getElementById(id); }
 
@@ -41,10 +48,12 @@
 
   function loop() {
     frame++;
+    A.setPhase(Math.max(0, st.patronIndex) / Math.max(1, ORDER.length - 1));
     A.drawRoom(frame);
     if (st.patron) A.drawPerson(A.CAST_ART[st.patron.art], st.expr, frame);
     else A.drawEmptySeat(frame);
     if (st.servedCup) A.drawServedCup(296, frame, st.servedCup.tint);
+    A.applyNightWash();
     A.present();
     requestAnimationFrame(loop);
   }
@@ -63,6 +72,7 @@
   }
 
   var typing = null;
+  var textSpeed = 12;          /* ms per tick; 0 means show it all at once */
 
   function showLine(who, text, isNarration, done, expr) {
     if (expr) st.expr = expr;
@@ -74,18 +84,19 @@
 
     var html = markup(text);
     el.line.innerHTML = html;
-
-    /* typewriter over the rendered text, so glossary buttons survive */
     var full = el.line.textContent;
-    el.line.textContent = '';
-    var i = 0;
     el.advance.hidden = true;
     clearInterval(typing);
+
+    if (textSpeed === 0) { el.line.innerHTML = html; return finish(); }
+
+    el.line.textContent = '';
+    var i = 0;
     typing = setInterval(function () {
       i += 2;
       el.line.textContent = full.slice(0, i);
       if (i >= full.length) finish();
-    }, 12);
+    }, textSpeed);
 
     function finish() {
       clearInterval(typing); typing = null;
@@ -98,7 +109,6 @@
       };
     }
 
-    /* click once to skip the typewriter, again to advance */
     el.dialogue.onclick = function (ev) {
       if (ev.target.classList.contains('gloss')) return;
       if (typing) finish();
@@ -133,6 +143,7 @@
   }
 
   function playNodes(nodes, onDone) {
+    if (!nodes || !nodes.length) return onDone();
     var queue = nodes.slice();
     step();
     function step() {
@@ -165,16 +176,36 @@
   function nextPatron() {
     st.patronIndex++;
     st.servedCup = null;
-    if (st.patronIndex >= D.CAST.length) return endNight();
-    st.patron = D.CAST[st.patronIndex];
+    if (st.patronIndex >= ORDER.length) return endNight();
+    st.patron = ORDER[st.patronIndex];
     st.expr = 'neutral';
     updateHud();
+    save();
     var sc = S[st.patron.id];
-    playNodes(sc.enter, askOrder);
+    playNodes(sc.enter, function () {
+      if (st.patron.noOrder) return runConversation(null);
+      showLine(st.patron, st.patron.order, false, openBrew, 'neutral');
+    });
   }
 
-  function askOrder() {
-    showLine(st.patron, st.patron.order, false, openBrew, 'neutral');
+  /* react → talk → (confession, only if the cup suited them) → exit */
+  function runConversation(outcome) {
+    var sc = S[st.patron.id];
+    playNodes(outcome && sc.react ? sc.react[outcome] : null, function () {
+      playNodes(sc.talk, function () {
+        var earned = (outcome === 'matched') && sc.confession;
+        if (earned) st.confessions++;
+        playNodes(earned ? sc.confession : null, function () {
+          playNodes(sc.exit, function () {
+            st.journal.push(sc.journal);
+            st.patron = null;
+            st.servedCup = null;
+            if (st.patronIndex >= ORDER.length - 1) return nextPatron();
+            openInterstitial();
+          });
+        });
+      });
+    });
   }
 
   /* =======================================================================
@@ -205,6 +236,7 @@
     b.disabled = out;
     b.onclick = function () {
       st.sel[kind] = ing.id;
+      if (Snd) Snd.knock(260 + Math.random() * 120, 0.045);
       buildShelf();
       updateCup();
     };
@@ -222,13 +254,16 @@
     });
   }
 
+  function complete() { return st.sel.base && st.sel.sweet && st.sel.add; }
+
   function updateCup() {
     var s = st.sel;
-    if (!s.base || !s.sweet || !s.add) {
+    if (!complete()) {
       el.cupName.textContent = '—';
       el.cupDesc.textContent = 'Choose a base, a sweetener, and one thing more.';
       el.cupCost.textContent = '';
       el.serveBtn.disabled = true;
+      el.pourBtn.disabled = true;
       el.cupNew.hidden = true;
       return;
     }
@@ -236,10 +271,32 @@
     var cost = D.drinkCost(s.base, s.sweet, s.add);
     el.cupName.textContent = rec.name;
     el.cupDesc.textContent = rec.desc;
-    el.cupCost.innerHTML = 'costs you <b>' + D.pence(cost) + '</b> &middot; fetches <b>' + D.pence(D.priceOf(rec, cost)) + '</b>' +
+    el.cupCost.innerHTML = 'costs you <b>' + D.pence(cost) + '</b> &middot; fetches <b>' +
+      D.pence(D.priceOf(rec, cost)) + '</b>' +
       (D.byId(D.SWEETENERS, s.sweet).legal === false ? ' &middot; <span class="warn">unlawful sweetening</span>' : '');
     el.cupNew.hidden = !!st.discovered[rec.id] || rec.id === 'odd';
     el.serveBtn.disabled = false;
+    el.pourBtn.disabled = false;
+  }
+
+  /* Pour it away and start again. You lose what went into it, which is both
+     true to the period and the cheapest possible lesson about waste. */
+  function pourOut() {
+    if (!complete()) return;
+    var s = st.sel;
+    var cost = D.drinkCost(s.base, s.sweet, s.add);
+    st.purse -= cost;
+    st.wasted += cost;
+    if (s.sweet === 'honey') st.honeyLeft--;
+    if (s.sweet === 'french') st.frenchUses++;
+    st.sel = { base: null, sweet: null, add: null };
+    if (Snd) Snd.knock(180, 0.07);
+    el.pourNote.textContent = 'Poured away. ' + D.pence(cost) + ' of goods gone.';
+    el.pourNote.hidden = false;
+    setTimeout(function () { el.pourNote.hidden = true; }, 2600);
+    buildShelf();
+    updateCup();
+    updateHud();
   }
 
   function serve() {
@@ -248,14 +305,12 @@
     var cost = D.drinkCost(s.base, s.sweet, s.add);
     var tags = D.drinkTags(s.base, s.sweet, s.add);
     var outcome = D.judge(st.patron, tags);
-
-    /* money */
     var paid = D.priceOf(rec, cost);
+
     st.purse -= cost;
     st.purse += paid;
-    if (outcome === 'matched') st.purse += 2;   /* they leave something extra */
+    if (outcome === 'matched') st.purse += 2;
 
-    /* the political consequence of the sweetener */
     if (s.sweet === 'french') {
       st.frenchUses++;
       st.suspicion += (st.patron.id === 'officer')
@@ -276,24 +331,78 @@
     var tints = { coffee: '#3b2416', bohea: '#6b4a22', hyson: '#7d8a4a',
                   chocolate: '#4a2c1c', sage: '#6f7a4e', water: '#8fa3b5' };
     st.servedCup = { tint: tints[s.base] };
+    A.addRing(296);
+    if (Math.random() < 0.7) A.addTarnish();
+    if (Snd) Snd.knock(300, 0.07);
 
     el.brew.hidden = true;
     st.phase = 'shift';
     updateHud();
-
-    var sc = S[st.patron.id];
-    playNodes(sc.react[outcome], function () {
-      playNodes(sc.talk, function () {
-        playNodes(sc.exit, function () {
-          st.journal.push(sc.journal);
-          nextPatron();
-        });
-      });
-    });
+    runConversation(outcome);
   }
 
   /* =======================================================================
-     HUD, BOOKS, GLOSSARY
+     BETWEEN PATRONS — the breath, and the chores
+     ======================================================================= */
+
+  function openInterstitial() {
+    st.phase = 'between';
+    st.mode = 'idle';
+    el.dialogue.hidden = true;
+    el.between.hidden = false;
+    updateBetween();
+  }
+
+  function updateBetween() {
+    var left = A.ringCount();
+    el.choresNote.textContent = left
+      ? left + (left === 1 ? ' mark' : ' marks') + ' left on the counter and the pewter.'
+      : 'Counter wiped, pewter bright. Nothing to do but wait.';
+    el.wipeBtn.hidden = left === 0;
+    el.wipeBtn.textContent = st.mode === 'wipe' ? 'Put the cloth down' : 'Take up the cloth';
+    el.betweenHint.textContent = st.mode === 'wipe'
+      ? 'Drag across the counter and the cupboard to wipe them down.'
+      : 'Click anything in the room to look at it more closely.';
+    document.body.classList.toggle('wiping', st.mode === 'wipe');
+  }
+
+  function toggleWipe() {
+    st.mode = st.mode === 'wipe' ? 'idle' : 'wipe';
+    el.between.classList.toggle('slim', st.mode === 'wipe');
+    updateBetween();
+  }
+
+  /* Dragging the cloth. Works with mouse and with a finger.
+     downAt/dragged let us tell a wipe from a click, so that finishing a wipe
+     does not immediately pop open whatever was under the cursor. */
+  var wiping = false, downAt = null, dragged = false;
+  function wipeFrom(ev) {
+    if (st.mode !== 'wipe') return;
+    var pt = A.toLogical(ev);
+    var got = A.wipeAt(pt.x, pt.y, 11);
+    if (got && Snd) Snd.knock(420 + Math.random() * 200, 0.03);
+    if (got) updateBetween();
+    if (A.ringCount() === 0 && st.mode === 'wipe') {
+      st.mode = 'idle';
+      el.between.classList.remove('slim');
+      updateBetween();
+    }
+  }
+
+  function examine(ev) {
+    if (st.phase !== 'between' || st.mode === 'wipe') return;
+    if (dragged) { dragged = false; return; }
+    var pt = A.toLogical(ev);
+    var id = A.hitTest(pt.x, pt.y);
+    if (!id || !D.ROOM[id]) return;
+    st.seenRoom[id] = true;
+    el.glossTerm.textContent = D.ROOM[id].title;
+    el.glossDef.innerHTML = markup(D.ROOM[id].text);
+    el.gloss.hidden = false;
+  }
+
+  /* =======================================================================
+     HUD, BOOKS, GLOSSARY, SETTINGS
      ======================================================================= */
 
   function updateHud() {
@@ -305,7 +414,7 @@
       pip.className = 'pip' + (i < st.suspicion ? ' lit' : '');
       el.suspicion.appendChild(pip);
     }
-    el.progress.textContent = Math.max(0, st.patronIndex + 1) + ' of ' + D.CAST.length;
+    el.progress.textContent = Math.max(0, st.patronIndex + 1) + ' of ' + ORDER.length;
   }
 
   function openBook() {
@@ -340,11 +449,55 @@
     el.gloss.hidden = false;
   }
 
+  function applyTextSize(px) {
+    document.documentElement.style.setProperty('--line-size', px + 'px');
+    try { localStorage.setItem('greendragon.size', px); } catch (e) {}
+  }
+
+  function applySpeed(v) {
+    textSpeed = v;
+    try { localStorage.setItem('greendragon.speed', v); } catch (e) {}
+  }
+
+  /* =======================================================================
+     SAVE — so a fire drill or a short period does not cost a student the night
+     ======================================================================= */
+
+  function save() {
+    try {
+      localStorage.setItem(SAVE, JSON.stringify({
+        purse: st.purse, suspicion: st.suspicion, honeyLeft: st.honeyLeft,
+        frenchUses: st.frenchUses, britishUses: st.britishUses, wasted: st.wasted,
+        confessions: st.confessions, patronIndex: st.patronIndex,
+        log: st.log, discovered: st.discovered, journal: st.journal
+      }));
+    } catch (e) {}
+  }
+
+  function loadSave() {
+    try {
+      var raw = localStorage.getItem(SAVE);
+      if (!raw) return null;
+      var d = JSON.parse(raw);
+      return (d && d.patronIndex > 0 && d.patronIndex < ORDER.length) ? d : null;
+    } catch (e) { return null; }
+  }
+
+  function resume(d) {
+    Object.keys(d).forEach(function (k) { st[k] = d[k]; });
+    st.patronIndex--;                       /* nextPatron will step forward */
+    el.title.hidden = true;
+    st.phase = 'shift';
+    nextPatron();
+  }
+
+  function clearSave() { try { localStorage.removeItem(SAVE); } catch (e) {} }
+
   /* =======================================================================
      THE BROADSHEET
      ======================================================================= */
 
-  function openBroadsheet() {
+  function openBroadsheet(fromShift) {
     var b = D.BROADSHEET;
     var html = '<div class="masthead">' + b.masthead + '</div><div class="dateline">' + b.dateline + '</div>';
     b.items.forEach(function (it) {
@@ -353,6 +506,10 @@
     el.paperBody.innerHTML = html;
     el.broadsheet.hidden = false;
     el.title.hidden = true;
+    $('openShopBtn').textContent = fromShift ? 'Put the paper down' : 'Open the shop';
+    $('openShopBtn').onclick = fromShift
+      ? function () { el.broadsheet.hidden = true; }
+      : startNight;
   }
 
   /* =======================================================================
@@ -362,10 +519,13 @@
   function endNight() {
     st.phase = 'closing';
     st.patron = null;
+    clearSave();
     el.dialogue.hidden = true;
+    el.between.hidden = true;
 
     var earned = 0, spent = 0;
     st.log.forEach(function (r) { earned += r.paid; spent += r.cost; });
+    spent += st.wasted;
     var madeRent = st.purse >= D.LEDGER.rent;
 
     var html = '<h2>The Green Dragon &mdash; Accounts for the Night</h2>' +
@@ -384,6 +544,7 @@
       '<tr><td>Purse at opening</td><td>' + D.pence(D.LEDGER.startPurse) + '</td></tr>' +
       '<tr><td>Taken over the counter</td><td>' + D.pence(earned) + '</td></tr>' +
       '<tr><td>Spent on ingredients</td><td>&minus;' + D.pence(spent) + '</td></tr>' +
+      (st.wasted ? '<tr><td class="quiet-row">&nbsp;&nbsp;of which poured away</td><td class="quiet-row">' + D.pence(st.wasted) + '</td></tr>' : '') +
       '<tr class="rule"><td>Purse at closing</td><td><b>' + D.pence(st.purse) + '</b></td></tr>' +
       '<tr><td>Rent due tonight</td><td>&minus;' + D.pence(D.LEDGER.rent) + '</td></tr>' +
       '<tr class="rule"><td><b>' + (madeRent ? 'Rent paid. Remaining' : 'Short by') + '</b></td>' +
@@ -393,9 +554,10 @@
     html += '<div class="tally"><div><span class="big">' + st.frenchUses + '</span>cups sweetened unlawfully</div>' +
       '<div><span class="big">' + st.britishUses + '</span>cups sweetened lawfully</div>' +
       '<div><span class="big">' + st.suspicion + '/' + D.LEDGER.suspicionCap + '</span>notice taken by the Customs</div>' +
-      '<div><span class="big">' + Object.keys(st.discovered).length + '/' + D.RECIPES.length + '</span>recipes discovered</div></div>';
+      '<div><span class="big">' + st.confessions + '/6</span>told you something private</div>' +
+      '<div><span class="big">' + Object.keys(st.discovered).length + '/' + D.RECIPES.length + '</span>recipes discovered</div>' +
+      '<div><span class="big">' + Object.keys(st.seenRoom).length + '/' + Object.keys(D.ROOM).length + '</span>things looked at</div></div>';
 
-    /* the verdict — the whole lesson, stated once, after they have lived it */
     var verdict;
     if (madeRent && st.frenchUses === 0) {
       verdict = 'You kept the law all night and still made rent. Almost nobody managed that in 1741 &mdash; and if you look at your margins, you can see why. Every honest cup you poured earned less than the same cup would have earned across the street.';
@@ -409,13 +571,18 @@
     html += '<div class="verdict"><h3>What tonight was about</h3><p>' + verdict + '</p>' +
       '<p>Britain wrote strict trade laws and then, for decades, barely enforced them. Historians call that <b>salutary neglect</b>. Colonists grew used to running their own economy. When Britain finally began enforcing in earnest after 1763, colonists did not experience it as a government finally doing its job &mdash; they experienced it as a government taking something away.</p></div>';
 
+    if (st.confessions < 6) {
+      html += '<div class="verdict quiet-verdict"><h3>What you did not hear</h3><p>Six of tonight’s patrons had something they would only say over a drink that actually suited them. You earned <b>' +
+        st.confessions + '</b> of those. Somebody else in this room heard different things than you did &mdash; that is worth comparing.</p></div>';
+    }
+
     html += '<div class="jrn"><h3>Notes from the Evening</h3>';
     st.journal.forEach(function (j) { html += '<div class="note"><b>' + j.title + '</b><p>' + j.text + '</p></div>'; });
     html += '</div><button id="againBtn" class="big-btn">Open again tomorrow night</button>';
 
     el.closeBody.innerHTML = html;
     el.closing.hidden = false;
-    $('againBtn').onclick = function () { location.reload(); };
+    $('againBtn').onclick = function () { clearSave(); location.reload(); };
   }
 
   /* =======================================================================
@@ -425,20 +592,86 @@
   function init() {
     ['dialogue', 'speaker', 'line', 'choices', 'advance', 'brew', 'baseShelf',
      'sweetShelf', 'addShelf', 'cupName', 'cupDesc', 'cupCost', 'cupNew',
-     'serveBtn', 'orderEcho', 'orderWho', 'purse', 'suspicion', 'progress',
-     'book', 'bookBody', 'gloss', 'glossTerm', 'glossDef', 'broadsheet',
-     'paperBody', 'closing', 'closeBody', 'title'].forEach(function (id) { el[id] = $(id); });
+     'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
+     'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
+     'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
+     'between', 'choresNote', 'wipeBtn', 'betweenHint', 'settings']
+      .forEach(function (id) { el[id] = $(id); });
 
     A.init($('stage'));
 
-    $('beginBtn').onclick = openBroadsheet;
-    $('openShopBtn').onclick = startNight;
+    $('beginBtn').onclick = function () { openBroadsheet(false); };
     $('bookBtn').onclick = openBook;
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
     el.serveBtn.onclick = serve;
+    el.pourBtn.onclick = pourOut;
 
-    /* any glossary term, anywhere */
+    /* between-patron panel */
+    el.wipeBtn.onclick = toggleWipe;
+    $('paperAgainBtn').onclick = function () { openBroadsheet(true); };
+    $('nextPatronBtn').onclick = function () {
+      el.between.hidden = true;
+      el.between.classList.remove('slim');
+      st.mode = 'idle';
+      document.body.classList.remove('wiping');
+      nextPatron();
+    };
+
+    /* canvas: wipe by dragging, examine by clicking */
+    var stage = $('stage');
+    function down(e) {
+      wiping = true; dragged = false;
+      var t = e.touches ? e.touches[0] : e;
+      downAt = { x: t.clientX, y: t.clientY };
+      wipeFrom(e);
+    }
+    function move(e) {
+      if (!wiping) return;
+      var t = e.touches ? e.touches[0] : e;
+      if (downAt && Math.abs(t.clientX - downAt.x) + Math.abs(t.clientY - downAt.y) > 6) dragged = true;
+      wipeFrom(e);
+    }
+    stage.addEventListener('mousedown', down);
+    stage.addEventListener('mousemove', move);
+    global.addEventListener('mouseup', function () { wiping = false; });
+    stage.addEventListener('touchstart', function (e) { down(e); e.preventDefault(); }, { passive: false });
+    stage.addEventListener('touchmove', function (e) { move(e); e.preventDefault(); }, { passive: false });
+    global.addEventListener('touchend', function () { wiping = false; });
+    stage.addEventListener('click', examine);
+
+    /* sound, off until somebody asks for it */
+    var soundBtn = $('soundBtn');
+    function paintSound() {
+      var on = Snd && Snd.isOn();
+      soundBtn.textContent = on ? 'Sound on' : 'Sound off';
+      soundBtn.classList.toggle('on', !!on);
+    }
+    soundBtn.onclick = function () { if (Snd) Snd.setEnabled(!Snd.isOn()); paintSound(); };
+    paintSound();
+
+    /* settings */
+    $('settingsBtn').onclick = function () { el.settings.hidden = !el.settings.hidden; };
+    $('settingsClose').onclick = function () { el.settings.hidden = true; };
+    var sizeSel = $('sizeSel'), speedSel = $('speedSel');
+    sizeSel.onchange = function () { applyTextSize(+sizeSel.value); };
+    speedSel.onchange = function () { applySpeed(+speedSel.value); };
+    try {
+      var sz = localStorage.getItem('greendragon.size');
+      if (sz) { sizeSel.value = sz; applyTextSize(+sz); }
+      var sp = localStorage.getItem('greendragon.speed');
+      if (sp !== null) { speedSel.value = sp; applySpeed(+sp); }
+    } catch (e) {}
+
+    /* offer to pick up where a previous session stopped */
+    var saved = loadSave();
+    if (saved) {
+      var r = $('resumeRow');
+      r.hidden = false;
+      $('resumeBtn').onclick = function () { resume(saved); };
+      $('freshBtn').onclick = function () { clearSave(); r.hidden = true; };
+    }
+
     document.addEventListener('click', function (ev) {
       if (ev.target.classList && ev.target.classList.contains('gloss')) {
         ev.stopPropagation();
@@ -446,13 +679,14 @@
       }
     }, true);
 
-    /* space / enter advances dialogue too */
     document.addEventListener('keydown', function (ev) {
       if ((ev.key === ' ' || ev.key === 'Enter') && !el.dialogue.hidden && el.dialogue.onclick) {
         ev.preventDefault();
         el.dialogue.onclick({ target: el.line });
       }
-      if (ev.key === 'Escape') { el.book.hidden = true; el.gloss.hidden = true; }
+      if (ev.key === 'Escape') {
+        el.book.hidden = true; el.gloss.hidden = true; el.settings.hidden = true;
+      }
     });
 
     updateHud();

@@ -214,7 +214,10 @@
     /* Using French molasses is cheap and unlawful. Each use is noticed a
        little; the Commissioner notices a great deal more. */
     frenchSuspicion: 1,
-    frenchToOfficer: 4
+    frenchToOfficer: 4,
+    /* Pouring a cup away costs you what went into it and nothing else. It is
+       the cheapest way to let a student experiment without punishing them. */
+    allowPourOut: true
   };
 
   function pence(d) {
@@ -229,6 +232,9 @@
      THE CAST — six patrons, one evening, in order
      ======================================================================= */
 
+  /* The evening's running order. A teacher short on time can delete an entry
+     here and nothing else breaks — the ledger, the journal and the closing
+     screen all follow this list. */
   var CAST = [
     {
       id: 'convert', art: 'convert',
@@ -286,6 +292,36 @@
     }
   ];
 
+  /* Two of the evening's patrons come back before closing. They do not order —
+     they have already had their drink and they have come back to say something
+     — which keeps the return beats short and makes them feel different from a
+     first visit. */
+  var RETURNS = [
+    {
+      id: 'convert_return', art: 'convert', noOrder: true,
+      name: 'Ezra Hale', title: 'returned, and not calmer',
+      thread: 'What the Awakening cost him by Tuesday'
+    },
+    {
+      id: 'patience_return', art: 'patience', noOrder: true,
+      name: 'Patience Marsh', title: 'returned, with her mind made up',
+      thread: 'What she decided about Thursday'
+    }
+  ];
+
+  /* Ezra opens the night and comes back near the end of it; Patience sits in
+     the middle and returns after she has been home. Pym always closes. */
+  var ORDER = ['convert', 'reader', 'minister', 'patience', 'captain',
+               'convert_return', 'patience_return', 'officer'];
+
+  function runningOrder() {
+    var all = CAST.concat(RETURNS);
+    return ORDER.map(function (id) {
+      for (var i = 0; i < all.length; i++) if (all[i].id === id) return all[i];
+      return null;
+    }).filter(Boolean);
+  }
+
   /* How well the cup answers what they asked for. No cup is ever refused. */
   function judge(patron, tags) {
     var hit = 0, miss = 0;
@@ -325,6 +361,23 @@
   };
 
   /* =======================================================================
+     THE ROOM — clicked between patrons, while the shop is empty
+     ======================================================================= */
+
+  var ROOM = {
+    hearth: { title: 'The hearth',
+      text: 'Everything hot in this house comes off this fire. There is no stove; a stove is a thing for the next century. The kettle hangs on a crane that swings out over the coals, and the whole room is arranged around the fact that heat happens in exactly one place.' },
+    window: { title: 'The casement',
+      text: 'Small panes set in lead, because large sheets of glass are ruinously expensive and every one of these crossed the Atlantic in a crate of straw. The rain has not stopped since Saturday. Beyond it, Union Street, and past that the wharves where the {{smuggling|the night’s business}} gets done.' },
+    sign:   { title: 'The trade sign',
+      text: 'A green dragon, painted by somebody who had plainly never seen one. Most people in Boston cannot read a shop’s name at forty paces but everyone can recognise a picture, which is why every house of business in this town is known by an animal or an object rather than a surname.' },
+    shelf:  { title: 'The cupboard',
+      text: 'Pewter tankards, stoneware jars, and four pieces of English china kept where they can be seen. The pewter is what people drink from. The china is what tells them what sort of house this is — and it is on that shelf, not in a cupboard, for exactly that reason.' },
+    candle: { title: 'The candle',
+      text: 'Tallow, not beeswax. It smells of the animal it came from and it gutters, but a beeswax candle costs several times as much and is for churches and people with money. When this burns down the room gets darker, and that is simply what the end of an evening is.' }
+  };
+
+  /* =======================================================================
      GLOSSARY — every term a student can click in dialogue or newspaper
      ======================================================================= */
 
@@ -351,6 +404,7 @@
     BASES: BASES, SWEETENERS: SWEETENERS, ADDITIONS: ADDITIONS,
     RECIPES: RECIPES, ODD_MIXTURE: ODD_MIXTURE, CAST: CAST,
     BROADSHEET: BROADSHEET, GLOSSARY: GLOSSARY, LEDGER: LEDGER,
+    ROOM: ROOM, RETURNS: RETURNS, ORDER: ORDER, runningOrder: runningOrder,
     findRecipe: findRecipe, drinkTags: drinkTags, drinkCost: drinkCost,
     judge: judge, byId: byId, pence: pence, priceOf: priceOf
   };

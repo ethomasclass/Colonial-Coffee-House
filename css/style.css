@@ -109,7 +109,7 @@ html, body {
   font-size: .92rem; letter-spacing: .05em;
   color: var(--cream);
 }
-.line { font-size: 1.12rem; line-height: 1.55; min-height: 3.4rem; }
+.line { font-size: var(--line-size, 18px); line-height: 1.55; min-height: 3.4rem; }
 .line.narration { color: var(--dim); font-style: italic; }
 .line em { color: var(--amber-lit); font-style: italic; }
 
@@ -349,4 +349,78 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   .cup-card { grid-template-columns: 1fr; }
   .cup-card .big-btn { grid-column: 1; grid-row: auto; margin-top: .6rem; }
   .line { font-size: 1rem; }
+}
+
+
+/* ===================== BETWEEN PATRONS ===================== */
+/* Not a full overlay — the empty room stays visible and clickable behind it,
+   because looking at the room is one of the things you can do here. */
+.between {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  display: flex; justify-content: center;
+  padding: 0 1rem 1rem;
+  z-index: 16;
+  pointer-events: none;
+}
+.between-inner {
+  pointer-events: auto;
+  width: min(60rem, 100%);
+  padding: 1rem 1.4rem;
+  background: linear-gradient(#2b2028, #1c1418);
+  border: 3px solid var(--wood-hi); border-radius: 4px;
+  box-shadow: 0 8px 0 rgba(0,0,0,.55);
+  transition: opacity .18s;
+}
+/* While the cloth is in hand the panel gets out of the way of the counter. */
+.between.slim .between-inner { opacity: .35; }
+.between.slim .between-inner:hover { opacity: 1; }
+.between-head { display: flex; align-items: baseline; gap: .8rem; flex-wrap: wrap; }
+.between-title { font-size: 1.1rem; color: var(--linen); }
+.between-sub { font-size: .9rem; color: var(--dim); font-style: italic; }
+.between-acts { display: flex; gap: .6rem; margin-top: .7rem; flex-wrap: wrap; align-items: center; }
+.between-acts .big-btn { margin-top: 0; margin-left: auto; }
+.between-hint { margin-top: .5rem; font-size: .82rem; color: var(--dim); }
+
+body.wiping #stage { cursor: grab; }
+body.wiping #stage:active { cursor: grabbing; }
+
+.ghost-btn {
+  font-family: var(--serif); font-size: .95rem;
+  padding: .55rem 1.1rem;
+  background: #382831; color: var(--cream);
+  border: 2px solid #4d3a44; border-radius: 3px; cursor: pointer;
+}
+.ghost-btn:hover { background: #4a3542; }
+.ghost-btn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* ===================== BREW ACTIONS ===================== */
+.cup-actions { grid-column: 2; grid-row: 1 / span 4; display: flex; flex-direction: column; gap: .5rem; justify-content: center; }
+.cup-actions .big-btn { margin-top: 0; }
+.pour-note { grid-column: 1; font-size: .85rem; color: var(--amber-lit); font-style: italic; }
+
+/* ===================== SETTINGS ===================== */
+.settings {
+  position: absolute; top: 3.4rem; right: 1rem;
+  z-index: 60;
+  background: var(--panel); border: 2px solid var(--wood-hi); border-radius: 3px;
+  padding: .9rem 1.1rem;
+  display: flex; flex-direction: column; gap: .7rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,.6);
+}
+.settings label { font-size: .85rem; color: var(--linen); display: flex; flex-direction: column; gap: .25rem; }
+.settings select {
+  font-family: var(--serif); font-size: .9rem; padding: .25rem;
+  background: #2e2129; color: var(--cream);
+  border: 1px solid var(--wood-hi); border-radius: 2px;
+}
+.ghost.on { background: var(--wood); color: var(--amber-lit); border-color: var(--amber); }
+
+.resume-row { margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--wood); }
+.resume-row .ghost { margin-left: .6rem; }
+.quiet-row { color: var(--dim) !important; font-size: .85rem; }
+.quiet-verdict { background: #cfc09c !important; }
+
+@media (max-width: 820px) {
+  .cup-actions { grid-column: 1; grid-row: auto; flex-direction: row; }
+  .between-acts .big-btn { margin-left: 0; }
 }

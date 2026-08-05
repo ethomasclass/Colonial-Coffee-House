@@ -27,9 +27,10 @@ iPads, and anything else with a browser.
 | | |
 |---|---|
 | **Setting** | Boston, Monday 14 September 1741 |
-| **Length** | ~45–50 minutes: paper, six patrons, closing ledger |
+| **Length** | ~50–58 minutes: paper, eight scenes, closing ledger. **See the timing note below** |
 | **Reading level** | High school US survey. Modernised spelling; period vocabulary is glossed in-game |
 | **Drinks** | 32 recipes, all period-accurate, **none alcoholic** |
+| **Sound** | Synthesised in-browser, **off by default**, one toggle |
 | **Fail state** | None. Every cup is accepted and paid for |
 
 ### The loop
@@ -37,15 +38,33 @@ iPads, and anything else with a browser.
 1. **Read the morning *Boston Gazette*.** Five items. This is where the
    background history is planted, and one patron's order can only be worked out
    if the student actually read it.
-2. **Six patrons, one at a time.** Each gives an order as a *mood*, not a menu
-   item. The student picks a base, a sweetener, and one thing more.
+2. **Eight scenes, six of which want a drink.** Each patron gives an order as a
+   *mood*, not a menu item. The student picks a base, a sweetener, and one thing
+   more — or pours the cup away and starts again, losing the ingredients.
 3. **The conversation.** Every dialogue choice is a tone fork — no branch is
-   wrong, they differ in how much the patron volunteers. Serving a cup that
-   suits them opens them up; a cup that doesn't still gets drunk, just
-   awkwardly.
-4. **The closing ledger.** Every drink, what it cost, what it fetched, and
-   whether rent got paid. Designed to be read off the screen while filling in a
-   paper worksheet.
+   wrong, they differ in how much the patron volunteers.
+4. **The confession.** Each of the six ordering patrons has **one thing they
+   will only say over a cup that actually suited them.** Ezra admits he is
+   frightened it will wear off. Thorne admits he thinks he is losing. Bright
+   admits the customs officer has already tried to turn him informer. A student
+   who brews carelessly never hears any of it, and the closing screen tells them
+   how many they missed. This is what makes two students' notes different.
+5. **Between patrons**, the room is empty. Wipe the rings off the counter and
+   the tarnish off the pewter, re-read the paper, or click anything in the room
+   — hearth, window, trade sign, cupboard, candle — for a short note on what it
+   was and why it was like that.
+6. **Two patrons come back** before closing. Ezra has been dismissed by his
+   master over the meetings and is not sorry. Patience has told her father and
+   made up her mind.
+7. **The closing ledger.** Every drink, what it cost, what it fetched, what got
+   poured away, and whether rent got paid. Designed to be read off the screen
+   while filling in a paper worksheet.
+
+### The night visibly passes
+
+The candles burn down, the hearth sinks to embers, the street lantern outside
+gutters out, and the whole room darkens as the eight scenes go by. It teaches
+nothing. It is there so the game feels like a place.
 
 ### The mechanic that does the teaching
 
@@ -64,6 +83,26 @@ comfortably. Students discover *salutary neglect* by running the numbers, not
 by being told — and the closing screen only names the concept after they have
 already lived it.
 
+### Timing note — read this before you run it
+
+The build now runs **longer than one 50-minute period** for a slow reader: eight
+scenes plus the confessions is realistically 50–58 minutes before discussion.
+
+If you need it shorter, edit the `ORDER` array near the bottom of `js/data.js`:
+
+```js
+var ORDER = ['convert', 'reader', 'minister', 'patience', 'captain',
+             'convert_return', 'patience_return', 'officer'];
+```
+
+Delete any entry and nothing breaks — the ledger, journal, closing screen and
+progress counter all follow this list. Dropping `'convert_return'` and
+`'reader'` gets you back to roughly 40 minutes. **Keep `'officer'` last**; his
+scene is the payoff and it reads what the student did all evening.
+
+I have not timed this with real students. Do that before you commit a class to
+it, and cut from `ORDER` accordingly.
+
 ---
 
 ## The cast
@@ -76,6 +115,8 @@ already lived it.
 | **Capt. Jonas Bright** | The Molasses Act, smuggling, and whose labour is actually in the barrel |
 | **Patience Marsh** | Both threads at once: awakened, asked to testify, and daughter to a merchant who cannot afford to be noticed |
 | **Mr. Aldis Pym**, Customs | The convergence — his scene changes based on what the student did all evening |
+| **Ezra, returning** | What the Awakening actually cost him — and the thirty households that took him in, none of which answer to his master |
+| **Patience, returning** | Her father refused to forbid her and handed her the bill instead. She is going anyway |
 
 ---
 
@@ -117,22 +158,41 @@ game in the manner of the period press, and the game says so on the page.
 ```
 index.html        markup and all the panels
 css/style.css     candlelight, pewter, dark wood
-js/art.js         pixel renderer, the room, the shared character sheet
-js/data.js        shelf, 32 recipes, cast, newspaper, glossary, ledger economics
-js/scenes.js      the six conversations
-js/game.js        state, dialogue player, brewing, closing ledger
+js/art.js         pixel renderer, the room, the shared character sheet,
+                  the night phase, the chore marks, click regions
+js/audio.js       rain, hearth and a slow tune, synthesised — no sound files
+js/data.js        shelf, 32 recipes, cast, running order, newspaper,
+                  glossary, room notes, ledger economics
+js/scenes.js      the eight conversations and the six confessions
+js/game.js        state, dialogue player, brewing, chores, closing ledger
 ```
 
 To change the writing, edit `js/scenes.js` — it needs no knowledge of the rest.
 To change the economics, edit the `LEDGER` block in `js/data.js`.
+To cut the game short, edit `ORDER` in `js/data.js`.
+
+### Accessibility and classroom practicalities
+
+- **Text size** (four steps) and **text speed** (including "all at once")
+  under the `Aa` button. Both remembered between sessions.
+- **Sound is off until somebody turns it on**, and the choice is remembered.
+- **The night is saved** to the browser as you go. If a student's tab dies or
+  the period ends, the title screen offers to carry on where they stopped.
+- Dialogue advances with click, space, or enter. `Esc` closes any panel.
+- Nothing is sent anywhere. No accounts, no analytics, no network calls at all.
 
 ---
 
 ## Not built yet
 
-- The paper worksheet. The closing ledger is laid out to be filled in from,
+- **The paper worksheet.** The closing ledger is laid out to be filled in from,
   but the worksheet itself does not exist.
-- Character art is procedural pixel art generated in code. It is consistent and
-  readable but it is not hand-drawn; swapping in real sprites would mean
-  replacing `drawPerson()` in `js/art.js`.
-- No audio.
+- **Real timing data.** See the timing note above.
+- **Per-character epilogues** on the closing screen ("Patience testified on
+  Thursday") — designed but not built.
+- **Character art is procedural**, generated in code from one shared
+  `drawPerson()` character sheet. It is consistent and readable but it is not
+  hand-drawn; swapping in real sprites means replacing that one function.
+- **Multi-day play.** Doesn't fit one period, but `js/scenes.js` and the `ORDER`
+  array are fully separable, so a three-day version is an expansion rather than
+  a rewrite.
