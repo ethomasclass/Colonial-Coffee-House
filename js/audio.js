@@ -211,18 +211,19 @@
   function scrub(intensity) {
     if (!on || !ctx) return;
     var t = ctx.currentTime;
-    if (t - lastScrub < 0.055) return;
+    if (t - lastScrub < 0.04) return;
     lastScrub = t;
     var s = noiseSource(false);
     var bp = ctx.createBiquadFilter();
     bp.type = 'bandpass';
-    bp.frequency.value = 900 + Math.random() * 900 + intensity * 700;
-    bp.Q.value = 0.9;
+    bp.frequency.value = 700 + Math.random() * 800 + intensity * 900;
+    bp.Q.value = 0.7;
     var g = ctx.createGain();
-    var lvl = 0.012 + intensity * 0.035;
+    /* Audible over a classroom, but still cloth rather than sandpaper. */
+    var lvl = 0.05 + intensity * 0.10;
     g.gain.setValueAtTime(0.0001, t);
     g.gain.exponentialRampToValueAtTime(lvl, t + 0.02);
-    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.13);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.17);
     s.connect(bp); bp.connect(g); g.connect(master);
     s.start(t); s.stop(t + 0.2);
   }

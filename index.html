@@ -18,7 +18,7 @@
     </div>
     <div class="hud-c">
       <span class="sign">The Green Dragon &mdash; Union Street</span>
-      <span class="hud-sub">Monday, 14 September 1741 &middot; patron <span id="progress">0 of 6</span></span>
+      <span class="hud-sub">Monday, 14 September 1741 &middot; patron <span id="progress">0 of 8</span></span>
     </div>
     <div class="hud-r">
       <span class="hud-label">Notice taken</span>
@@ -73,54 +73,80 @@
   <!-- ===================== BROADSHEET ===================== -->
   <div id="broadsheet" class="overlay paper" hidden>
     <div class="paper-inner">
-      <div id="paperBody"></div>
+      <div class="masthead">The Boston Gazette</div>
+      <div class="dateline">MONDAY, September 14, 1741</div>
+      <div id="paperBody" class="paper-cols"></div>
+      <div class="paper-foot">
+        <button id="paperPrev" class="ghost-btn">&#9664; Back</button>
+        <span id="paperPageNum" class="paper-page">Page 1 of 3</span>
+        <button id="paperNext" class="ghost-btn">Turn the page &#9654;</button>
+        <button id="openShopBtn" class="big-btn">Open the shop</button>
+      </div>
       <p class="quiet paper-note">Written for this game in the manner of the
          period press. The events reported &mdash; Whitefield on the Common, the
-         dissolution of the Land Bank, the Molasses Act &mdash; are real.</p>
-      <button id="openShopBtn" class="big-btn">Open the shop</button>
+         Land Bank, the Molasses Act &mdash; are real.</p>
     </div>
   </div>
 
   <!-- ===================== BREW ===================== -->
   <div id="brew" class="overlay brew" hidden>
     <div class="brew-inner">
+
       <div class="order-card">
         <div id="orderWho" class="order-who"></div>
         <div id="orderEcho" class="order-echo"></div>
       </div>
 
-      <div class="brew-bar">
-        <span id="bookCount" class="book-count">0 of 32 recipes known</span>
-        <button id="brewBookBtn" class="ghost">Open the recipe book</button>
-      </div>
+      <div class="brew-body">
 
-      <div class="shelves">
-        <section>
-          <h3>Base <span>what goes in the pot</span></h3>
-          <div id="baseShelf" class="shelf"></div>
-        </section>
-        <section>
-          <h3>Sweetener <span>and this is where the law lives</span></h3>
-          <div id="sweetShelf" class="shelf"></div>
-        </section>
-        <section>
-          <h3>One thing more</h3>
-          <div id="addShelf" class="shelf"></div>
-        </section>
-      </div>
+        <!-- LEFT: the recipe book, open on the counter beside you -->
+        <aside class="brew-book">
+          <div class="bb-spine"></div>
+          <div class="bb-page">
+            <h3>The Recipe Book</h3>
+            <p id="bookCount" class="bb-count">5 of 32 known</p>
+            <div id="brewBookList" class="bb-list"></div>
+          </div>
+        </aside>
 
-      <div class="cup-card">
-        <div class="cup-head">
-          <span id="cupName" class="cup-name">&mdash;</span>
-          <span id="cupNew" class="cup-new" hidden>new recipe</span>
-        </div>
-        <div id="cupDesc" class="cup-desc">Choose a base, a sweetener, and one thing more. Anything you make goes into the recipe book, whether you serve it or not.</div>
-        <div id="cupCost" class="cup-cost"></div>
-        <div id="pourNote" class="pour-note" hidden></div>
-        <div class="cup-actions">
-          <button id="pourBtn" class="ghost-btn" disabled>Pour it out</button>
-          <button id="serveBtn" class="big-btn" disabled>Serve it</button>
-        </div>
+        <!-- RIGHT: the cup, and the shelf you are taking things off -->
+        <section class="brew-work">
+          <div class="cup-panel">
+            <div class="cup-stand">
+              <canvas id="cupCanvas" width="120" height="150"></canvas>
+            </div>
+            <div class="cup-info">
+              <div class="cup-head">
+                <span id="cupName" class="cup-name">An empty cup</span>
+                <span id="cupNew" class="cup-new" hidden>new recipe</span>
+              </div>
+              <div id="cupDesc" class="cup-desc">Click a base, a sweetener, and one thing more. Anything you make goes into the book, whether you serve it or not.</div>
+              <div id="cupCost" class="cup-cost"></div>
+              <div id="ingNote" class="ing-note-line"></div>
+              <div id="pourNote" class="pour-note" hidden></div>
+              <div class="cup-actions">
+                <button id="pourBtn" class="ghost-btn" disabled>Pour it out</button>
+                <button id="serveBtn" class="big-btn" disabled>Serve it</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="shelves">
+            <section>
+              <h4>Base <span>what goes in the pot</span></h4>
+              <div id="baseShelf" class="shelf"></div>
+            </section>
+            <section>
+              <h4>Sweetener <span>and this is where the law lives</span></h4>
+              <div id="sweetShelf" class="shelf"></div>
+            </section>
+            <section>
+              <h4>One thing more</h4>
+              <div id="addShelf" class="shelf"></div>
+            </section>
+          </div>
+        </section>
+
       </div>
     </div>
   </div>
@@ -138,7 +164,7 @@
         <button id="paperAgainBtn" class="ghost-btn">Read the paper again</button>
         <button id="nextPatronBtn" class="big-btn">Open the door</button>
       </div>
-      <div id="betweenHint" class="between-hint">Click anything in the room — hearth, window, sign, cupboard, candle — to look at it more closely.</div>
+      <div id="betweenHint" class="between-hint">Click anything in the room &mdash; hearth, window, sign, cupboard, candle &mdash; to look at it more closely.</div>
     </div>
   </div>
 
@@ -153,6 +179,7 @@
         <canvas id="choreCanvas" width="384" height="216"></canvas>
       </div>
       <div class="chore-foot">
+        <button id="choreSoundBtn" class="ghost-btn">&#9834; Sound off</button>
         <div class="meter"><div id="choreBar" class="meter-fill"></div></div>
         <span id="chorePct" class="chore-pct">0%</span>
         <button id="choreDone" class="ghost-btn">Leave it for now</button>
@@ -185,7 +212,7 @@
   <div id="book" class="overlay book" hidden>
     <div class="book-inner">
       <button id="bookClose" class="x">close</button>
-      <div id="bookBody"></div>
+      <div id="bookBody" class="book-spread"></div>
     </div>
   </div>
 
@@ -206,6 +233,7 @@
 </div>
 
 <script src="js/art.js"></script>
+<script src="js/icons.js"></script>
 <script src="js/audio.js"></script>
 <script src="js/chores.js"></script>
 <script src="js/data.js"></script>

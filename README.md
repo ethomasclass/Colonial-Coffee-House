@@ -35,12 +35,16 @@ iPads, and anything else with a browser.
 
 ### The loop
 
-1. **Read the morning *Boston Gazette*.** Five items. This is where the
-   background history is planted, and one patron's order can only be worked out
-   if the student actually read it.
+1. **Read the morning *Boston Gazette*.** Landscape, two columns, a pixel
+   woodcut on every story, and three pages you turn. Six stories, each written
+   for somebody who has never heard of any of it — what the thing is, why it is
+   happening, what it means for an ordinary person — and each ending with an
+   **In plain terms** box that puts the whole story in one sentence.
 2. **Eight scenes, six of which want a drink.** Each patron gives an order as a
-   *mood*, not a menu item. The student picks a base, a sweetener, and one thing
-   more — or pours the cup away and starts again, losing the ingredients.
+   *mood*, not a menu item. The brewing bench has the **recipe book open on the
+   left** and **the cup on the right**: click a jar on the shelf and you watch
+   it pour in, the level rise, and the drink take its colour. Or pour the cup
+   away and start again, losing the ingredients.
 3. **The conversation.** Every dialogue choice is a tone fork — no branch is
    wrong, they differ in how much the patron volunteers.
 4. **The confession.** Each of the six ordering patrons has **one thing they
@@ -90,14 +94,20 @@ The candles burn down, the hearth sinks to embers, the street lantern outside
 gutters out, and the whole room darkens as the eight scenes go by. It teaches
 nothing. It is there so the game feels like a place.
 
-### Finding the recipes
+### The recipe book
 
-Anything you put together on the brew panel goes straight into the book,
-whether you serve it or not — so a student can stand at the shelf and just
-explore, and all 32 are reachable in a single night. Undiscovered entries in
-the book show a hint built from the recipe's own rule (*"Bohea Tea, sweetened
-with loaf sugar, and cream"*), so the book works as a hunting list rather than
-a wall of question marks. The book is reachable from inside the brew panel.
+It looks like a book — leather boards, a spine, two printed pages — and every
+drink has its own pixel cup drawn from its actual ingredients, so a tea bowl,
+a stoneware mug, a chocolate pot and a pewter cup all read differently and the
+cream, nutmeg, lemon and molasses show in the liquid.
+
+**Five recipes are known at the start**, because nobody opens a coffee house
+without being able to make the plain things. Anything you put together on the
+shelf goes straight into the book, served or not, so a student can stand there
+and explore and all 32 are reachable in one night. Unmade entries show a
+question-mark cup and a hint built from the recipe's own rule (*"Bohea Tea,
+sweetened with loaf sugar, and cream"*), so the book is a hunting list rather
+than a wall of blanks. It stays open beside you the whole time you brew.
 
 ### The mechanic that does the teaching
 
@@ -196,6 +206,8 @@ js/art.js         pixel renderer, the room, the shared character sheet,
 js/audio.js       rain, hearth, a slow tune, scrubbing and a chime —
                   all synthesised, no sound files
 js/chores.js      the cleaning game: both scenes, the dirt grid, the rag
+js/icons.js       every small drawing — drink cups, shelf jars, newspaper
+                  woodcuts — rendered onto their own little canvases
 js/data.js        shelf, 32 recipes, cast, running order, newspaper,
                   glossary, room notes, ledger economics
 js/scenes.js      the eight conversations and the six confessions

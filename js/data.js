@@ -230,6 +230,11 @@
      THE LEDGER — the squeeze, in numbers
      ======================================================================= */
 
+  /* Nobody opens a coffee house without already knowing how to make the
+     ordinary things. These start in the book so it is never empty. */
+  var KNOWN_AT_START = ['black_coffee', 'plain_bohea', 'sweet_coffee',
+                        'drinking_chocolate', 'sage_tea'];
+
   var LEDGER = {
     startPurse: 36,     /* three shillings, and it is not enough           */
     rent: 66,           /* due to the landlord at close of business.       */
@@ -368,22 +373,50 @@
   var BROADSHEET = {
     masthead: 'The Boston Gazette',
     dateline: 'MONDAY, September 14, 1741',
-    items: [
-      { head: 'Of the Itinerant Preachers',
-        body: 'It is now near a twelvemonth since Mr. Whitefield stood upon the Common and was heard, they say, by twenty thousand souls at once. Others have followed after him, preaching in fields and borrowed pulpits where the settled ministers will not have them. Some congregations are grown warm; others are grown divided. Two parishes in this county have split outright, the one part calling themselves NEW LIGHT, the other holding to the ORDER of their fathers.',
-        gloss: ['itinerant', 'newlight', 'oldlight'] },
-      { head: 'The Land Bank Dissolved',
-        body: 'Word is come from London that Parliament has extended the Bubble Act to these Colonies, and the Land Bank is thereby made void. Those who took its notes are to answer for them, and there is much bitterness in the country towns, where the want of good money was the whole occasion of the scheme.',
-        gloss: ['landbank'] },
-      { head: 'Shipping',
-        body: 'ENTERED IN: the sloop Dolphin, Bright master, from the Islands, with molasses and salt. — CLEARED OUT: the brig Adventure for Bristol, with dried fish and whale oil. Masters are reminded that enumerated goods must be carried to England first, and that duty is due upon all foreign molasses at sixpence the gallon, by the Act of 1733.',
-        gloss: ['enumerated', 'molassesact'] },
-      { head: 'Advertisement',
-        body: 'To be SOLD at the sign of the Three Sugar Loaves in Cornhill: LOAF SUGAR of the best refining, BOHEA and HYSON teas, and CHOCOLATE ground at the mill in Dorchester. Also a parcel of LEMONS, lately landed, which will not keep.',
-        gloss: [] },
-      { head: 'Notice',
-        body: 'Mr. Aldis Pym is appointed to the Customs for this port, and gives notice that he intends a stricter accounting than has lately been the custom here. The sloop Ranger was seized at Marblehead this fortnight past, her cargo condemned.',
-        gloss: ['customs'] }
+    /* Two stories a page, three pages. Every one is written for somebody who
+       has never heard of any of this before: what the thing is, why it is
+       happening, and what it means for an ordinary person. The `plain` line
+       is the whole story in one sentence, for anyone who skims. */
+    pages: [
+      [
+        { head: 'The Preachers Who Travel',
+          art: 'preaching',
+          body: 'For as long as anyone can remember, a New England town has had ONE minister. The town chooses him, the town pays him, and he stays until he dies. He reads his sermon calmly from a written page, and everybody sits still.\n\nSomething else is now happening. Preachers have begun to TRAVEL — town to town, parish to parish, preaching in fields and barns when no pulpit will have them. They do not read calmly. They shout, they weep, and they ask each person present a single question: not whether you attend church, but whether you KNOW, in your heart, that you are saved.\n\nLast autumn Mr. George Whitefield preached on Boston Common and, it is said, twenty thousand people came to hear him. There are not twenty thousand people living in Boston. They walked in from everywhere.',
+          plain: 'A new kind of travelling preacher is drawing enormous crowds by making religion something you FEEL rather than something you attend.',
+          gloss: ['itinerant', 'newbirth'] },
+
+        { head: 'And the Quarrel It Has Started',
+          art: 'press',
+          body: 'Not everyone is pleased. The settled ministers have spent their lives studying, and they did not invite these men into their parishes.\n\nThose who welcome the revivals are called {{newlight|NEW LIGHT}}, as though a fresh flame had been found. Those who hold to the old order are called {{oldlight|OLD LIGHT}}, and they answer that shouting and weeping is disorder dressed up as piety. They have a word for it: {{enthusiasm|ENTHUSIASM}} — a man claiming God has spoken to him directly, with no learning, no ordination, and nobody\'s permission.\n\nWhy does this alarm them so much? Because in a field there is no pulpit to defend. Servants speak. Women speak. Black colonists speak. And nobody can stop them.\n\nWhole congregations have already split in half over it. Two in this county alone.',
+          plain: 'The revivals are splitting churches, because they let people with no rank or education claim religious authority.',
+          gloss: ['newlight', 'oldlight', 'enthusiasm', 'testify'] }
+      ],
+      [
+        { head: 'How a Barrel of Molasses Reaches Boston',
+          art: 'shipping',
+          body: 'Sugar cane is grown on islands in the Caribbean, on plantations worked by {{triangle|enslaved people}} who did not choose the labour and are not paid for it. When the cane is boiled for sugar, a thick dark syrup is left over. That is MOLASSES.\n\nNew England buys it by the shipload and distils most of it into rum. Rum is this colony\'s largest manufacture — some sixty distilleries in Massachusetts — and the whole trade rests on molasses being CHEAP.\n\nBritain\'s own islands cannot supply enough of it, and charge more for what they have. The FRENCH islands sell at half the price, because France forbids its colonies to distil rum and so has little use for the stuff.\n\nSo Boston buys French. Every captain in this harbour knows it. So does everyone who drinks anything sweet.',
+          plain: 'Boston\'s biggest industry runs on cheap French molasses — and on the labour of enslaved people in the Caribbean.',
+          gloss: ['triangle', 'smuggling'] },
+
+        { head: 'What the Law Says About It',
+          art: 'customs',
+          body: 'Parliament sits in London, three thousand miles away, and it has written a great deal of law about what colonists may buy and from whom.\n\nThe {{navigation|NAVIGATION ACTS}} require that colonial goods travel in English or colonial ships, and that certain listed products — {{enumerated|ENUMERATED GOODS}} — be carried to England FIRST, even when a better price waits somewhere nearer. England takes its cut on the way through. That is the point of the detour.\n\nThen in 1733 came the {{molassesact|MOLASSES ACT}}: sixpence duty on every gallon of molasses from a non-British island. It was not written to raise money. It was written because British sugar planters have friends in Parliament and could not match the French price.\n\nThe Act has stood for eight years. It has almost never been collected.',
+          plain: 'The law says buy British and pay the duty. Almost nobody does, and until now almost nobody has been made to.',
+          gloss: ['navigation', 'enumerated', 'molassesact', 'neglect'] }
+      ],
+      [
+        { head: 'Why There Is No Money',
+          art: 'money',
+          body: 'Massachusetts is not permitted to coin money. What silver reaches us is spent on English goods and sails straight back across the Atlantic, so there is never enough of it here to buy and sell with.\n\nLast year a group of country men proposed a remedy: a LAND BANK, issuing paper notes backed by the value of their farms. Boston merchants disliked it, believing the notes would lose value. Country debtors welcomed it, because paper is easier to come by than silver.\n\nWord is now come from London that Parliament has voided the scheme entirely. Those holding its notes must answer for them, and there is much bitterness in the country towns — where the want of good money was the whole occasion of the thing.',
+          plain: 'The colony tried to solve a money shortage by printing its own, and Parliament simply cancelled it from London.',
+          gloss: ['landbank'] },
+
+        { head: 'Books Lately Come Over',
+          art: 'goods',
+          body: 'A new manner of thinking is arriving from Europe by every ship, and it is argued over in rooms like this one.\n\nIts habit is to trust REASON and OBSERVATION rather than authority — to ask how a thing may be shown to be true, instead of who said it. Mr. Newton has explained the motions of the heavens by a few plain rules. Mr. {{lockeref|Locke}} argues that we are born knowing nothing at all, and gather every idea we have from what we see and hear.\n\nFollow that where it leads. If nothing is written in a man at birth, then no man is born knowing more than another, and none is born fit to rule another. Mr. Locke says as much: a government holds its power only by the agreement of the governed.\n\nWe have no university full of philosophers here. We have newspapers, almanacs, printers, and coffee houses. It is turning out to be enough.',
+          plain: 'European ideas about reason, evidence, and government by consent are reaching ordinary colonists through cheap print and coffee-house argument.',
+          gloss: ['lockeref'] }
+      ]
     ]
   };
 
@@ -432,6 +465,7 @@
     RECIPES: RECIPES, ODD_MIXTURE: ODD_MIXTURE, CAST: CAST,
     BROADSHEET: BROADSHEET, GLOSSARY: GLOSSARY, LEDGER: LEDGER,
     ROOM: ROOM, RETURNS: RETURNS, ORDER: ORDER, runningOrder: runningOrder,
+    KNOWN_AT_START: KNOWN_AT_START,
     findRecipe: findRecipe, drinkTags: drinkTags, drinkCost: drinkCost,
     judge: judge, byId: byId, pence: pence, priceOf: priceOf, hintFor: hintFor
   };

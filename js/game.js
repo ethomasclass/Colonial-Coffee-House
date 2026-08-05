@@ -10,7 +10,7 @@
   'use strict';
 
   var D = global.Data, S = global.Scenes, A = global.Art;
-  var Snd = global.Sound, Chores = global.Chores;
+  var Snd = global.Sound, Chores = global.Chores, Ico = global.Icons;
 
   var ORDER = D.runningOrder();
 
@@ -39,7 +39,10 @@
     sel: { base: null, sweet: null, add: null }
   };
 
+  D.KNOWN_AT_START.forEach(function (id) { st.discovered[id] = true; });
+
   var frame = 0, el = {}, SAVE = 'greendragon.save';
+  var paperPage = 0, paperReturns = false;
 
   function $(id) { return document.getElementById(id); }
 
@@ -223,28 +226,45 @@
     st.sel = { base: null, sweet: null, add: null };
     el.orderEcho.textContent = '“' + st.patron.order + '”';
     el.orderWho.textContent = st.patron.name + ', ' + st.patron.title;
+    el.ingNote.textContent = '';
+    cup.pours = [];
     buildShelf();
     updateCup();
+    if (!cup.raf) drawCup();
   }
 
   function shelfButton(ing, kind) {
     var b = document.createElement('button');
     b.className = 'ing';
     var out = st.honeyLeft <= 0 && ing.id === 'honey';
-    if (out) b.classList.add('out');
-    var costTxt = ing.id === 'honey' ? (st.honeyLeft + ' left') : (ing.cost === 0 ? 'free' : ing.cost + 'd');
-    b.innerHTML = '<span class="ing-name">' + ing.name + '</span>' +
-      '<span class="ing-cost">' + costTxt + '</span>' +
-      (ing.legal === false ? '<span class="ing-flag">unlawful</span>' : '') +
-      '<span class="ing-note">' + ing.note + '</span>';
-    b.disabled = out;
+    if (out) { b.classList.add('out'); b.disabled = true; }
+
+    var cv = document.createElement('canvas');
+    b.appendChild(cv);
+    var nm = document.createElement('span'); nm.className = 'ing-name';
+    nm.textContent = ing.name; b.appendChild(nm);
+    var ct = document.createElement('span'); ct.className = 'ing-cost';
+    ct.textContent = ing.id === 'honey' ? (st.honeyLeft + ' left')
+                                        : (ing.cost === 0 ? 'free' : ing.cost + 'd');
+    b.appendChild(ct);
+    if (ing.legal === false) {
+      var fl = document.createElement('span'); fl.className = 'ing-flag';
+      fl.textContent = 'unlawful'; b.appendChild(fl);
+    }
+
+    function note() { el.ingNote.textContent = ing.note; }
+    b.onmouseenter = note;
+    b.onfocus = note;
     b.onclick = function () {
       st.sel[kind] = ing.id;
-      if (Snd) Snd.knock(260 + Math.random() * 120, 0.045);
+      note();
+      pourInto(ing, kind);
+      if (Snd) Snd.knock(240 + Math.random() * 140, 0.05);
       buildShelf();
       updateCup();
     };
     if (st.sel[kind] === ing.id) b.classList.add('on');
+    Ico.bottleIcon(cv, ing.id);
     return b;
   }
 
@@ -256,15 +276,129 @@
       host.innerHTML = '';
       row[1].forEach(function (ing) { host.appendChild(shelfButton(ing, row[2])); });
     });
+    buildBrewBook();
+  }
+
+  /* The book lying open beside you while you work. Known drinks show their
+     cup; unmade ones show what to try. */
+  function buildBrewBook() {
+    el.brewBookList.innerHTML = '';
+    var here = complete() ? D.findRecipe(st.sel.base, st.sel.sweet, st.sel.add) : null;
+    D.RECIPES.forEach(function (r) {
+      var row = document.createElement('div');
+      row.className = 'bb-item' + (st.discovered[r.id] ? '' : ' unknown') +
+                      (here && here.id === r.id ? ' on' : '');
+      var cv = document.createElement('canvas');
+      row.appendChild(cv);
+      var txt = document.createElement('div');
+      txt.innerHTML = '<div class="bb-name">' +
+        (st.discovered[r.id] ? r.name : 'Not yet made') +
+        '<span class="p">' + D.pence(r.price) + '</span></div>' +
+        '<div class="bb-hint">' + (st.discovered[r.id] ? r.desc : D.hintFor(r)) + '</div>';
+      row.appendChild(txt);
+      el.brewBookList.appendChild(row);
+      Ico.drinkIcon(cv, r, { ghost: !st.discovered[r.id] });
+    });
+    el.bookCount.textContent = Object.keys(st.discovered).length + ' of ' + D.RECIPES.length + ' known';
   }
 
   function complete() { return st.sel.base && st.sel.sweet && st.sel.add; }
 
+  /* --- the cup, and things falling into it ------------------------------- */
+  var cup = { pours: [], t: 0, raf: null };
+
+  var POUR_COLOUR = {
+    coffee: '#3b2416', bohea: '#7d5628', hyson: '#8a9455', chocolate: '#4f3020',
+    sage: '#78834f', water: '#8fa3b5',
+    french: '#2e1b10', british: '#3a2416', sugar: '#f4efe4', honey: '#c98a2a',
+    cream: '#f0e6d2', nutmeg: '#7a4a24', ginger: '#c49a5e',
+    lemon: '#d9c24a', vinegar: '#cfe0d0', none: null
+  };
+
+  function pourInto(ing, kind) {
+    if (!POUR_COLOUR[ing.id]) return;          /* 'nothing' pours nothing */
+    cup.pours.push({ colour: POUR_COLOUR[ing.id], t: 30, solid: kind !== 'base' });
+  }
+
+  /* How full the cup looks, given how far through the recipe you are. */
+  function cupFill() {
+    if (!st.sel.base) return 0;
+    var f = 0.55;
+    if (st.sel.sweet && st.sel.sweet !== 'none') f = 0.68;
+    else if (st.sel.sweet) f = 0.62;
+    if (st.sel.add && st.sel.add !== 'none') f = 0.80;
+    else if (st.sel.add) f = 0.74;
+    return f;
+  }
+
+  function drawCup() {
+    cup.t++;
+    var s = Ico.surface(el.cupCanvas, 120, 150);
+    var kind = Ico.vesselFor(st.sel.base || 'water');
+    var liquid = st.sel.base ? Ico.LIQUID[st.sel.base] : null;
+
+    /* the vessel is drawn at 48x56 in icon space; scale it up to fill here */
+    s.c.save();
+    s.c.imageSmoothingEnabled = false;
+    s.c.translate(12, 44);
+    s.c.scale(2, 2);
+    var sub = {
+      c: s.c, r: s.r, p: s.p, e: s.e, poly: s.poly
+    };
+    Ico.drawVessel(sub, 0, 0, kind, liquid, cupFill(),
+      { sweet: st.sel.sweet, add: st.sel.add });
+    s.c.restore();
+
+    /* whatever is currently falling in */
+    var surfaceY = 44 + 2 * (st.sel.base ? (kind === 'bowl' ? 18 : kind === 'pot' ? 8 : kind === 'mug' ? 12 : 14) : 14);
+    for (var i = cup.pours.length - 1; i >= 0; i--) {
+      var pr = cup.pours[i];
+      pr.t--;
+      if (pr.t <= 0) { cup.pours.splice(i, 1); continue; }
+      var wob = Math.round(Math.sin((cup.t + i * 9) * 0.5) * 1);
+      if (pr.solid) {
+        /* a lump or a pinch, tumbling in */
+        var fy = (30 - pr.t) * 3;
+        if (fy < surfaceY + 20) {
+          s.r(57 + wob, 8 + fy, 5, 5, pr.colour);
+          s.r(57 + wob, 8 + fy, 2, 2, 'rgba(255,255,255,0.25)');
+          s.r(52 - wob, 4 + fy, 2, 2, pr.colour);
+          s.r(66 + wob, 12 + fy, 2, 2, pr.colour);
+        }
+      } else {
+        /* a proper stream, with a lit edge and a couple of stray drops */
+        var len = Math.max(0, surfaceY + 18 - 4);
+        s.r(57 + wob, 4, 5, len, pr.colour);
+        s.r(57 + wob, 4, 1, len, 'rgba(255,255,255,0.16)');
+        s.r(56 + wob, 4, 1, Math.round(len * 0.4), pr.colour);
+        s.r(62 + wob, 4, 1, Math.round(len * 0.7), pr.colour);
+        s.r(54 + wob, 10 + ((cup.t * 3) % 26), 2, 3, pr.colour);
+        s.r(64 + wob, 6 + ((cup.t * 4) % 30), 2, 2, pr.colour);
+      }
+      /* the splash where it lands */
+      if (pr.t < 22) {
+        var sp = (22 - pr.t) / 22;
+        s.e(60, surfaceY + 18, Math.round(4 + sp * 12), Math.max(1, Math.round(3 - sp * 2)),
+            'rgba(255,255,255,' + (0.30 * (1 - sp)).toFixed(2) + ')');
+      }
+    }
+
+    /* steam, once there is something hot in it */
+    if (complete() && st.sel.base !== 'water') {
+      for (var k = 0; k < 3; k++) {
+        var sy = surfaceY + 6 - ((cup.t + k * 13) % 40);
+        var sx = 50 + k * 9 + Math.round(Math.sin((cup.t + k * 20) * 0.11) * 3);
+        if (sy > 0) { s.r(sx, sy, 2, 2, 'rgba(214,195,160,0.55)'); }
+      }
+    }
+    cup.raf = requestAnimationFrame(drawCup);
+  }
+
   function updateCup() {
     var s = st.sel;
     if (!complete()) {
-      el.cupName.textContent = '—';
-      el.cupDesc.textContent = 'Choose a base, a sweetener, and one thing more.';
+      el.cupName.textContent = st.sel.base ? 'Not finished yet' : 'An empty cup';
+      el.cupDesc.textContent = 'Click a base, a sweetener, and one thing more. Anything you make goes into the book, whether you serve it or not.';
       el.cupCost.textContent = '';
       el.serveBtn.disabled = true;
       el.pourBtn.disabled = true;
@@ -283,7 +417,7 @@
       D.pence(D.priceOf(rec, cost)) + '</b>' +
       (D.byId(D.SWEETENERS, s.sweet).legal === false ? ' &middot; <span class="warn">unlawful sweetening</span>' : '');
     el.cupNew.hidden = !wasNew;
-    el.bookCount.textContent = Object.keys(st.discovered).length + ' of ' + D.RECIPES.length + ' recipes known';
+    buildBrewBook();
     el.serveBtn.disabled = false;
     el.pourBtn.disabled = false;
   }
@@ -345,6 +479,7 @@
     if (Snd) Snd.knock(300, 0.07);
 
     el.brew.hidden = true;
+    if (cup.raf) { cancelAnimationFrame(cup.raf); cup.raf = null; }
     st.phase = 'shift';
     updateHud();
     runConversation(outcome);
@@ -437,26 +572,44 @@
   }
 
   function openBook() {
-    var html = '<h2>The Recipe Book</h2><p class="sub">' +
-      Object.keys(st.discovered).length + ' of ' + D.RECIPES.length + ' discovered.</p>';
+    el.bookBody.innerHTML = '';
+    var head = document.createElement('h2'); head.textContent = 'The Recipe Book';
+    el.bookBody.appendChild(head);
+    var sub = document.createElement('p'); sub.className = 'sub';
+    sub.textContent = Object.keys(st.discovered).length + ' of ' + D.RECIPES.length +
+      ' known. Anything you put together on the brewing shelf is written in here.';
+    el.bookBody.appendChild(sub);
+
     var byBase = {};
     D.RECIPES.forEach(function (r) { (byBase[r.base] = byBase[r.base] || []).push(r); });
     D.BASES.forEach(function (b) {
-      html += '<h3>' + b.name + '</h3><ul class="recs">';
+      var h = document.createElement('h3'); h.textContent = b.name;
+      el.bookBody.appendChild(h);
       (byBase[b.id] || []).forEach(function (r) {
-        html += st.discovered[r.id]
-          ? '<li><b>' + r.name + '</b> <span class="p">' + D.pence(r.price) + '</span><br><span class="d">' + r.desc + '</span></li>'
-          : '<li class="unk"><b>Not yet made</b><br><span class="d">' + D.hintFor(r) + '</span></li>';
+        var known = !!st.discovered[r.id];
+        var row = document.createElement('div');
+        row.className = 'rec' + (known ? '' : ' unknown');
+        var cv = document.createElement('canvas'); row.appendChild(cv);
+        var t = document.createElement('div');
+        t.innerHTML = '<div class="rec-name">' + (known ? r.name : 'Not yet made') +
+          '<span class="p">' + D.pence(r.price) + '</span></div>' +
+          '<div class="rec-desc">' + (known ? r.desc : D.hintFor(r)) + '</div>';
+        row.appendChild(t);
+        el.bookBody.appendChild(row);
+        Ico.drinkIcon(cv, r, { ghost: !known });
       });
-      html += '</ul>';
     });
+
     if (st.journal.length) {
-      html += '<h2>Notes on the Evening</h2>';
+      var jh = document.createElement('h2');
+      jh.className = 'journal-head'; jh.textContent = 'Notes on the Evening';
+      el.bookBody.appendChild(jh);
       st.journal.forEach(function (j) {
-        html += '<div class="note"><b>' + j.title + '</b><p>' + j.text + '</p></div>';
+        var n = document.createElement('div'); n.className = 'note';
+        n.innerHTML = '<b>' + j.title + '</b><p>' + j.text + '</p>';
+        el.bookBody.appendChild(n);
       });
     }
-    el.bookBody.innerHTML = html;
     el.book.hidden = false;
   }
 
@@ -516,19 +669,42 @@
      THE BROADSHEET
      ======================================================================= */
 
-  function openBroadsheet(fromShift) {
-    var b = D.BROADSHEET;
-    var html = '<div class="masthead">' + b.masthead + '</div><div class="dateline">' + b.dateline + '</div>';
-    b.items.forEach(function (it) {
-      html += '<article><h3>' + it.head + '</h3><p>' + markup(it.body) + '</p></article>';
+  function renderPaper() {
+    var pages = D.BROADSHEET.pages;
+    paperPage = Math.max(0, Math.min(pages.length - 1, paperPage));
+    el.paperBody.innerHTML = '';
+    el.paperBody.scrollTop = 0;
+    pages[paperPage].forEach(function (it) {
+      var art = document.createElement('article');
+      var h = document.createElement('h3'); h.textContent = it.head; art.appendChild(h);
+      var cv = document.createElement('canvas'); cv.className = 'cut'; art.appendChild(cv);
+      it.body.split('\n\n').forEach(function (para) {
+        var pe = document.createElement('p'); pe.innerHTML = markup(para); art.appendChild(pe);
+      });
+      var pl = document.createElement('div'); pl.className = 'plain-terms';
+      pl.innerHTML = '<b>In plain terms</b>' + markup(it.plain);
+      art.appendChild(pl);
+      el.paperBody.appendChild(art);
+      Ico.woodcut(cv, it.art);            /* after it is in the document */
     });
-    el.paperBody.innerHTML = html;
+    el.paperPageNum.textContent = 'Page ' + (paperPage + 1) + ' of ' + pages.length;
+    el.paperPrev.disabled = paperPage === 0;
+    el.paperNext.disabled = paperPage === pages.length - 1;
+  }
+
+  function turnPage(by) {
+    paperPage += by;
+    if (Snd) Snd.knock(420, 0.05);
+    renderPaper();
+  }
+
+  function openBroadsheet(fromShift) {
+    paperReturns = !!fromShift;
+    paperPage = 0;
+    renderPaper();
     el.broadsheet.hidden = false;
     el.title.hidden = true;
     $('openShopBtn').textContent = fromShift ? 'Put the paper down' : 'Open the shop';
-    $('openShopBtn').onclick = fromShift
-      ? function () { el.broadsheet.hidden = true; }
-      : startNight;
   }
 
   /* =======================================================================
@@ -616,18 +792,25 @@
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
      'between', 'choresNote', 'wipeBtn', 'polishBtn', 'betweenHint', 'settings',
-     'bookCount', 'chore', 'choreTitle', 'choreBar', 'chorePct', 'choreDone']
+     'bookCount', 'chore', 'choreTitle', 'choreBar', 'chorePct', 'choreDone',
+     'cupCanvas', 'brewBookList', 'ingNote', 'paperPrev', 'paperNext',
+     'paperPageNum']
       .forEach(function (id) { el[id] = $(id); });
 
     A.init($('stage'));
 
     $('beginBtn').onclick = function () { openBroadsheet(false); };
+    el.paperPrev.onclick = function () { turnPage(-1); };
+    el.paperNext.onclick = function () { turnPage(1); };
+    $('openShopBtn').onclick = function () {
+      if (paperReturns) { el.broadsheet.hidden = true; return; }
+      startNight();
+    };
     $('bookBtn').onclick = openBook;
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
     el.serveBtn.onclick = serve;
     el.pourBtn.onclick = pourOut;
-    $('brewBookBtn').onclick = openBook;
 
     /* between-patron panel */
     Chores.init($('choreCanvas'));
@@ -644,13 +827,22 @@
     $('stage').addEventListener('click', examine);
 
     /* sound, off until somebody asks for it */
-    var soundBtn = $('soundBtn');
+    var soundBtn = $('soundBtn'), choreSoundBtn = $('choreSoundBtn');
     function paintSound() {
       var on = Snd && Snd.isOn();
       soundBtn.textContent = on ? 'Sound on' : 'Sound off';
       soundBtn.classList.toggle('on', !!on);
+      choreSoundBtn.textContent = on ? '\u266a Sound on' : '\u266a Turn sound on';
+      choreSoundBtn.classList.toggle('finished', !on);
+      $('choreHint').textContent = on
+        ? 'Press and drag the cloth. It takes a few passes.'
+        : 'Press and drag the cloth. Turn the sound on to hear it.';
     }
-    soundBtn.onclick = function () { if (Snd) Snd.setEnabled(!Snd.isOn()); paintSound(); };
+    function toggleSound() { if (Snd) Snd.setEnabled(!Snd.isOn()); paintSound(); }
+    soundBtn.onclick = toggleSound;
+    choreSoundBtn.onclick = toggleSound;
+    /* A remembered choice was being written and never read back. */
+    if (Snd && Snd.preference()) Snd.setEnabled(true);
     paintSound();
 
     /* settings */
