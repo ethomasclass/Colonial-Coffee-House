@@ -153,19 +153,23 @@
      wiped until somebody else puts a cup down. */
   var rings = [];
   var seed = 0;
-  function addRing(x) {
+  function addRing() {
     seed++;
+    /* Spread across the whole bar rather than clustering where the cup was,
+       so there is visibly something to do and it is not all in one corner. */
     rings.push({ kind: 'ring',
-                 x: x + Math.round((rnd(seed * 5.3) - 0.5) * 26),
-                 y: COUNTER_Y + 8 + Math.round(rnd(seed * 9.1) * 18),
-                 r: 5 + Math.round(rnd(seed * 3.7) * 3) });
+                 x: 24 + Math.round(rnd(seed * 5.3) * (W - 48)),
+                 /* kept high on the bar so the between-patron panel, which
+                    sits along the bottom of the frame, never hides them */
+                 y: COUNTER_Y + 4 + Math.round(rnd(seed * 9.1) * 12),
+                 r: 8 + Math.round(rnd(seed * 3.7) * 4) });
   }
 
   /* Pewter dulls as the evening goes on. Same cloth, different surface. */
   function addTarnish() {
     seed++;
     var row = Math.floor(rnd(seed * 2.9) * 3), col = Math.floor(rnd(seed * 6.1) * 5);
-    rings.push({ kind: 'tarnish', x: 299 + col * 16 + 5, y: 28 + row * 38 + 21, r: 7 });
+    rings.push({ kind: 'tarnish', x: 299 + col * 16 + 5, y: 28 + row * 38 + 20, r: 9 });
   }
   function ringCount() { return rings.length; }
   function wipeAt(lx, ly, radius) {
@@ -201,6 +205,29 @@
     var cx = (ev.touches ? ev.touches[0].clientX : ev.clientX) - b.left;
     var cy = (ev.touches ? ev.touches[0].clientY : ev.clientY) - b.top;
     return { x: cx / b.width * W, y: cy / b.height * H };
+  }
+
+  /* The cloth in your hand. Drawn last of all, over the night wash, so it is
+     always the brightest thing on screen while you are wiping. */
+  var cloth = null;
+  function setCloth(pt) { cloth = pt; }
+
+  function drawCloth(f) {
+    if (!cloth) return;
+    var x = Math.round(cloth.x), y = Math.round(cloth.y);
+    /* a smear of damp under the rag, so it looks like it is doing something */
+    ell(x, y + 6, 14, 5, 'rgba(255,240,200,0.10)');
+    /* folded linen, with a shadow so it sits above the wood */
+    r(x - 11, y - 5, 22, 14, C.linenDim);
+    r(x - 11, y - 6, 22, 4, C.cream);
+    r(x - 9, y - 3, 18, 3, C.linen);
+    r(x - 11, y + 7, 22, 2, C.shadow);
+    /* creases */
+    hl(x - 8, y + 1, 7, C.linenDim);
+    hl(x + 1, y + 3, 7, C.linenDim);
+    /* a corner lifting, animated, so it reads as cloth and not a brick */
+    var lift = (f % 40 < 20) ? 0 : 1;
+    r(x + 8, y - 8 - lift, 5, 4, C.cream);
   }
 
   /* Laid over everything once the room and the people are drawn, so the whole
@@ -375,11 +402,12 @@
         }
       }
     }
-    /* dulled pewter, waiting for a cloth */
+    /* Dulled pewter, waiting for a cloth. Same rule: it has to be obvious. */
     rings.forEach(function (g) {
       if (g.kind !== 'tarnish') return;
-      ell(g.x, g.y, g.r, g.r - 1, C.pewterDim);
-      ell(g.x - 1, g.y - 1, g.r - 3, g.r - 3, C.shadow);
+      ell(g.x, g.y, g.r, g.r, C.shadow);
+      ell(g.x, g.y, g.r - 2, g.r - 2, '#4a4238');
+      ell(g.x - 2, g.y - 2, Math.max(1, g.r - 5), Math.max(1, g.r - 5), '#6b6154');
     });
 
     /* hanging bunches of dried herbs */
@@ -417,11 +445,18 @@
       var gx = (i * 29) % W, gy = COUNTER_Y + 12 + ((i * 17) % 40);
       hl(gx, gy, 10 + (i % 9), C.wood);
     }
-    /* rings and spills left behind by whoever has been drinking */
+    /* Rings and spills. Drawn with real contrast against the wood — a dark wet
+       ring with a lit rim — because a stain the player cannot see is not a
+       chore, it is a bug. */
     rings.forEach(function (g) {
       if (g.kind !== 'ring') return;
-      ell(g.x, g.y, g.r, Math.max(1, Math.round(g.r * 0.45)), C.woodDark);
-      ell(g.x, g.y, g.r - 2, Math.max(1, Math.round(g.r * 0.28)), C.wood);
+      var ry = Math.max(2, Math.round(g.r * 0.5));
+      ell(g.x, g.y, g.r + 1, ry + 1, C.ink);
+      ell(g.x, g.y, g.r, ry, C.woodDark);
+      ell(g.x, g.y, g.r - 3, Math.max(1, ry - 2), C.woodLit);
+      /* the wet highlight that makes it read as a spill and not a hole */
+      hl(g.x - Math.round(g.r * 0.5), g.y - ry + 1, Math.round(g.r * 0.9), C.linenDim);
+      p(g.x + Math.round(g.r * 0.4), g.y + 1, C.linenDim);
     });
 
     /* front edge shadow so the band reads as foreground */
@@ -694,7 +729,7 @@
     drawEmptySeat: drawEmptySeat, CAST_ART: CAST_ART, EXPR: EXPR,
     setPhase: setPhase, getPhase: getPhase, applyNightWash: applyNightWash,
     addRing: addRing, addTarnish: addTarnish, wipeAt: wipeAt, clearRings: clearRings, ringCount: ringCount,
-    hitTest: hitTest, toLogical: toLogical,
+    hitTest: hitTest, toLogical: toLogical, setCloth: setCloth, drawCloth: drawCloth,
     ctx: function () { return bctx; }
   };
 

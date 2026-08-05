@@ -424,3 +424,16 @@ body.wiping #stage:active { cursor: grabbing; }
   .cup-actions { grid-column: 1; grid-row: auto; flex-direction: row; }
   .between-acts .big-btn { margin-left: 0; }
 }
+
+
+/* ===================== BREW BAR ===================== */
+.brew-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: .7rem;
+}
+.book-count { font-size: .84rem; color: var(--dim); letter-spacing: .04em; }
+.brew-bar .ghost { margin-left: 0; }
+
+/* undiscovered recipes now carry a hint rather than a blank */
+.recs li.unk { color: var(--dim); letter-spacing: 0; }
+.recs li.unk b { color: #6d5c4a; font-weight: normal; font-style: italic; }

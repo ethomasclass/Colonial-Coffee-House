@@ -29,7 +29,7 @@ iPads, and anything else with a browser.
 | **Setting** | Boston, Monday 14 September 1741 |
 | **Length** | ~50–58 minutes: paper, eight scenes, closing ledger. **See the timing note below** |
 | **Reading level** | High school US survey. Modernised spelling; period vocabulary is glossed in-game |
-| **Drinks** | 32 recipes, all period-accurate, **none alcoholic** |
+| **Drinks** | 32 recipes, all period-accurate, **none alcoholic**. Composing one in the brew panel discovers it — no need to serve it |
 | **Sound** | Synthesised in-browser, **off by default**, one toggle |
 | **Fail state** | None. Every cup is accepted and paid for |
 
@@ -49,10 +49,12 @@ iPads, and anything else with a browser.
    admits the customs officer has already tried to turn him informer. A student
    who brews carelessly never hears any of it, and the closing screen tells them
    how many they missed. This is what makes two students' notes different.
-5. **Between patrons**, the room is empty. Wipe the rings off the counter and
-   the tarnish off the pewter, re-read the paper, or click anything in the room
-   — hearth, window, trade sign, cupboard, candle — for a short note on what it
-   was and why it was like that.
+5. **Between patrons**, the room is empty. Take up the cloth — a rag appears
+   in hand and follows the cursor — and drag it across the bar to wipe away
+   drink rings, or over the cupboard to bring the tarnished pewter back. It is
+   optional and rewards nothing; it is there because it is satisfying. You can
+   also re-read the paper, or click anything in the room — hearth, window,
+   trade sign, cupboard, candle — for a short note on what it was and why.
 6. **Two patrons come back** before closing. Ezra has been dismissed by his
    master over the meetings and is not sorry. Patience has told her father and
    made up her mind.
@@ -65,6 +67,15 @@ iPads, and anything else with a browser.
 The candles burn down, the hearth sinks to embers, the street lantern outside
 gutters out, and the whole room darkens as the eight scenes go by. It teaches
 nothing. It is there so the game feels like a place.
+
+### Finding the recipes
+
+Anything you put together on the brew panel goes straight into the book,
+whether you serve it or not — so a student can stand at the shelf and just
+explore, and all 32 are reachable in a single night. Undiscovered entries in
+the book show a hint built from the recipe's own rule (*"Bohea Tea, sweetened
+with loaf sugar, and cream"*), so the book works as a hunting list rather than
+a wall of question marks. The book is reachable from inside the brew panel.
 
 ### The mechanic that does the teaching
 

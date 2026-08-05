@@ -177,6 +177,33 @@
     return ODD_MIXTURE;
   }
 
+  /* A readable nudge for a recipe the player has not stumbled on yet, built
+     from its own matching rule. Turns the recipe book from a wall of ??? into
+     something a student can actually go and hunt down. */
+  function describeSweet(spec) {
+    if (spec === 'any') return 'sweetened or not';
+    if (spec.length === 1 && spec[0] === 'none') return 'unsweetened';
+    if (spec.length === 4) return 'sweetened, any way you like';
+    if (spec.length === 2 && spec.indexOf('french') !== -1) return 'sweetened with molasses';
+    if (spec.indexOf('sugar') !== -1 && spec.indexOf('honey') !== -1) return 'sweetened with sugar or honey';
+    if (spec.length === 1 && spec[0] === 'sugar') return 'sweetened with loaf sugar';
+    if (spec.length === 1 && spec[0] === 'honey') return 'sweetened with honey';
+    return 'sweetened';
+  }
+
+  function describeAdd(spec) {
+    var names = { none: 'nothing more', cream: 'cream', nutmeg: 'nutmeg',
+                  ginger: 'ginger', lemon: 'lemon', vinegar: 'cider vinegar' };
+    var parts = spec.map(function (a) { return names[a] || a; });
+    if (parts.length === 1) return 'and ' + parts[0];
+    return 'and ' + parts.slice(0, -1).join(', ') + ' or ' + parts[parts.length - 1];
+  }
+
+  function hintFor(rec) {
+    var base = byId(BASES, rec.base);
+    return base.name + ', ' + describeSweet(rec.sweet) + ', ' + describeAdd(rec.add) + '.';
+  }
+
   function byId(list, id) {
     for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i];
     return null;
@@ -406,7 +433,7 @@
     BROADSHEET: BROADSHEET, GLOSSARY: GLOSSARY, LEDGER: LEDGER,
     ROOM: ROOM, RETURNS: RETURNS, ORDER: ORDER, runningOrder: runningOrder,
     findRecipe: findRecipe, drinkTags: drinkTags, drinkCost: drinkCost,
-    judge: judge, byId: byId, pence: pence, priceOf: priceOf
+    judge: judge, byId: byId, pence: pence, priceOf: priceOf, hintFor: hintFor
   };
 
 })(window);

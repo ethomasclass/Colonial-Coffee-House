@@ -54,6 +54,7 @@
     else A.drawEmptySeat(frame);
     if (st.servedCup) A.drawServedCup(296, frame, st.servedCup.tint);
     A.applyNightWash();
+    A.drawCloth(frame);
     A.present();
     requestAnimationFrame(loop);
   }
@@ -167,6 +168,9 @@
      ======================================================================= */
 
   function startNight() {
+    /* The room was in use before you opened tonight. Gives the first breath
+       between patrons something to actually do. */
+    A.addRing(); A.addRing(); A.addTarnish();
     st.phase = 'shift';
     el.broadsheet.hidden = true;
     el.title.hidden = true;
@@ -269,12 +273,17 @@
     }
     var rec = D.findRecipe(s.base, s.sweet, s.add);
     var cost = D.drinkCost(s.base, s.sweet, s.add);
+    /* Composing it is discovering it. You do not have to serve a drink to
+       learn that it exists — you only have to make it once and look at it. */
+    var wasNew = rec.id !== 'odd' && !st.discovered[rec.id];
+    if (rec.id !== 'odd') st.discovered[rec.id] = true;
     el.cupName.textContent = rec.name;
     el.cupDesc.textContent = rec.desc;
     el.cupCost.innerHTML = 'costs you <b>' + D.pence(cost) + '</b> &middot; fetches <b>' +
       D.pence(D.priceOf(rec, cost)) + '</b>' +
       (D.byId(D.SWEETENERS, s.sweet).legal === false ? ' &middot; <span class="warn">unlawful sweetening</span>' : '');
-    el.cupNew.hidden = !!st.discovered[rec.id] || rec.id === 'odd';
+    el.cupNew.hidden = !wasNew;
+    el.bookCount.textContent = Object.keys(st.discovered).length + ' of ' + D.RECIPES.length + ' recipes known';
     el.serveBtn.disabled = false;
     el.pourBtn.disabled = false;
   }
@@ -331,8 +340,9 @@
     var tints = { coffee: '#3b2416', bohea: '#6b4a22', hyson: '#7d8a4a',
                   chocolate: '#4a2c1c', sage: '#6f7a4e', water: '#8fa3b5' };
     st.servedCup = { tint: tints[s.base] };
-    A.addRing(296);
-    if (Math.random() < 0.7) A.addTarnish();
+    A.addRing(); A.addRing();
+    A.addTarnish();
+    if (Math.random() < 0.6) A.addTarnish();
     if (Snd) Snd.knock(300, 0.07);
 
     el.brew.hidden = true;
@@ -358,7 +368,8 @@
     el.choresNote.textContent = left
       ? left + (left === 1 ? ' mark' : ' marks') + ' left on the counter and the pewter.'
       : 'Counter wiped, pewter bright. Nothing to do but wait.';
-    el.wipeBtn.hidden = left === 0;
+    el.wipeBtn.hidden = false;
+    el.wipeBtn.disabled = left === 0 && st.mode !== 'wipe';
     el.wipeBtn.textContent = st.mode === 'wipe' ? 'Put the cloth down' : 'Take up the cloth';
     el.betweenHint.textContent = st.mode === 'wipe'
       ? 'Drag across the counter and the cupboard to wipe them down.'
@@ -369,6 +380,9 @@
   function toggleWipe() {
     st.mode = st.mode === 'wipe' ? 'idle' : 'wipe';
     el.between.classList.toggle('slim', st.mode === 'wipe');
+    if (st.mode !== 'wipe') A.setCloth(null);
+    else A.setCloth({ x: 192, y: A.COUNTER_Y + 6 });   /* so it appears at once */
+    if (Snd) Snd.knock(240, 0.05);
     updateBetween();
   }
 
@@ -384,6 +398,7 @@
     if (got) updateBetween();
     if (A.ringCount() === 0 && st.mode === 'wipe') {
       st.mode = 'idle';
+      A.setCloth(null);
       el.between.classList.remove('slim');
       updateBetween();
     }
@@ -427,7 +442,7 @@
       (byBase[b.id] || []).forEach(function (r) {
         html += st.discovered[r.id]
           ? '<li><b>' + r.name + '</b> <span class="p">' + D.pence(r.price) + '</span><br><span class="d">' + r.desc + '</span></li>'
-          : '<li class="unk">? ? ?</li>';
+          : '<li class="unk"><b>Not yet made</b><br><span class="d">' + D.hintFor(r) + '</span></li>';
       });
       html += '</ul>';
     });
@@ -595,7 +610,7 @@
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
-     'between', 'choresNote', 'wipeBtn', 'betweenHint', 'settings']
+     'between', 'choresNote', 'wipeBtn', 'betweenHint', 'settings', 'bookCount']
       .forEach(function (id) { el[id] = $(id); });
 
     A.init($('stage'));
@@ -606,6 +621,7 @@
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
     el.serveBtn.onclick = serve;
     el.pourBtn.onclick = pourOut;
+    $('brewBookBtn').onclick = openBook;
 
     /* between-patron panel */
     el.wipeBtn.onclick = toggleWipe;
@@ -614,6 +630,7 @@
       el.between.hidden = true;
       el.between.classList.remove('slim');
       st.mode = 'idle';
+      A.setCloth(null);
       document.body.classList.remove('wiping');
       nextPatron();
     };
@@ -621,17 +638,22 @@
     /* canvas: wipe by dragging, examine by clicking */
     var stage = $('stage');
     function down(e) {
+      if (st.mode === 'wipe') A.setCloth(A.toLogical(e));
       wiping = true; dragged = false;
       var t = e.touches ? e.touches[0] : e;
       downAt = { x: t.clientX, y: t.clientY };
       wipeFrom(e);
     }
     function move(e) {
+      if (st.mode === 'wipe') A.setCloth(A.toLogical(e));
       if (!wiping) return;
       var t = e.touches ? e.touches[0] : e;
       if (downAt && Math.abs(t.clientX - downAt.x) + Math.abs(t.clientY - downAt.y) > 6) dragged = true;
       wipeFrom(e);
     }
+    stage.addEventListener('mouseleave', function () {
+      if (st.mode === 'wipe') A.setCloth(null);
+    });
     stage.addEventListener('mousedown', down);
     stage.addEventListener('mousemove', move);
     global.addEventListener('mouseup', function () { wiping = false; });
