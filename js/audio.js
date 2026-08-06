@@ -39,17 +39,22 @@
   function buildRain() {
     var src = noiseSource(true);
     var bp = ctx.createBiquadFilter();
-    bp.type = 'bandpass'; bp.frequency.value = 1400; bp.Q.value = 0.5;
+    bp.type = 'bandpass'; bp.frequency.value = 1050; bp.Q.value = 0.45;
     var hp = ctx.createBiquadFilter();
-    hp.type = 'highpass'; hp.frequency.value = 600;
+    hp.type = 'highpass'; hp.frequency.value = 340;
+    /* Rain heard through glass, not rain hitting you. The extra lowpass takes
+       the hiss off it so it sits under everything instead of on top. */
+    var lp = ctx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 1900;
     rainGain = ctx.createGain();
-    rainGain.gain.value = 0.05;
-    src.connect(bp); bp.connect(hp); hp.connect(rainGain); rainGain.connect(master);
+    rainGain.gain.value = 0.022;
+    src.connect(bp); bp.connect(hp); hp.connect(lp); lp.connect(rainGain);
+    rainGain.connect(master);
     src.start();
 
     /* the shower swells and eases rather than sitting flat */
     var lfo = ctx.createOscillator(), lfoGain = ctx.createGain();
-    lfo.frequency.value = 0.06; lfoGain.gain.value = 0.018;
+    lfo.frequency.value = 0.05; lfoGain.gain.value = 0.007;
     lfo.connect(lfoGain); lfoGain.connect(rainGain.gain);
     lfo.start();
   }

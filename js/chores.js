@@ -10,7 +10,7 @@
    Dirt is a grid, not a list of objects. Every cell holds a grime level, the
    rag knocks it down by one per pass, and the cell is redrawn at a lower
    opacity — so a heavy ring takes four sweeps and you watch it fade rather
-   than blink out. Cleaning is metered by distance travelled, so it is the
+   than blink out. Cleaning is metered by distance traveled, so it’s the
    movement that does the work.
    =========================================================================== */
 
@@ -20,7 +20,7 @@
   var W = 384, H = 216, CS = 4;
   var GW = W / CS, GH = H / CS;          /* 96 x 54 cells */
   var MAX = 4;                            /* passes to clear the worst of it */
-  var BRUSH = 13;                         /* logical px, about the rag's width */
+  var BRUSH = 13;                         /* logical px, about the rag’s width */
   var STEP = 6;                           /* px of travel between passes      */
 
   var view, vctx, buf, bctx;
@@ -200,7 +200,7 @@
       var my = t.y + 20 + rnd(m * 7.1) * (t.h - 44);
       R(mx, my, 2, 1, '#79808a');
     }
-    /* an owner's mark, which only shows once it is polished */
+    /* an owner’s mark, which only shows once it’s polished */
     R(t.x + 52, t.y + 74, 3, 18, '#6e757e');
     R(t.x + 52, t.y + 74, 16, 3, '#6e757e');
     R(t.x + 64, t.y + 74, 3, 18, '#6e757e');
@@ -288,8 +288,8 @@
     return lifted;
   }
 
-  /* Cleaning is metered by how far the cloth has actually travelled, so
-     holding still does nothing and it is the scrubbing that lifts it. */
+  /* Cleaning is metered by how far the cloth has actually traveled, so
+     holding still doesn’thing and it’s the scrubbing that lifts it. */
   function moveTo(pt) {
     rag.tx = pt.x; rag.ty = pt.y; rag.seen = true;
     if (!rag.down || done) { last = pt; return; }

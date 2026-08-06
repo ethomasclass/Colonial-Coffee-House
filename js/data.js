@@ -3,8 +3,8 @@
 
    HISTORICAL NOTE: every drink here is non-alcoholic and every one of them was
    actually drunk in New England in the 1740s. Rum is discussed but never
-   served — it is the thing molasses *becomes* once it leaves this counter, and
-   that is precisely why the molasses on the shelf is a political object.
+   served — it’s the thing molasses *becomes* once it leaves this counter, and
+   that’s precisely why the molasses on the shelf is a political object.
 
    Money is reckoned in pence (d). Twelve pence to the shilling. Massachusetts
    paper money in 1741 was badly inflated, which is why the rent hurts.
@@ -27,23 +27,23 @@
     { id: 'chocolate', name: 'Chocolate', cost: 4, tags: ['rich', 'comforting', 'genteel'],
       note: 'Grated from a cake milled in Dorchester. Drunk hot, never eaten.' },
     { id: 'sage', name: 'Sage', cost: 0, tags: ['humble', 'gentle', 'local', 'homely'],
-      note: 'From the garden. What you drink when you will not pay for China tea.' },
+      note: 'From the garden. What you drink when you won’t pay for China tea.' },
     { id: 'water', name: 'Spring Water', cost: 0, tags: ['humble', 'plain', 'local'],
-      note: 'Drawn this morning. Free, and there is no duty on it yet.' }
+      note: 'Drawn this morning. Free, and there’s no duty on it yet.' }
   ];
 
   var SWEETENERS = [
     { id: 'none', name: 'Unsweetened', cost: 0, tags: ['plain'], legal: true,
       note: 'Nothing at all.' },
     { id: 'french', name: 'French Molasses', cost: 1, tags: ['sweet', 'dark'], legal: false,
-      note: 'From the French islands. Cheap, dark, and the duty on it has not been paid.' },
+      note: 'From the French islands. Cheap, dark, and the duty on it hasn’t been paid.' },
     { id: 'british', name: 'British Molasses', cost: 4, tags: ['sweet', 'dark'], legal: true,
       note: 'From Antigua and Barbados. Lawful, and three times the price.' },
     { id: 'sugar', name: 'Loaf Sugar', cost: 6, tags: ['sweet', 'genteel', 'dear'], legal: true,
       note: 'Broken from the cone with nippers. A luxury, and it looks like one.' },
     { id: 'honey', name: 'Honey', cost: 0, cost_note: 'from our own skeps', stock: 6,
       tags: ['sweet', 'local', 'gentle'], legal: true,
-      note: 'Our own. Costs nothing but there is only so much of it.' }
+      note: 'Our own. Costs nothing but there’s only so much of it.' }
   ];
 
   var ADDITIONS = [
@@ -53,11 +53,11 @@
     { id: 'nutmeg', name: 'Nutmeg', cost: 2, tags: ['spiced', 'warming', 'dear'],
       note: 'Grated fresh. Came a very long way to get here.' },
     { id: 'ginger', name: 'Ginger', cost: 1, tags: ['warming', 'sharp'],
-      note: 'Dried root, pounded. Good against a cold harbour wind.' },
+      note: 'Dried root, pounded. Good against a cold harbor wind.' },
     { id: 'lemon', name: 'Lemon', cost: 2, tags: ['sharp', 'bright', 'dear'],
       note: 'Off a ship from the Madeiras. Will not keep, so use it or lose it.' },
     { id: 'vinegar', name: 'Cider Vinegar', cost: 0, tags: ['sharp', 'humble', 'local'],
-      note: 'A splash. Sounds unpleasant; is not.' }
+      note: 'A splash. Sounds unpleasant; isn’t.' }
   ];
 
   /* =======================================================================
@@ -73,7 +73,7 @@
     { id: 'spiced_coffee', name: 'Spiced Coffee', base: 'coffee', sweet: 'any', add: ['nutmeg'], price: 12,
       desc: 'Sweetened and dusted with nutmeg. A small extravagance in a plain cup.' },
     { id: 'coffee_cream', name: 'Coffee with Cream', base: 'coffee', sweet: 'any', add: ['cream'], price: 11,
-      desc: 'Softened with cream until the bitterness is only a rumour.' },
+      desc: 'Softened with cream until the bitterness is only a rumor.' },
     { id: 'sweet_coffee', name: 'Sweet Coffee', base: 'coffee', sweet: ANY_SWEET, add: ['none'], price: 9,
       desc: 'Molasses stirred through black coffee. What most of Boston actually drinks.' },
     { id: 'black_coffee', name: 'Black Coffee', base: 'coffee', sweet: ['none'], add: ['none'], price: 8,
@@ -81,7 +81,7 @@
 
     /* --- bohea -------------------------------------------------------- */
     { id: 'english_bohea', name: 'Bohea in the English Style', base: 'bohea', sweet: ['sugar'], add: ['cream'], price: 14,
-      desc: 'Loaf sugar and cream, taken exactly as they take it in London. That is the point of it.' },
+      desc: 'Loaf sugar and cream, taken exactly as they take it in London. That’s the point of it.' },
     { id: 'bohea_cream', name: 'Bohea with Cream', base: 'bohea', sweet: 'any', add: ['cream'], price: 10,
       desc: 'Clouded pale with cream. Comfortable, unremarkable, and lawful.' },
     { id: 'sweet_bohea', name: 'Sweetened Bohea', base: 'bohea', sweet: ANY_SWEET, add: ['none'], price: 9,
@@ -109,7 +109,7 @@
     { id: 'spiced_chocolate', name: 'Spiced Chocolate', base: 'chocolate', sweet: 'any', add: ['nutmeg'], price: 16,
       desc: 'Sweet, thick, and warm with nutmeg. Steadying without being dulling.' },
     { id: 'rich_chocolate', name: 'Rich Chocolate', base: 'chocolate', sweet: 'any', add: ['cream'], price: 15,
-      desc: 'Chocolate whipped with cream until it is very nearly a meal.' },
+      desc: 'Chocolate whipped with cream until it’s very nearly a meal.' },
     { id: 'drinking_chocolate', name: 'Drinking Chocolate', base: 'chocolate', sweet: ANY_SWEET, add: ['none'], price: 13,
       desc: 'Sweetened and frothed with the mill. Genteel, indulgent, and quiet.' },
     { id: 'bitter_chocolate', name: 'Bitter Chocolate', base: 'chocolate', sweet: ['none'], add: ['none'], price: 11,
@@ -144,7 +144,7 @@
     { id: 'honey_water', name: 'Honey Water', base: 'water', sweet: ['honey'], add: ['none'], price: 3,
       desc: 'Two things from this parish and nothing else. Quiet, and free of politics.' },
     { id: 'sweet_water', name: 'Sweetened Water', base: 'water', sweet: ANY_SWEET, add: ['none'], price: 3,
-      desc: 'Barely a drink. Still, it is sweet, and sweetness costs somebody something.' },
+      desc: 'Barely a drink. Still, it’s sweet, and sweetness costs somebody something.' },
     { id: 'cold_water', name: 'A Cup of Cold Water', base: 'water', sweet: ['none'], add: ['none'], price: 0,
       desc: 'Free. Refused by no one and paid for by nobody.' }
   ];
@@ -156,7 +156,7 @@
 
   /* A recipe fetches its listed price. Anything not in the book fetches barely
      more than its ingredients — so experimenting is cheap rather than ruinous,
-     and the profit lives in knowing what you are doing. */
+     and the profit lives in knowing what you’re doing. */
   function priceOf(rec, cost) { return rec.dynamic ? cost + 1 : rec.price; }
 
   /* =======================================================================
@@ -177,7 +177,7 @@
     return ODD_MIXTURE;
   }
 
-  /* A readable nudge for a recipe the player has not stumbled on yet, built
+  /* A readable nudge for a recipe the player hasn’t stumbled on yet, built
      from its own matching rule. Turns the recipe book from a wall of ??? into
      something a student can actually go and hunt down. */
   function describeSweet(spec) {
@@ -230,20 +230,29 @@
      THE LEDGER — the squeeze, in numbers
      ======================================================================= */
 
-  /* Nobody opens a coffee house without already knowing how to make the
-     ordinary things. These start in the book so it is never empty. */
-  var KNOWN_AT_START = ['black_coffee', 'plain_bohea', 'sweet_coffee',
-                        'drinking_chocolate', 'sage_tea'];
+  /* Nobody opens a coffee house without already knowing the trade. Thirteen
+     recipes are in the book on the first night, at least two for every base,
+     including what most of tonight’s patrons actually want — so a forty-minute
+     session is spent reading people rather than hunting the shelf. The other
+     nineteen are still there to be found. */
+  var KNOWN_AT_START = [
+    'black_coffee', 'sweet_coffee', 'coffee_cream',
+    'plain_bohea', 'sweet_bohea', 'bohea_cream', 'english_bohea',
+    'plain_hyson', 'sweet_hyson',
+    'drinking_chocolate', 'rich_chocolate',
+    'sage_tea', 'sage_honey',
+    'switchel'
+  ];
 
   var LEDGER = {
-    startPurse: 36,     /* three shillings, and it is not enough           */
+    startPurse: 36,     /* three shillings, and it isn’t enough           */
     rent: 66,           /* due to the landlord at close of business.       */
                         /* Tuned so that a perfect lawful night clears it by  */
-                        /* a whisker and an ordinary lawful night does not,   */
+                        /* a whisker and an ordinary lawful night doesn’t,   */
                         /* while smuggling clears it comfortably. That gap IS */
                         /* the lesson; it should be felt, not asserted.       */
     suspicionCap: 10,
-    /* Using French molasses is cheap and unlawful. Each use is noticed a
+    /* Using French molasses is cheap and unlawful. Each use isn’ticed a
        little; the Commissioner notices a great deal more. */
     frenchSuspicion: 1,
     frenchToOfficer: 4,
@@ -264,15 +273,15 @@
      THE CAST — six patrons, one evening, in order
      ======================================================================= */
 
-  /* The evening's running order. A teacher short on time can delete an entry
+  /* The evening’s running order. A teacher short on time can delete an entry
      here and nothing else breaks — the ledger, the journal and the closing
      screen all follow this list. */
   var CAST = [
     {
       id: 'convert', art: 'convert',
-      name: 'Ezra Hale', title: 'a young cooper, lately awakened',
+      name: 'Ezra Hale', title: 'a young barrel-maker, newly converted',
       thread: 'The Great Awakening',
-      order: 'Something to keep me wakeful. Nothing dainty — I have not the stomach for dainty tonight.',
+      order: 'Something to keep me awake. Nothing fancy — I’m not in the mood for fancy tonight.',
       wants: ['bracing', 'plain', 'humble', 'local'],
       avoids: ['genteel', 'rich', 'dear'],
       ideal: 'black_coffee'
@@ -281,14 +290,14 @@
       id: 'minister', art: 'minister',
       name: 'Rev. Samuel Thorne', title: 'settled minister, and an Old Light',
       thread: 'The Great Awakening — the other half',
-      order: 'As I always take it, if you please. Sugar and cream both. One may keep good order in small things as well as large.',
+      order: 'As I always take it, if you please. Sugar and cream both. You can keep good order in small things as well as large ones.',
       wants: ['genteel', 'mild', 'smooth', 'imported'],
       avoids: ['humble', 'sharp', 'bitter'],
       ideal: 'english_bohea'
     },
     {
       id: 'reader', art: 'reader',
-      name: 'Cato Bell', title: "a printer's apprentice",
+      name: 'Cato Bell', title: "a printer’s apprentice",
       thread: 'The Enlightenment',
       order: 'Something I can sit with a long while without it going bitter on me. I mean to finish this before the candle does.',
       wants: ['mild', 'comforting', 'smooth'],
@@ -306,9 +315,9 @@
     },
     {
       id: 'patience', art: 'patience',
-      name: 'Patience Marsh', title: "a shipping merchant's daughter",
+      name: 'Patience Marsh', title: "a shipping merchant’s daughter",
       thread: 'The Awakening and the trade, in one person',
-      order: "Something that won't keep me up — but won't let me go soft and sleepy either. I have thinking to do.",
+      order: "Something that won’t keep me up — but won’t let me go soft and sleepy either. I have thinking to do.",
       wants: ['comforting', 'gentle', 'spiced', 'warming'],
       avoids: ['bracing', 'sharp'],
       ideal: 'spiced_chocolate'
@@ -324,14 +333,14 @@
     }
   ];
 
-  /* Two of the evening's patrons come back before closing. They do not order —
+  /* Two of the evening’s patrons come back before closing. They don’t order —
      they have already had their drink and they have come back to say something
      — which keeps the return beats short and makes them feel different from a
      first visit. */
   var RETURNS = [
     {
       id: 'convert_return', art: 'convert', noOrder: true,
-      name: 'Ezra Hale', title: 'returned, and not calmer',
+      name: 'Ezra Hale', title: 'back again, and not any calmer',
       thread: 'What the Awakening cost him by Tuesday'
     },
     {
@@ -381,39 +390,39 @@
       [
         { head: 'The Preachers Who Travel',
           art: 'preaching',
-          body: 'For as long as anyone can remember, a New England town has had ONE minister. The town chooses him, the town pays him, and he stays until he dies. He reads his sermon calmly from a written page, and everybody sits still.\n\nSomething else is now happening. Preachers have begun to TRAVEL — town to town, parish to parish, preaching in fields and barns when no pulpit will have them. They do not read calmly. They shout, they weep, and they ask each person present a single question: not whether you attend church, but whether you KNOW, in your heart, that you are saved.\n\nLast autumn Mr. George Whitefield preached on Boston Common and, it is said, twenty thousand people came to hear him. There are not twenty thousand people living in Boston. They walked in from everywhere.',
-          plain: 'A new kind of travelling preacher is drawing enormous crowds by making religion something you FEEL rather than something you attend.',
+          body: 'For as long as anyone can remember, a New England town has had ONE minister. The town chooses him, the town pays him, and he stays until he dies. He reads his sermon calmly from a written page, and everybody sits still.\n\nSomething else is now happening. Preachers have begun to TRAVEL — town to town, parish to parish, preaching in fields and barns when no pulpit will have them. They don’t read calmly. They shout, they weep, and they ask each person present a single question: not whether you attend church, but whether you KNOW, in your heart, that you’re saved.\n\nLast autumn Mr. George Whitefield preached on Boston Common and, it’s said, twenty thousand people came to hear him. There aren’t twenty thousand people living in Boston. They walked in from everywhere.',
+          plain: 'A new kind of traveling preacher is drawing enormous crowds by making religion something you FEEL rather than something you attend.',
           gloss: ['itinerant', 'newbirth'] },
 
         { head: 'And the Quarrel It Has Started',
           art: 'press',
-          body: 'Not everyone is pleased. The settled ministers have spent their lives studying, and they did not invite these men into their parishes.\n\nThose who welcome the revivals are called {{newlight|NEW LIGHT}}, as though a fresh flame had been found. Those who hold to the old order are called {{oldlight|OLD LIGHT}}, and they answer that shouting and weeping is disorder dressed up as piety. They have a word for it: {{enthusiasm|ENTHUSIASM}} — a man claiming God has spoken to him directly, with no learning, no ordination, and nobody\'s permission.\n\nWhy does this alarm them so much? Because in a field there is no pulpit to defend. Servants speak. Women speak. Black colonists speak. And nobody can stop them.\n\nWhole congregations have already split in half over it. Two in this county alone.',
+          body: 'Not everyone is pleased. The settled ministers have spent their lives studying, and they didn’t invite these men into their parishes.\n\nThose who welcome the revivals are called {{newlight|NEW LIGHT}}, as though a fresh flame had been found. Those who hold to the old order are called {{oldlight|OLD LIGHT}}, and they answer that the shouting and crying is chaos dressed up as real faith. They have a word for it: {{enthusiasm|ENTHUSIASM}} — someone claiming God spoke to him personally — with no training, no official position, and nobody’s permission.\n\nWhy does this alarm them so much? Because in a field there’s no pulpit to defend. Servants speak. Women speak. Black colonists speak. And nobody can stop them.\n\nWhole congregations have already split in half over it. Two in this county alone.',
           plain: 'The revivals are splitting churches, because they let people with no rank or education claim religious authority.',
           gloss: ['newlight', 'oldlight', 'enthusiasm', 'testify'] }
       ],
       [
         { head: 'How a Barrel of Molasses Reaches Boston',
           art: 'shipping',
-          body: 'Sugar cane is grown on islands in the Caribbean, on plantations worked by {{triangle|enslaved people}} who did not choose the labour and are not paid for it. When the cane is boiled for sugar, a thick dark syrup is left over. That is MOLASSES.\n\nNew England buys it by the shipload and distils most of it into rum. Rum is this colony\'s largest manufacture — some sixty distilleries in Massachusetts — and the whole trade rests on molasses being CHEAP.\n\nBritain\'s own islands cannot supply enough of it, and charge more for what they have. The FRENCH islands sell at half the price, because France forbids its colonies to distil rum and so has little use for the stuff.\n\nSo Boston buys French. Every captain in this harbour knows it. So does everyone who drinks anything sweet.',
-          plain: 'Boston\'s biggest industry runs on cheap French molasses — and on the labour of enslaved people in the Caribbean.',
+          body: 'Sugar cane is grown on islands in the Caribbean, on plantations worked by {{triangle|enslaved people}} who didn’t choose the labor and aren’t paid for it. When the cane is boiled for sugar, a thick dark syrup is left over. That’s MOLASSES.\n\nNew England buys it by the shipload and distils most of it into rum. Rum is this colony’s largest manufacture — some sixty distilleries in Massachusetts — and the whole trade rests on molasses being CHEAP.\n\nBritain’s own islands can’t supply enough of it, and charge more for what they have. The FRENCH islands sell at half the price, because France forbids its colonies to distil rum and so has little use for the stuff.\n\nSo Boston buys French. Every captain in this harbor knows it. So does everyone who drinks anything sweet.',
+          plain: 'Boston’s biggest industry runs on cheap French molasses — and on the labor of enslaved people in the Caribbean.',
           gloss: ['triangle', 'smuggling'] },
 
         { head: 'What the Law Says About It',
           art: 'customs',
-          body: 'Parliament sits in London, three thousand miles away, and it has written a great deal of law about what colonists may buy and from whom.\n\nThe {{navigation|NAVIGATION ACTS}} require that colonial goods travel in English or colonial ships, and that certain listed products — {{enumerated|ENUMERATED GOODS}} — be carried to England FIRST, even when a better price waits somewhere nearer. England takes its cut on the way through. That is the point of the detour.\n\nThen in 1733 came the {{molassesact|MOLASSES ACT}}: sixpence duty on every gallon of molasses from a non-British island. It was not written to raise money. It was written because British sugar planters have friends in Parliament and could not match the French price.\n\nThe Act has stood for eight years. It has almost never been collected.',
+          body: 'Parliament sits in London, three thousand miles away, and it has written a great deal of law about what colonists may buy and from whom.\n\nThe {{navigation|NAVIGATION ACTS}} require that colonial goods travel in English or colonial ships, and that certain listed products — {{enumerated|ENUMERATED GOODS}} — be carried to England FIRST, even when a better price waits somewhere nearer. England takes its cut on the way through. That’s the point of the detour.\n\nThen in 1733 came the {{molassesact|MOLASSES ACT}}: sixpence duty on every gallon of molasses from a non-British island. It wasn’t written to raise money. It was written because British sugar planters have friends in Parliament and couldn’t match the French price.\n\nThe Act has stood for eight years. It has almost never been collected.',
           plain: 'The law says buy British and pay the duty. Almost nobody does, and until now almost nobody has been made to.',
           gloss: ['navigation', 'enumerated', 'molassesact', 'neglect'] }
       ],
       [
         { head: 'Why There Is No Money',
           art: 'money',
-          body: 'Massachusetts is not permitted to coin money. What silver reaches us is spent on English goods and sails straight back across the Atlantic, so there is never enough of it here to buy and sell with.\n\nLast year a group of country men proposed a remedy: a LAND BANK, issuing paper notes backed by the value of their farms. Boston merchants disliked it, believing the notes would lose value. Country debtors welcomed it, because paper is easier to come by than silver.\n\nWord is now come from London that Parliament has voided the scheme entirely. Those holding its notes must answer for them, and there is much bitterness in the country towns — where the want of good money was the whole occasion of the thing.',
+          body: 'Massachusetts isn’t permitted to coin money. What silver reaches us is spent on English goods and sails straight back across the Atlantic, so there’s never enough of it here to buy and sell with.\n\nLast year a group of country men proposed a remedy: a LAND BANK, issuing paper notes backed by the value of their farms. Boston merchants disliked it, believing the notes would lose value. Country debtors welcomed it, because paper is easier to come by than silver.\n\nWord is now come from London that Parliament has voided the scheme entirely. Those holding its notes must answer for them, and there’s much bitterness in the country towns — where the want of good money was the whole occasion of the thing.',
           plain: 'The colony tried to solve a money shortage by printing its own, and Parliament simply cancelled it from London.',
           gloss: ['landbank'] },
 
         { head: 'Books Lately Come Over',
           art: 'goods',
-          body: 'A new manner of thinking is arriving from Europe by every ship, and it is argued over in rooms like this one.\n\nIts habit is to trust REASON and OBSERVATION rather than authority — to ask how a thing may be shown to be true, instead of who said it. Mr. Newton has explained the motions of the heavens by a few plain rules. Mr. {{lockeref|Locke}} argues that we are born knowing nothing at all, and gather every idea we have from what we see and hear.\n\nFollow that where it leads. If nothing is written in a man at birth, then no man is born knowing more than another, and none is born fit to rule another. Mr. Locke says as much: a government holds its power only by the agreement of the governed.\n\nWe have no university full of philosophers here. We have newspapers, almanacs, printers, and coffee houses. It is turning out to be enough.',
+          body: 'A new manner of thinking is arriving from Europe by every ship, and it’s argued over in rooms like this one.\n\nIts habit’s to trust REASON and OBSERVATION rather than authority — to ask how a thing may be shown to be true, instead of who said it. Mr. Newton has explained the motions of the heavens by a few plain rules. Mr. {{lockeref|Locke}} argues that we’re born knowing nothing at all, and gather every idea we have from what we see and hear.\n\nFollow that where it leads. If nothing is written in a man at birth, then no man is born knowing more than another, and none is born fit to rule another. Mr. Locke says as much: a government holds its power only by the agreement of the governed.\n\nWe have no university full of philosophers here. We have newspapers, almanacs, printers, and coffee houses. It’s turning out to be enough.',
           plain: 'European ideas about reason, evidence, and government by consent are reaching ordinary colonists through cheap print and coffee-house argument.',
           gloss: ['lockeref'] }
       ]
@@ -426,15 +435,15 @@
 
   var ROOM = {
     hearth: { title: 'The hearth',
-      text: 'Everything hot in this house comes off this fire. There is no stove; a stove is a thing for the next century. The kettle hangs on a crane that swings out over the coals, and the whole room is arranged around the fact that heat happens in exactly one place.' },
+      text: 'Everything hot in this house comes off this fire. There’s no stove; a stove is a thing for the next century. The kettle hangs on a crane that swings out over the coals, and the whole room is arranged around the fact that heat happens in exactly one place.' },
     window: { title: 'The casement',
-      text: 'Small panes set in lead, because large sheets of glass are ruinously expensive and every one of these crossed the Atlantic in a crate of straw. The rain has not stopped since Saturday. Beyond it, Union Street, and past that the wharves where the {{smuggling|the night’s business}} gets done.' },
+      text: 'Small panes set in lead, because large sheets of glass are ruinously expensive and every one of these crossed the Atlantic in a crate of straw. The rain hasn’t stopped since Saturday. Beyond it, Union Street, and past that the wharves where the {{smuggling|the night’s business}} gets done.' },
     sign:   { title: 'The trade sign',
-      text: 'A green dragon, painted by somebody who had plainly never seen one. Most people in Boston cannot read a shop’s name at forty paces but everyone can recognise a picture, which is why every house of business in this town is known by an animal or an object rather than a surname.' },
+      text: 'A green dragon, painted by somebody who had plainly never seen one. Most people in Boston can’t read a shop’s name at forty paces but everyone can recognize a picture, which is why every house of business in this town is known by an animal or an object rather than a surname.' },
     shelf:  { title: 'The cupboard',
-      text: 'Pewter tankards, stoneware jars, and four pieces of English china kept where they can be seen. The pewter is what people drink from. The china is what tells them what sort of house this is — and it is on that shelf, not in a cupboard, for exactly that reason.' },
+      text: 'Pewter tankards, stoneware jars, and four pieces of English china kept where they can be seen. The pewter is what people drink from. The china is what tells them what sort of house this is — and it’s on that shelf, not in a cupboard, for exactly that reason.' },
     candle: { title: 'The candle',
-      text: 'Tallow, not beeswax. It smells of the animal it came from and it gutters, but a beeswax candle costs several times as much and is for churches and people with money. When this burns down the room gets darker, and that is simply what the end of an evening is.' }
+      text: 'Tallow, not beeswax. It smells of the animal it came from and it gutters, but a beeswax candle costs several times as much and is for churches and people with money. When this burns down the room gets darker, and that’s simply what the end of an evening is.' }
   };
 
   /* =======================================================================

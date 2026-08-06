@@ -156,7 +156,7 @@
   function addRing() {
     seed++;
     /* Spread across the whole bar rather than clustering where the cup was,
-       so there is visibly something to do and it is not all in one corner. */
+       so there’s visibly something to do and it isn’t all in one corner. */
     rings.push({ kind: 'ring',
                  x: 24 + Math.round(rnd(seed * 5.3) * (W - 48)),
                  /* kept high on the bar so the between-patron panel, which
@@ -252,7 +252,7 @@
       r(7 + q * 32, 119, 20, 44, C.woodLit);
     }
 
-    /* Hearth and cupboard stop short of the counter so there is a clear strip
+    /* Hearth and cupboard stop short of the counter so there’s a clear strip
        of counter-top to stand a candle and a served cup on. */
     drawWindow(112, 22, f);
     drawHearth(6, 42, f, flick);
@@ -325,7 +325,7 @@
     for (var cg = 0; cg < 4; cg++) {
       p(fx + 10 + cg * 9, fy + fh - 10, (cg + Math.floor(f / 20)) % 3 === 0 ? C.amber : C.ember);
     }
-    /* sparks, which stop once there is nothing left to throw them */
+    /* sparks, which stop once there isn’thing left to throw them */
     if (burn > 0.5) {
       for (var s = 0; s < 5; s++) {
         var sy = fy + fh - 30 - ((f + s * 13) % 26);
@@ -431,8 +431,8 @@
       hl(gx, gy, 10 + (i % 9), C.wood);
     }
     /* Rings and spills. Drawn with real contrast against the wood — a dark wet
-       ring with a lit rim — because a stain the player cannot see is not a
-       chore, it is a bug. */
+       ring with a lit rim — because a stain the player can’t see isn’t a
+       chore, it’s a bug. */
     rings.forEach(function (g) {
       if (g.kind !== 'ring') return;
       var ry = Math.max(2, Math.round(g.r * 0.5));
@@ -596,18 +596,18 @@
 
   function drawHair(cfg, cx, top, hw, hh, f) {
     var s = cfg.style;
-    if (s === 'tiedback') {                     /* men's queue, tied in black */
+    if (s === 'tiedback') {                     /* men’s queue, tied in black */
       blob(cx - hw / 2 - 2, top - 6, hw + 4, 36, cfg.hair);
       r(cx - 24, top + 14, 6, 28, cfg.hair);
       r(cx + 18, top + 14, 6, 28, cfg.hair);
       r(cx + 21, top + 40, 8, 20, cfg.hair);    /* queue over the shoulder   */
       r(cx + 21, top + 40, 8, 4, C.black);      /* the ribbon                */
-    } else if (s === 'wig') {                   /* clergyman's short bob wig  */
+    } else if (s === 'wig') {                   /* clergyman’s short bob wig  */
       blob(cx - hw / 2 - 6, top - 9, hw + 12, 42, C.hairWhite);
       ell(cx - 27, top + 38, 9, 16, C.hairWhite);
       ell(cx + 27, top + 38, 9, 16, C.hairWhite);
       for (var i = 0; i < 7; i++) hl(cx - 27, top + 28 + i * 4, 54, C.linenDim);
-    } else if (s === 'cap') {                   /* woman's linen cap          */
+    } else if (s === 'cap') {                   /* woman’s linen cap          */
       blob(cx - hw / 2 - 1, top - 4, hw + 2, 30, cfg.hair);
       blob(cx - hw / 2 - 7, top - 12, hw + 14, 38, C.cream);
       ell(cx, top + 4, 27, 16, C.white);

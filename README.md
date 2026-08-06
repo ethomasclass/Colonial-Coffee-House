@@ -28,7 +28,7 @@ iPads, and anything else with a browser.
 |---|---|
 | **Setting** | Boston, Monday 14 September 1741 |
 | **Length** | ~50–58 minutes: paper, eight scenes, closing ledger. **See the timing note below** |
-| **Reading level** | High school US survey. Modernised spelling; period vocabulary is glossed in-game |
+| **Reading level** | Written for 10th grade. Contemporary American English and spelling, contractions throughout; only the period terms that *are* the content (New Light, enumerated goods, enthusiasm) are kept, and every one is glossed in-game |
 | **Drinks** | 32 recipes, all period-accurate, **none alcoholic**. Composing one in the brew panel discovers it — no need to serve it |
 | **Sound** | Synthesised in-browser, **off by default**, one toggle |
 | **Fail state** | None. Every cup is accepted and paid for |
@@ -101,13 +101,18 @@ drink has its own pixel cup drawn from its actual ingredients, so a tea bowl,
 a stoneware mug, a chocolate pot and a pewter cup all read differently and the
 cream, nutmeg, lemon and molasses show in the liquid.
 
-**Five recipes are known at the start**, because nobody opens a coffee house
-without being able to make the plain things. Anything you put together on the
-shelf goes straight into the book, served or not, so a student can stand there
-and explore and all 32 are reachable in one night. Unmade entries show a
-question-mark cup and a hint built from the recipe's own rule (*"Bohea Tea,
-sweetened with loaf sugar, and cream"*), so the book is a hunting list rather
-than a wall of blanks. It stays open beside you the whole time you brew.
+**Fourteen recipes are known at the start** — at least two for every base, and
+all but one of what tonight's patrons actually want. In a forty-minute session
+the time should go on reading people, not hunting the shelf. The one exception
+is Patience's Spiced Chocolate, which stays a discovery on purpose: her scene
+is the centre of the evening and her confession is worth earning.
+
+The other eighteen are still there to be found. Anything you put together on
+the shelf goes into the book, served or not, so a student can stand there and
+explore. Unmade entries show a question-mark cup and a hint built from the
+recipe's own rule (*"Bohea Tea, sweetened with loaf sugar, and cream"*), so the
+book is a hunting list rather than a wall of blanks. It stays open beside you
+the whole time you brew.
 
 ### The mechanic that does the teaching
 

@@ -317,7 +317,7 @@
 
   function pourInto(ing, kind) {
     if (!POUR_COLOUR[ing.id]) return;          /* 'nothing' pours nothing */
-    cup.pours.push({ colour: POUR_COLOUR[ing.id], t: 30, solid: kind !== 'base' });
+    cup.pours.push({ color: POUR_COLOUR[ing.id], t: 30, solid: kind !== 'base' });
   }
 
   /* How full the cup looks, given how far through the recipe you are. */
@@ -360,20 +360,20 @@
         /* a lump or a pinch, tumbling in */
         var fy = (30 - pr.t) * 3;
         if (fy < surfaceY + 20) {
-          s.r(57 + wob, 8 + fy, 5, 5, pr.colour);
+          s.r(57 + wob, 8 + fy, 5, 5, pr.color);
           s.r(57 + wob, 8 + fy, 2, 2, 'rgba(255,255,255,0.25)');
-          s.r(52 - wob, 4 + fy, 2, 2, pr.colour);
-          s.r(66 + wob, 12 + fy, 2, 2, pr.colour);
+          s.r(52 - wob, 4 + fy, 2, 2, pr.color);
+          s.r(66 + wob, 12 + fy, 2, 2, pr.color);
         }
       } else {
         /* a proper stream, with a lit edge and a couple of stray drops */
         var len = Math.max(0, surfaceY + 18 - 4);
-        s.r(57 + wob, 4, 5, len, pr.colour);
+        s.r(57 + wob, 4, 5, len, pr.color);
         s.r(57 + wob, 4, 1, len, 'rgba(255,255,255,0.16)');
-        s.r(56 + wob, 4, 1, Math.round(len * 0.4), pr.colour);
-        s.r(62 + wob, 4, 1, Math.round(len * 0.7), pr.colour);
-        s.r(54 + wob, 10 + ((cup.t * 3) % 26), 2, 3, pr.colour);
-        s.r(64 + wob, 6 + ((cup.t * 4) % 30), 2, 2, pr.colour);
+        s.r(56 + wob, 4, 1, Math.round(len * 0.4), pr.color);
+        s.r(62 + wob, 4, 1, Math.round(len * 0.7), pr.color);
+        s.r(54 + wob, 10 + ((cup.t * 3) % 26), 2, 3, pr.color);
+        s.r(64 + wob, 6 + ((cup.t * 4) % 30), 2, 2, pr.color);
       }
       /* the splash where it lands */
       if (pr.t < 22) {
@@ -383,7 +383,7 @@
       }
     }
 
-    /* steam, once there is something hot in it */
+    /* steam, once there’s something hot in it */
     if (complete() && st.sel.base !== 'water') {
       for (var k = 0; k < 3; k++) {
         var sy = surfaceY + 6 - ((cup.t + k * 13) % 40);
@@ -407,7 +407,7 @@
     }
     var rec = D.findRecipe(s.base, s.sweet, s.add);
     var cost = D.drinkCost(s.base, s.sweet, s.add);
-    /* Composing it is discovering it. You do not have to serve a drink to
+    /* Composing it’s discovering it. You don’t have to serve a drink to
        learn that it exists — you only have to make it once and look at it. */
     var wasNew = rec.id !== 'odd' && !st.discovered[rec.id];
     if (rec.id !== 'odd') st.discovered[rec.id] = true;
@@ -515,7 +515,7 @@
     el.between.hidden = true;
     el.chore.hidden = false;
     el.choreTitle.textContent = which === 'pewter'
-      ? 'A tankard, and a good deal of tarnish'
+      ? 'A tankard, and a lot of tarnish'
       : 'The bar, from above';
     el.choreDone.textContent = 'Leave it for now';
     el.choreDone.classList.remove('finished');
@@ -632,7 +632,7 @@
   }
 
   /* =======================================================================
-     SAVE — so a fire drill or a short period does not cost a student the night
+     SAVE — so a fire drill or a short period doesn’t cost a student the night
      ======================================================================= */
 
   function save() {
@@ -685,7 +685,7 @@
       pl.innerHTML = '<b>In plain terms</b>' + markup(it.plain);
       art.appendChild(pl);
       el.paperBody.appendChild(art);
-      Ico.woodcut(cv, it.art);            /* after it is in the document */
+      Ico.woodcut(cv, it.art);            /* after it’s in the document */
     });
     el.paperPageNum.textContent = 'Page ' + (paperPage + 1) + ' of ' + pages.length;
     el.paperPrev.disabled = paperPage === 0;
@@ -760,16 +760,16 @@
     } else if (madeRent && st.frenchUses > 0) {
       verdict = 'You made rent, and you made it on French molasses that no duty was ever paid on. So did most of Boston. The Molasses Act of 1733 had been law for eight years by this night, and it had almost never been collected.';
     } else if (!madeRent && st.frenchUses === 0) {
-      verdict = 'You kept the law and you could not make rent. This is the squeeze exactly: obeying the Navigation Acts and the Molasses Act meant paying more for the same goods than every smuggler on the wharf. That is why the law went unenforced &mdash; not because colonists were lawless, but because keeping it did not pay.';
+      verdict = 'You kept the law and you couldn’t make rent. This is the squeeze exactly: obeying the Navigation Acts and the Molasses Act meant paying more for the same goods than every smuggler on the wharf. That’s why the law went unenforced &mdash; not because colonists were lawless, but because keeping it didn’t pay.';
     } else {
       verdict = 'You smuggled and you still fell short. The margins in this trade were thin even when you broke the law &mdash; which is why so many Boston merchants broke it every single day rather than occasionally.';
     }
     html += '<div class="verdict"><h3>What tonight was about</h3><p>' + verdict + '</p>' +
-      '<p>Britain wrote strict trade laws and then, for decades, barely enforced them. Historians call that <b>salutary neglect</b>. Colonists grew used to running their own economy. When Britain finally began enforcing in earnest after 1763, colonists did not experience it as a government finally doing its job &mdash; they experienced it as a government taking something away.</p></div>';
+      '<p>Britain wrote strict trade laws and then, for decades, barely enforced them. Historians call that <b>salutary neglect</b>. Colonists grew used to running their own economy. When Britain finally began enforcing in earnest after 1763, colonists didn’t experience it as a government finally doing its job &mdash; they experienced it as a government taking something away.</p></div>';
 
     if (st.confessions < 6) {
-      html += '<div class="verdict quiet-verdict"><h3>What you did not hear</h3><p>Six of tonight’s patrons had something they would only say over a drink that actually suited them. You earned <b>' +
-        st.confessions + '</b> of those. Somebody else in this room heard different things than you did &mdash; that is worth comparing.</p></div>';
+      html += '<div class="verdict quiet-verdict"><h3>What you didn’t hear</h3><p>Six of tonight’s patrons had something they would only say over a drink that actually suited them. You earned <b>' +
+        st.confessions + '</b> of those. Somebody else in this room heard different things than you did &mdash; that’s worth comparing.</p></div>';
     }
 
     html += '<div class="jrn"><h3>Notes from the Evening</h3>';
