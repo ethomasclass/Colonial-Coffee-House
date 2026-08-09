@@ -229,6 +229,28 @@ function render() {
   }
   sc.putImageData(img, 0, 0);
 
+  /* Trim the empty margins. Generators leave wildly different amounts of space
+     around a figure; trimming means the game can anchor every sprite the same
+     way instead of you re-tuning the layout for each one. */
+  var minX = W, minY = H, maxX = -1, maxY = -1;
+  for (var y = 0; y < H; y++) {
+    for (var x = 0; x < W; x++) {
+      if (d[(y * W + x) * 4 + 3]) {
+        if (x < minX) minX = x; if (x > maxX) maxX = x;
+        if (y < minY) minY = y; if (y > maxY) maxY = y;
+      }
+    }
+  }
+  if (maxX >= minX && maxY >= minY && (maxX - minX + 1 !== W || maxY - minY + 1 !== H)) {
+    var tw = maxX - minX + 1, th = maxY - minY + 1;
+    var trimmed = document.createElement('canvas');
+    trimmed.width = tw; trimmed.height = th;
+    var tc = trimmed.getContext('2d');
+    tc.imageSmoothingEnabled = false;
+    tc.drawImage(small, minX, minY, tw, th, 0, 0, tw, th);
+    small = trimmed; W = tw; H = th;
+  }
+
   /* show it blown up, exactly the way the game will */
   after.width = W * 2; after.height = H * 2;
   var ac = after.getContext('2d');

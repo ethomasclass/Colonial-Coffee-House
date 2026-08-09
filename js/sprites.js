@@ -54,7 +54,10 @@ window.SPRITES = {
    where its feet-of-the-bust should land. Tune these once the first image is
    in rather than guessing now. */
 window.SPRITE_LAYOUT = {
-  height: 0.78,      /* of the 216px room, so ~168px tall               */
+  height: 0.70,      /* of the 216px room, so ~151px tall                */
   centreX: 0.50,     /* across the frame                                 */
-  bottom: 0.94       /* where the bottom edge of the image sits          */
+  bottom: 0.84       /* bottom edge lands just past the counter top      */
 };
+/* These match where the drawn figures sit. If a sprite of yours rides too high
+   or too low, nudge `bottom`; if it is too big for the room, drop `height`.
+   tools/pixelate.html trims empty margins, so every sprite anchors alike. */
