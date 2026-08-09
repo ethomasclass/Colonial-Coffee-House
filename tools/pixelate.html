@@ -50,6 +50,8 @@
   code { background: #241a20; padding: .1rem .3rem; border-radius: 2px; color: #f0bb63; }
   .drop { border: 2px dashed #6b4630; border-radius: 3px; padding: 1rem; text-align: center; color: #9c8a72; font-size: .86rem; }
   .drop.over { border-color: #f0bb63; color: #f0bb63; background: rgba(217,144,56,.08); }
+  #before { cursor: crosshair; }
+  #resetCrop { font-size: .82rem; padding: .35rem .6rem; }
 </style>
 </head>
 <body>
@@ -70,6 +72,15 @@
       <div class="drop" id="drop">Drop an image here, or choose one:</div>
       <label>&nbsp;</label>
       <input type="file" id="file" accept="image/*">
+    </fieldset>
+
+    <fieldset>
+      <legend>Crop</legend>
+      <p class="hint" style="margin-top:0">Drag a box on the <b>Before</b> picture
+        to keep only part of it. Use this to cut away a table the generator drew
+        (the room has its own counter) and anything floating in a corner.</p>
+      <button id="resetCrop" style="margin-top:.5rem">Use the whole picture</button>
+      <p class="hint" id="cropInfo">No crop — using the whole picture.</p>
     </fieldset>
 
     <fieldset>
@@ -98,10 +109,11 @@
         <input type="checkbox" id="cut" checked>
         <label for="cut">Knock out the background</label>
       </div>
-      <label>Tolerance: <span class="val" id="tVal">40</span></label>
-      <input type="range" id="t" min="0" max="140" value="40">
-      <p class="hint">Samples the four corners. Works when the background is
-        flat; if the generator gave you a room, ask it again for a plain one.</p>
+      <label>Tolerance: <span class="val" id="tVal">30</span></label>
+      <input type="range" id="t" min="0" max="120" value="30">
+      <p class="hint">Fills inward from the edges, so parts of the figure that
+        happen to match the backdrop are safe. Raise it if flecks of background
+        survive; lower it if it starts eating the character's outline.</p>
     </fieldset>
 
     <button id="save" disabled>Download PNG</button>
@@ -142,6 +154,50 @@ var PALETTE = [
 var src = null;
 var $ = function (id) { return document.getElementById(id); };
 var before = $('before'), after = $('after');
+
+/* Crop is held in 0..1 of the source, so it survives any preview size. */
+var crop = null, dragging = null;
+
+function cropRect() {
+  if (!src) return null;
+  var c = crop || { x: 0, y: 0, w: 1, h: 1 };
+  return {
+    x: Math.round(c.x * src.naturalWidth),
+    y: Math.round(c.y * src.naturalHeight),
+    w: Math.max(1, Math.round(c.w * src.naturalWidth)),
+    h: Math.max(1, Math.round(c.h * src.naturalHeight))
+  };
+}
+
+function beforePoint(ev) {
+  var b = before.getBoundingClientRect();
+  return {
+    x: Math.min(1, Math.max(0, (ev.clientX - b.left) / b.width)),
+    y: Math.min(1, Math.max(0, (ev.clientY - b.top) / b.height))
+  };
+}
+
+before.addEventListener('mousedown', function (ev) {
+  if (!src) return;
+  dragging = beforePoint(ev);
+  ev.preventDefault();
+});
+window.addEventListener('mousemove', function (ev) {
+  if (!dragging || !src) return;
+  var p2 = beforePoint(ev);
+  crop = {
+    x: Math.min(dragging.x, p2.x), y: Math.min(dragging.y, p2.y),
+    w: Math.abs(p2.x - dragging.x), h: Math.abs(p2.y - dragging.y)
+  };
+  render();
+});
+window.addEventListener('mouseup', function () {
+  if (!dragging) return;
+  dragging = null;
+  if (crop && (crop.w < 0.02 || crop.h < 0.02)) crop = null;
+  render();
+});
+$('resetCrop').onclick = function () { crop = null; render(); };
 
 function load(file) {
   var img = new Image();
@@ -184,14 +240,29 @@ function posterize(v, steps) {
 function render() {
   if (!src) return;
   var H = +$('h').value;
-  var W = Math.max(1, Math.round(H * (src.naturalWidth / src.naturalHeight)));
+  var cr = cropRect();
+  var W = Math.max(1, Math.round(H * (cr.w / cr.h)));
 
-  /* preview of the original, scaled to a comparable size */
+  /* preview of the original, with the crop box drawn over it */
+  var bw = 420, bh = Math.round(bw * (src.naturalHeight / src.naturalWidth));
   var bc = before.getContext('2d');
-  before.width = W * 2; before.height = H * 2;
+  before.width = bw; before.height = bh;
   bc.imageSmoothingEnabled = true;
-  bc.clearRect(0, 0, before.width, before.height);
-  bc.drawImage(src, 0, 0, before.width, before.height);
+  bc.clearRect(0, 0, bw, bh);
+  bc.drawImage(src, 0, 0, bw, bh);
+  if (crop) {
+    bc.fillStyle = 'rgba(10,6,10,0.55)';
+    bc.fillRect(0, 0, bw, Math.round(crop.y * bh));
+    bc.fillRect(0, Math.round((crop.y + crop.h) * bh), bw, bh);
+    bc.fillRect(0, Math.round(crop.y * bh), Math.round(crop.x * bw), Math.round(crop.h * bh));
+    bc.fillRect(Math.round((crop.x + crop.w) * bw), Math.round(crop.y * bh), bw, Math.round(crop.h * bh));
+    bc.strokeStyle = '#f0bb63'; bc.lineWidth = 2;
+    bc.strokeRect(Math.round(crop.x * bw), Math.round(crop.y * bh),
+                  Math.round(crop.w * bw), Math.round(crop.h * bh));
+  }
+  $('cropInfo').textContent = crop
+    ? 'Cropped to ' + Math.round(crop.w * 100) + '% × ' + Math.round(crop.h * 100) + '% of the picture.'
+    : 'No crop — using the whole picture. Drag a box on the Before picture.';
 
   /* Area-average down first. Nearest-neighbour straight off a soft AI image
      gives you noise; averaging then hard-quantising gives you pixel art. */
@@ -200,7 +271,7 @@ function render() {
   var sc = small.getContext('2d');
   sc.imageSmoothingEnabled = true;
   sc.imageSmoothingQuality = 'high';
-  sc.drawImage(src, 0, 0, W, H);
+  sc.drawImage(src, cr.x, cr.y, cr.w, cr.h, 0, 0, W, H);
 
   var img = sc.getImageData(0, 0, W, H), d = img.data;
   var steps = Math.max(2, Math.round(+$('c').value / 4));
@@ -212,21 +283,54 @@ function render() {
     return [d[o], d[o+1], d[o+2]];
   });
 
-  for (var i = 0; i < d.length; i += 4) {
-    if (cut && d[i+3] > 8) {
+  /* Background removal by flood fill from the edges, not by colour alone.
+     Keying globally on "anything close to the corner colour" eats parts of the
+     figure that happen to be a similar tone — a cream waistcoat against a sage
+     backdrop, say. Filling inward from the border only removes background that
+     is actually connected to the outside. */
+  if (cut) {
+    var seen = new Uint8Array(W * H);
+    var stack = [];
+    for (var bx = 0; bx < W; bx++) { stack.push(bx); stack.push((H - 1) * W + bx); }
+    for (var by = 0; by < H; by++) { stack.push(by * W); stack.push(by * W + W - 1); }
+
+    /* True Euclidean distance, not a sum of channel differences. Summing
+       exaggerates near-matches: a warm cream waistcoat against a sage backdrop
+       sums to a big number on one channel and reads as "close enough" to
+       delete, which is exactly how you lose half a character. */
+    function isBackdrop(idx) {
+      var o = idx * 4;
+      if (!d[o + 3]) return true;
       for (var k = 0; k < corners.length; k++) {
-        var cdist = Math.abs(d[i]-corners[k][0]) + Math.abs(d[i+1]-corners[k][1]) + Math.abs(d[i+2]-corners[k][2]);
-        if (cdist <= tol * 3) { d[i+3] = 0; break; }
+        var dr = d[o] - corners[k][0], dg = d[o+1] - corners[k][1], db = d[o+2] - corners[k][2];
+        if (Math.sqrt(dr*dr + dg*dg + db*db) <= tol) return true;
       }
+      return false;
     }
+
+    while (stack.length) {
+      var idx = stack.pop();
+      if (idx < 0 || idx >= W * H || seen[idx]) continue;
+      if (!isBackdrop(idx)) continue;
+      seen[idx] = 1;
+      d[idx * 4 + 3] = 0;
+      var cx2 = idx % W, cy2 = (idx / W) | 0;
+      if (cx2 > 0) stack.push(idx - 1);
+      if (cx2 < W - 1) stack.push(idx + 1);
+      if (cy2 > 0) stack.push(idx - W);
+      if (cy2 < H - 1) stack.push(idx + W);
+    }
+  }
+
+  for (var i = 0; i < d.length; i += 4) {
     /* hard alpha only — a half-transparent edge ruins the pixel look */
     d[i+3] = d[i+3] > 128 ? 255 : 0;
     if (!d[i+3]) continue;
-
     var r = posterize(d[i], steps), g = posterize(d[i+1], steps), b = posterize(d[i+2], steps);
-    if (snap) { var p = nearestPalette(r, g, b); r = p[0]; g = p[1]; b = p[2]; }
+    if (snap) { var pc = nearestPalette(r, g, b); r = pc[0]; g = pc[1]; b = pc[2]; }
     d[i] = r; d[i+1] = g; d[i+2] = b;
   }
+
   sc.putImageData(img, 0, 0);
 
   /* Trim the empty margins. Generators leave wildly different amounts of space
