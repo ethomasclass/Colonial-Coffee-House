@@ -490,7 +490,15 @@
      Proportions are deliberately generous — a Coffee Talk customer is a bust
      that fills the frame, not a figure standing in a room. Head is 46x56 in a
      384x216 field, which puts the eyes at roughly a third of the way down. */
-  function drawPerson(cfg, exprName, f) {
+  function drawPerson(cfg, exprName, f, charId) {
+    /* hand-made art wins, when there is any */
+    if (charId) {
+      var url = spriteUrl(charId, exprName);
+      if (url) {
+        var img = getSprite(url);
+        if (img) return drawSpriteImage(img, f);
+      }
+    }
     var e = EXPR[exprName] || EXPR.neutral;
     var cx = 190;
     var bob = Math.round(Math.sin(f * 0.035));      /* slow breathing */
@@ -666,6 +674,60 @@
     }
   }
 
+  /* =========================================================================
+     OPTIONAL HAND-MADE SPRITES
+
+     If js/sprites.js names an image for this character and expression, we draw
+     that instead of the procedural figure. Loading is lazy and failure is
+     silent — a missing or broken file simply falls back to the drawn version,
+     so half-finished art never breaks the game.
+     ========================================================================= */
+
+  var spriteCache = {};                 /* url -> Image | 'failed'            */
+
+  /* An expression we have no art for borrows the nearest one we do. */
+  var EXPR_FALLBACK = {
+    bright: ['warm', 'neutral'],
+    downcast: ['worried', 'neutral'],
+    stern: ['worried', 'neutral'],
+    worried: ['neutral'],
+    warm: ['neutral'],
+    thoughtful: ['neutral'],
+    surprised: ['neutral'],
+    neutral: []
+  };
+
+  function spriteUrl(charId, expr) {
+    var table = global.SPRITES;
+    if (!table || !table[charId]) return null;
+    var set = table[charId];
+    var chain = [expr].concat(EXPR_FALLBACK[expr] || ['neutral']);
+    for (var i = 0; i < chain.length; i++) if (set[chain[i]]) return set[chain[i]];
+    return null;
+  }
+
+  function getSprite(url) {
+    var got = spriteCache[url];
+    if (got === 'failed') return null;
+    if (got) return got.complete && got.naturalWidth ? got : null;
+    var img = new Image();
+    img.onerror = function () { spriteCache[url] = 'failed'; };
+    img.src = url;
+    spriteCache[url] = img;
+    return null;
+  }
+
+  function drawSpriteImage(img, f) {
+    var L = global.SPRITE_LAYOUT || { height: 0.78, centreX: 0.5, bottom: 0.94 };
+    var bob = Math.round(Math.sin(f * 0.035));       /* the same slow breath */
+    var h = Math.round(H * L.height);
+    var w = Math.round(h * (img.naturalWidth / img.naturalHeight));
+    var x = Math.round(W * L.centreX - w / 2);
+    var y = Math.round(H * L.bottom - h) + bob;
+    bctx.imageSmoothingEnabled = false;              /* keep the pixel grid  */
+    bctx.drawImage(img, x, y, w, h);
+  }
+
   /* ---- the six configurations ------------------------------------------- */
   var CAST_ART = {
     patience: {
@@ -715,6 +777,7 @@
     setPhase: setPhase, getPhase: getPhase, applyNightWash: applyNightWash,
     addRing: addRing, addTarnish: addTarnish, wipeAt: wipeAt, clearRings: clearRings, ringCount: ringCount,
     hitTest: hitTest, toLogical: toLogical, countKind: countKind,
+    hasSprite: function (id, expr) { return !!spriteUrl(id, expr); },
     ctx: function () { return bctx; }
   };
 

@@ -54,7 +54,7 @@
     frame++;
     A.setPhase(Math.max(0, st.patronIndex) / Math.max(1, ORDER.length - 1));
     A.drawRoom(frame);
-    if (st.patron) A.drawPerson(A.CAST_ART[st.patron.art], st.expr, frame);
+    if (st.patron) A.drawPerson(A.CAST_ART[st.patron.art], st.expr, frame, st.patron.art);
     else A.drawEmptySeat(frame);
     if (st.servedCup) A.drawServedCup(296, frame, st.servedCup.tint);
     A.applyNightWash();

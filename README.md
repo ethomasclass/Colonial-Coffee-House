@@ -242,9 +242,17 @@ To cut the game short, edit `ORDER` in `js/data.js`.
 - **Real timing data.** See the timing note above.
 - **Per-character epilogues** on the closing screen ("Patience testified on
   Thursday") — designed but not built.
-- **Character art is procedural**, generated in code from one shared
-  `drawPerson()` character sheet. It is consistent and readable but it is not
-  hand-drawn; swapping in real sprites means replacing that one function.
+- **Character art is procedural by default**, generated in code from one shared
+  `drawPerson()` character sheet. To replace it with hand-made or generated
+  portraits, drop PNGs into `art/characters/` and uncomment their lines in
+  `js/sprites.js`. Anything you don't supply keeps using the drawn version, so
+  you can bring one face in at a time and nothing breaks. Missing expressions
+  fall back down a chain, so four images per character covers all eight moods
+  and one is enough to see how it looks.
+- **`tools/pixelate.html`** conditions a generated image into a usable sprite:
+  area-averages it down to a real pixel grid, cuts the palette to the room's
+  own colours, knocks out a flat background, and forces hard alpha. Open it in
+  a browser; nothing is uploaded anywhere.
 - **Multi-day play.** Doesn't fit one period, but `js/scenes.js` and the `ORDER`
   array are fully separable, so a three-day version is an expansion rather than
   a rewrite.
