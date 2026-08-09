@@ -50,6 +50,11 @@
   code { background: #241a20; padding: .1rem .3rem; border-radius: 2px; color: #f0bb63; }
   .drop { border: 2px dashed #6b4630; border-radius: 3px; padding: 1rem; text-align: center; color: #9c8a72; font-size: .86rem; }
   .drop.over { border-color: #f0bb63; color: #f0bb63; background: rgba(217,144,56,.08); }
+  select {
+    font-family: var(--serif); font-size: .88rem; width: 100%; padding: .3rem;
+    background: #2e2129; color: #efe0c2;
+    border: 1px solid #6b4630; border-radius: 2px;
+  }
   #before { cursor: crosshair; }
   #resetCrop { font-size: .82rem; padding: .35rem .6rem; }
 </style>
@@ -116,9 +121,30 @@
         survive; lower it if it starts eating the character's outline.</p>
     </fieldset>
 
+    <fieldset>
+      <legend>Who is this?</legend>
+      <label>Character</label>
+      <select id="who">
+        <option value="ezra">Ezra Hale — the barrel-maker</option>
+        <option value="thorne">Rev. Thorne — the minister</option>
+        <option value="cato" selected>Cato Bell — the apprentice</option>
+        <option value="bright">Capt. Bright — the captain</option>
+        <option value="patience">Patience Marsh</option>
+        <option value="pym">Mr. Pym — the customs officer</option>
+      </select>
+      <label>Expression</label>
+      <select id="mood">
+        <option value="neutral" selected>Neutral — start here</option>
+        <option value="warm">Warm — open, a slight smile</option>
+        <option value="worried">Worried — guarded, uneasy</option>
+        <option value="stern">Stern — disapproving</option>
+      </select>
+      <p class="hint">Saves as <code id="fname">cato-neutral.png</code>. Put it
+        in <code>art/characters/</code> and it appears in the game — nothing
+        else to edit.</p>
+    </fieldset>
+
     <button id="save" disabled>Download PNG</button>
-    <p class="hint">Save it into <code>art/characters/</code>, then uncomment its
-      line in <code>js/sprites.js</code>.</p>
   </div>
 
   <div class="stage">
@@ -219,6 +245,12 @@ drop.ondrop = function (e) {
 });
 $('snap').onchange = render;
 $('cut').onchange = render;
+
+function fileName() { return $('who').value + '-' + $('mood').value + '.png'; }
+function paintName() { $('fname').textContent = fileName(); }
+$('who').onchange = paintName;
+$('mood').onchange = paintName;
+paintName();
 
 function nearestPalette(r, g, b) {
   var best = 0, bd = 1e9;
@@ -369,7 +401,7 @@ function render() {
 $('save').onclick = function () {
   if (!after._small) return;
   var a = document.createElement('a');
-  a.download = 'sprite.png';
+  a.download = fileName();
   a.href = after._small.toDataURL('image/png');
   a.click();
 };

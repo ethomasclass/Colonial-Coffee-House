@@ -243,12 +243,13 @@ To cut the game short, edit `ORDER` in `js/data.js`.
 - **Per-character epilogues** on the closing screen ("Patience testified on
   Thursday") — designed but not built.
 - **Character art is procedural by default**, generated in code from one shared
-  `drawPerson()` character sheet. To replace it with hand-made or generated
-  portraits, drop PNGs into `art/characters/` and uncomment their lines in
-  `js/sprites.js`. Anything you don't supply keeps using the drawn version, so
-  you can bring one face in at a time and nothing breaks. Missing expressions
-  fall back down a chain, so four images per character covers all eight moods
-  and one is enough to see how it looks.
+  `drawPerson()` character sheet. To replace it, drop a PNG into
+  `art/characters/` using the names listed in `js/sprites.js` — every path is
+  already wired, so there is nothing to edit and nothing to uncomment. A file
+  that isn't there is ignored and the drawn figure is used instead, so art can
+  arrive one face at a time. Missing expressions fall back down a chain, so
+  four images per character covers all eight moods and `neutral` alone is
+  enough to see somebody in the room.
 - **`tools/pixelate.html`** conditions a generated image into a usable sprite:
   area-averages it down to a real pixel grid, cuts the palette to the room's
   own colours, knocks out a flat background, and forces hard alpha. Open it in

@@ -1,63 +1,95 @@
 /* ===========================================================================
-   sprites.js — optional hand-made character art.
+   sprites.js — hand-made character art.
 
-   The game draws its people procedurally by default. Put a PNG path in the
-   table below and that image is used instead, for that character and that
-   expression. Anything you don't supply keeps falling back, so you can bring
-   one face in at a time and the game never breaks.
+   THIS IS ALREADY WIRED. You do not need to edit this file.
 
-   HOW TO ADD A CHARACTER
-   ----------------------
-   1. Save the file as art/characters/<id>-<expression>.png
-   2. Uncomment its line below.
+   Every character below points at a filename in art/characters/. A file that
+   isn't there yet is simply ignored and the game draws its built-in figure
+   instead — so you can drop art in one piece at a time, nothing ever breaks,
+   and nothing needs uncommenting.
 
-   Character ids:  convert (Ezra), minister (Thorne), reader (Cato),
-                   captain (Bright), patience (Patience), officer (Pym)
+   TO ADD A FACE
+   -------------
+   Save a PNG into art/characters/ with the matching name below. That's all.
+   tools/pixelate.html will name the file for you if you pick the character
+   and expression from its menu before downloading.
 
-   Expressions:    neutral warm worried stern surprised thoughtful
-                   downcast bright
-
-   You do NOT need all eight. Missing ones fall back down this chain:
+   You do NOT need all four expressions. Missing ones fall back:
        bright   -> warm    -> neutral
        downcast -> worried -> neutral
        stern    -> worried -> neutral
        thoughtful, surprised -> neutral
-   So four images per character (neutral, warm, worried, stern) covers
-   everything, and one (neutral) is enough to see how it looks.
+   So `neutral` alone is enough to see a character in the room, and four
+   covers all eight moods the writing uses.
 
    REQUIREMENTS
    ------------
-   - Transparent background. The room is drawn behind it.
-   - The figure's shoulders should sit near the bottom of the image; the game
-     anchors the sprite so the counter crosses it in the right place.
-   - Any size. It is scaled to fit the room's grid on load, so generate big.
+   - Transparent background, and no table — the room draws its own counter.
+   - Crop so the bottom edge sits just below the hands.
+   - Any size; it is scaled to the room on load, so generate big.
+
+   (While a file is missing the browser console notes that it could not be
+   loaded. That is expected and harmless — it is how the fallback works.)
    =========================================================================== */
 
 window.SPRITES = {
 
-  // reader: {
-  //   neutral: 'art/characters/cato-neutral.png',
-  //   warm:    'art/characters/cato-warm.png',
-  //   worried: 'art/characters/cato-worried.png',
-  //   stern:   'art/characters/cato-stern.png'
-  // },
+  /* Ezra Hale — the barrel-maker */
+  convert: {
+    neutral: 'art/characters/ezra-neutral.png',
+    warm:    'art/characters/ezra-warm.png',
+    worried: 'art/characters/ezra-worried.png',
+    stern:   'art/characters/ezra-stern.png'
+  },
 
-  // convert:  { neutral: 'art/characters/ezra-neutral.png' },
-  // minister: { neutral: 'art/characters/thorne-neutral.png' },
-  // captain:  { neutral: 'art/characters/bright-neutral.png' },
-  // patience: { neutral: 'art/characters/patience-neutral.png' },
-  // officer:  { neutral: 'art/characters/pym-neutral.png' }
+  /* Rev. Samuel Thorne — the Old Light minister */
+  minister: {
+    neutral: 'art/characters/thorne-neutral.png',
+    warm:    'art/characters/thorne-warm.png',
+    worried: 'art/characters/thorne-worried.png',
+    stern:   'art/characters/thorne-stern.png'
+  },
+
+  /* Cato Bell — the printer's apprentice */
+  reader: {
+    neutral: 'art/characters/cato-neutral.png',
+    warm:    'art/characters/cato-warm.png',
+    worried: 'art/characters/cato-worried.png',
+    stern:   'art/characters/cato-stern.png'
+  },
+
+  /* Capt. Jonas Bright — master of the sloop Dolphin */
+  captain: {
+    neutral: 'art/characters/bright-neutral.png',
+    warm:    'art/characters/bright-warm.png',
+    worried: 'art/characters/bright-worried.png',
+    stern:   'art/characters/bright-stern.png'
+  },
+
+  /* Patience Marsh — the merchant's daughter */
+  patience: {
+    neutral: 'art/characters/patience-neutral.png',
+    warm:    'art/characters/patience-warm.png',
+    worried: 'art/characters/patience-worried.png',
+    stern:   'art/characters/patience-stern.png'
+  },
+
+  /* Mr. Aldis Pym — His Majesty's Customs */
+  officer: {
+    neutral: 'art/characters/pym-neutral.png',
+    warm:    'art/characters/pym-warm.png',
+    worried: 'art/characters/pym-worried.png',
+    stern:   'art/characters/pym-stern.png'
+  }
 
 };
 
-/* How tall a sprite should be drawn, as a fraction of the room's height, and
-   where its feet-of-the-bust should land. Tune these once the first image is
-   in rather than guessing now. */
+/* Where a supplied sprite sits in the room. These match where the built-in
+   figures sit, so art conditioned by tools/pixelate.html should land right
+   without touching anything. If one of yours rides high or low, nudge
+   `bottom`; if it is too big for the room, drop `height`. */
 window.SPRITE_LAYOUT = {
-  height: 0.70,      /* of the 216px room, so ~151px tall                */
-  centreX: 0.50,     /* across the frame                                 */
-  bottom: 0.84       /* bottom edge lands just past the counter top      */
+  height: 0.70,      /* of the 216px room, so about 151px tall           */
+  centreX: 0.50,     /* across the frame                                  */
+  bottom: 0.84       /* bottom edge lands just past the counter top       */
 };
-/* These match where the drawn figures sit. If a sprite of yours rides too high
-   or too low, nudge `bottom`; if it is too big for the room, drop `height`.
-   tools/pixelate.html trims empty margins, so every sprite anchors alike. */
