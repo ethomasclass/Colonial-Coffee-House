@@ -7,67 +7,60 @@
 <style>
   :root { --serif: Georgia, 'Palatino Linotype', Palatino, serif; }
   * { box-sizing: border-box; }
-  body {
-    margin: 0; padding: 1.5rem 2rem 3rem;
-    background: #14100f; color: #efe0c2; font-family: var(--serif);
-  }
+  body { margin: 0; padding: 1.5rem 2rem 3rem; background: #14100f; color: #efe0c2; font-family: var(--serif); }
   h1 { margin: 0 0 .2rem; color: #f0bb63; font-size: 1.6rem; }
-  .sub { color: #9c8a72; font-size: .9rem; margin: 0 0 1.4rem; max-width: 46rem; line-height: 1.5; }
-  .wrap { display: grid; grid-template-columns: 20rem 1fr; gap: 2rem; align-items: start; }
+  .sub { color: #9c8a72; font-size: .9rem; margin: 0 0 1.4rem; max-width: 48rem; line-height: 1.5; }
+  .wrap { display: grid; grid-template-columns: 21rem 1fr; gap: 2rem; align-items: start; }
   fieldset { border: 2px solid #6b4630; border-radius: 3px; padding: .8rem 1rem 1rem; margin: 0 0 1rem; }
   legend { padding: 0 .4rem; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: #d6c3a0; }
   label { display: block; font-size: .86rem; margin: .6rem 0 .2rem; color: #d6c3a0; }
   input[type=range] { width: 100%; }
   input[type=file] { font-family: var(--serif); font-size: .82rem; color: #efe0c2; width: 100%; }
+  input[type=number] { font-family: var(--serif); font-size: .9rem; width: 4.5rem; padding: .25rem;
+    background: #2e2129; color: #efe0c2; border: 1px solid #6b4630; border-radius: 2px; }
+  select { font-family: var(--serif); font-size: .88rem; width: 100%; padding: .3rem;
+    background: #2e2129; color: #efe0c2; border: 1px solid #6b4630; border-radius: 2px; }
   .val { color: #f0bb63; font-variant-numeric: tabular-nums; }
   .row { display: flex; align-items: center; gap: .5rem; margin: .5rem 0; }
   .row input[type=checkbox] { width: 1rem; height: 1rem; }
   .row label { margin: 0; }
-  button {
-    font-family: var(--serif); font-size: 1rem; width: 100%;
-    padding: .6rem 1rem; margin-top: .8rem;
-    background: linear-gradient(#d99038, #a86d24); color: #241a10;
-    font-weight: bold; border: 2px solid #6d4718; border-radius: 3px;
-    box-shadow: 0 4px 0 #4a300f; cursor: pointer;
-  }
+  .pair { display: flex; gap: 1rem; }
+  .pair > div { flex: 1; }
+  button { font-family: var(--serif); font-size: 1rem; width: 100%; padding: .6rem 1rem; margin-top: .8rem;
+    background: linear-gradient(#d99038, #a86d24); color: #241a10; font-weight: bold;
+    border: 2px solid #6d4718; border-radius: 3px; box-shadow: 0 4px 0 #4a300f; cursor: pointer; }
   button:disabled { background: #4a4038; color: #7d7268; border-color: #322c26; box-shadow: none; cursor: not-allowed; }
+  #resetCrop { font-size: .82rem; padding: .35rem .6rem; }
   .stage { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   .panel h2 { font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: #9c8a72; margin: 0 0 .5rem; }
   .checker {
     background-image:
-      linear-gradient(45deg, #2a2228 25%, transparent 25%),
-      linear-gradient(-45deg, #2a2228 25%, transparent 25%),
-      linear-gradient(45deg, transparent 75%, #2a2228 75%),
-      linear-gradient(-45deg, transparent 75%, #2a2228 75%);
-    background-size: 16px 16px;
-    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      linear-gradient(45deg, #2a2228 25%, transparent 25%), linear-gradient(-45deg, #2a2228 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #2a2228 75%), linear-gradient(-45deg, transparent 75%, #2a2228 75%);
+    background-size: 16px 16px; background-position: 0 0, 0 8px, 8px -8px, -8px 0;
     border: 2px solid #4d3225; border-radius: 2px;
-    display: flex; align-items: center; justify-content: center;
-    min-height: 22rem; padding: .5rem;
+    display: flex; align-items: center; justify-content: center; min-height: 20rem; padding: .5rem; gap: .5rem;
   }
   canvas { max-width: 100%; image-rendering: pixelated; image-rendering: crisp-edges; }
+  #before { cursor: crosshair; }
   .hint { font-size: .8rem; color: #9c8a72; margin-top: .5rem; line-height: 1.45; }
   code { background: #241a20; padding: .1rem .3rem; border-radius: 2px; color: #f0bb63; }
   .drop { border: 2px dashed #6b4630; border-radius: 3px; padding: 1rem; text-align: center; color: #9c8a72; font-size: .86rem; }
   .drop.over { border-color: #f0bb63; color: #f0bb63; background: rgba(217,144,56,.08); }
-  select {
-    font-family: var(--serif); font-size: .88rem; width: 100%; padding: .3rem;
-    background: #2e2129; color: #efe0c2;
-    border: 1px solid #6b4630; border-radius: 2px;
-  }
-  #before { cursor: crosshair; }
-  #resetCrop { font-size: .82rem; padding: .35rem .6rem; }
+  .sheetgrid { display: flex; flex-wrap: wrap; gap: .6rem; justify-content: center; }
+  .cell { text-align: center; }
+  .cell span { display: block; font-size: .7rem; color: #9c8a72; margin-top: .2rem; }
 </style>
 </head>
 <body>
 
 <h1>Sprite Conditioner</h1>
 <p class="sub">
-  Image generators produce pixel-<em>flavoured</em> pictures: soft edges, thousands of
-  near-identical colours, an inconsistent grid. This snaps one to a real pixel
-  grid, cuts the palette down, and knocks out the background — so a generated
-  portrait actually sits in the room instead of floating above it.
-  Everything happens in this page; nothing is uploaded anywhere.
+  Image generators make pixel-<em>flavoured</em> pictures: soft edges, thousands of near-identical
+  colours, no consistent grid. This snaps one to a real pixel grid, cuts the palette to the game's
+  own colours, and knocks out the background. It also slices a sheet of expressions into separate
+  sprites that stay perfectly aligned with each other — which is the whole reason to draw them on
+  one sheet. Nothing is uploaded anywhere.
 </p>
 
 <div class="wrap">
@@ -80,20 +73,35 @@
     </fieldset>
 
     <fieldset>
+      <legend>Sheet of expressions</legend>
+      <div class="row">
+        <input type="checkbox" id="isSheet">
+        <label for="isSheet">This picture holds several expressions</label>
+      </div>
+      <div class="pair">
+        <div><label>Across</label><input type="number" id="cols" min="1" max="8" value="4"></div>
+        <div><label>Down</label><input type="number" id="rows" min="1" max="8" value="1"></div>
+      </div>
+      <p class="hint">Cut into equal panels, read left to right, top to bottom, in this order:
+        <b>neutral, warm, worried, stern</b>. Every panel is trimmed to the same box, so the head
+        never jumps when the game swaps expressions mid-conversation.</p>
+    </fieldset>
+
+    <fieldset>
       <legend>Crop</legend>
-      <p class="hint" style="margin-top:0">Drag a box on the <b>Before</b> picture
-        to keep only part of it. Use this to cut away a table the generator drew
-        (the room has its own counter) and anything floating in a corner.</p>
-      <button id="resetCrop" style="margin-top:.5rem">Use the whole picture</button>
-      <p class="hint" id="cropInfo">No crop — using the whole picture.</p>
+      <p class="hint" style="margin-top:0">Drag a box on the <b>Before</b> picture. Cut away a table
+        the generator drew — the room has its own counter — and anything floating in a corner. On a
+        sheet, crop to the panels themselves and the slicing follows.</p>
+      <button id="resetCrop">Use the whole picture</button>
+      <p class="hint" id="cropInfo">No crop.</p>
     </fieldset>
 
     <fieldset>
       <legend>Pixel grid</legend>
       <label>Height in pixels: <span class="val" id="hVal">168</span></label>
       <input type="range" id="h" min="48" max="400" value="168">
-      <p class="hint">168 matches a character standing at the counter in the
-        384&times;216 room. Smaller is chunkier.</p>
+      <p class="hint">168 matches a character at the counter in the 384&times;216 room. On a sheet
+        this is the height of one panel, not the whole picture.</p>
     </fieldset>
 
     <fieldset>
@@ -104,8 +112,6 @@
         <input type="checkbox" id="snap" checked>
         <label for="snap">Pull toward the game's palette</label>
       </div>
-      <p class="hint">Snapping keeps the sprite in the same candlelight range as
-        the room. Turn it off if it is flattening the skin tones.</p>
     </fieldset>
 
     <fieldset>
@@ -116,9 +122,8 @@
       </div>
       <label>Tolerance: <span class="val" id="tVal">30</span></label>
       <input type="range" id="t" min="0" max="120" value="30">
-      <p class="hint">Fills inward from the edges, so parts of the figure that
-        happen to match the backdrop are safe. Raise it if flecks of background
-        survive; lower it if it starts eating the character's outline.</p>
+      <p class="hint">Fills inward from each panel's edges, so parts of the figure that happen to
+        match the backdrop are safe. Raise it if flecks survive; lower it if it eats the outline.</p>
     </fieldset>
 
     <fieldset>
@@ -132,19 +137,19 @@
         <option value="patience">Patience Marsh</option>
         <option value="pym">Mr. Pym — the customs officer</option>
       </select>
-      <label>Expression</label>
-      <select id="mood">
-        <option value="neutral" selected>Neutral — start here</option>
-        <option value="warm">Warm — open, a slight smile</option>
-        <option value="worried">Worried — guarded, uneasy</option>
-        <option value="stern">Stern — disapproving</option>
-      </select>
-      <p class="hint">Saves as <code id="fname">cato-neutral.png</code>. Put it
-        in <code>art/characters/</code> and it appears in the game — nothing
-        else to edit.</p>
+      <div id="moodWrap">
+        <label>Expression</label>
+        <select id="mood">
+          <option value="neutral" selected>Neutral — start here</option>
+          <option value="warm">Warm — open, a slight smile</option>
+          <option value="worried">Worried — guarded, uneasy</option>
+          <option value="stern">Stern — disapproving</option>
+        </select>
+      </div>
+      <p class="hint" id="fileHint"></p>
     </fieldset>
 
-    <button id="save" disabled>Download PNG</button>
+    <button id="save" disabled>Download</button>
   </div>
 
   <div class="stage">
@@ -153,8 +158,8 @@
       <div class="checker"><canvas id="before"></canvas></div>
     </div>
     <div class="panel">
-      <h2>After — shown at the size the game draws it</h2>
-      <div class="checker"><canvas id="after"></canvas></div>
+      <h2>After — at the size the game draws it</h2>
+      <div class="checker"><div class="sheetgrid" id="afterGrid"></div></div>
       <p class="hint" id="dims"></p>
     </div>
   </div>
@@ -163,58 +168,58 @@
 <script>
 /* The room's own colours, so a conditioned sprite lands in the same world. */
 var PALETTE = [
-  '#140d12','#241823','#33211a','#4d3225','#6b4630','#8a5c3c',
-  '#6d5c4a','#8a7660','#d99038','#f0bb63','#ffd97e','#b2451f',
-  '#efe0c2','#d6c3a0','#b09b7c','#f6efe0',
-  '#141d2b','#24334a','#25344a','#3c5570',
-  '#7f858d','#aeb4bb','#565c64',
-  '#8c3529','#6a271e','#46583a','#5f7550',
-  '#39456e','#4f5d8c','#5a3450','#5e4126','#7d5a35','#1b1620','#2e2733',
-  '#e0b08a','#bd8a68','#f2cba7','#c98d63','#a06e4b','#e0aa80',
-  '#8a5a3c','#6b4229','#a8734f','#5d3a26','#452a1b','#7a5136',
-  '#2a2028','#4a3020','#9a9288','#6d3520','#b99456','#ded4c2'
+  '#140d12','#241823','#33211a','#4d3225','#6b4630','#8a5c3c','#6d5c4a','#8a7660',
+  '#d99038','#f0bb63','#ffd97e','#b2451f','#efe0c2','#d6c3a0','#b09b7c','#f6efe0',
+  '#141d2b','#24334a','#25344a','#3c5570','#7f858d','#aeb4bb','#565c64',
+  '#8c3529','#6a271e','#46583a','#5f7550','#39456e','#4f5d8c','#5a3450','#5e4126',
+  '#7d5a35','#1b1620','#2e2733','#e0b08a','#bd8a68','#f2cba7','#c98d63','#a06e4b',
+  '#e0aa80','#8a5a3c','#6b4229','#a8734f','#5d3a26','#452a1b','#7a5136','#2a2028',
+  '#4a3020','#9a9288','#6d3520','#b99456','#ded4c2'
 ].map(function (h) {
   return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
 });
 
-var src = null;
+var MOODS = ['neutral', 'warm', 'worried', 'stern'];
+
 var $ = function (id) { return document.getElementById(id); };
-var before = $('before'), after = $('after');
+var src = null, crop = null, dragging = null, outputs = [];
+var before = $('before');
 
-/* Crop is held in 0..1 of the source, so it survives any preview size. */
-var crop = null, dragging = null;
+/* ---------------------------------------------------------------- loading */
+function load(file) {
+  var img = new Image();
+  img.onload = function () { src = img; crop = null; render(); $('save').disabled = false; };
+  img.src = URL.createObjectURL(file);
+}
+$('file').onchange = function (e) { if (e.target.files[0]) load(e.target.files[0]); };
+var drop = $('drop');
+drop.ondragover = function (e) { e.preventDefault(); drop.classList.add('over'); };
+drop.ondragleave = function () { drop.classList.remove('over'); };
+drop.ondrop = function (e) {
+  e.preventDefault(); drop.classList.remove('over');
+  if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);
+};
 
+/* ------------------------------------------------------------------ crop */
 function cropRect() {
-  if (!src) return null;
   var c = crop || { x: 0, y: 0, w: 1, h: 1 };
   return {
-    x: Math.round(c.x * src.naturalWidth),
-    y: Math.round(c.y * src.naturalHeight),
+    x: Math.round(c.x * src.naturalWidth), y: Math.round(c.y * src.naturalHeight),
     w: Math.max(1, Math.round(c.w * src.naturalWidth)),
     h: Math.max(1, Math.round(c.h * src.naturalHeight))
   };
 }
-
 function beforePoint(ev) {
   var b = before.getBoundingClientRect();
-  return {
-    x: Math.min(1, Math.max(0, (ev.clientX - b.left) / b.width)),
-    y: Math.min(1, Math.max(0, (ev.clientY - b.top) / b.height))
-  };
+  return { x: Math.min(1, Math.max(0, (ev.clientX - b.left) / b.width)),
+           y: Math.min(1, Math.max(0, (ev.clientY - b.top) / b.height)) };
 }
-
-before.addEventListener('mousedown', function (ev) {
-  if (!src) return;
-  dragging = beforePoint(ev);
-  ev.preventDefault();
-});
+before.addEventListener('mousedown', function (ev) { if (src) { dragging = beforePoint(ev); ev.preventDefault(); } });
 window.addEventListener('mousemove', function (ev) {
   if (!dragging || !src) return;
   var p2 = beforePoint(ev);
-  crop = {
-    x: Math.min(dragging.x, p2.x), y: Math.min(dragging.y, p2.y),
-    w: Math.abs(p2.x - dragging.x), h: Math.abs(p2.y - dragging.y)
-  };
+  crop = { x: Math.min(dragging.x, p2.x), y: Math.min(dragging.y, p2.y),
+           w: Math.abs(p2.x - dragging.x), h: Math.abs(p2.y - dragging.y) };
   render();
 });
 window.addEventListener('mouseup', function () {
@@ -225,185 +230,221 @@ window.addEventListener('mouseup', function () {
 });
 $('resetCrop').onclick = function () { crop = null; render(); };
 
-function load(file) {
-  var img = new Image();
-  img.onload = function () { src = img; render(); $('save').disabled = false; };
-  img.src = URL.createObjectURL(file);
-}
-
-$('file').onchange = function (e) { if (e.target.files[0]) load(e.target.files[0]); };
-var drop = $('drop');
-drop.ondragover = function (e) { e.preventDefault(); drop.classList.add('over'); };
-drop.ondragleave = function () { drop.classList.remove('over'); };
-drop.ondrop = function (e) {
-  e.preventDefault(); drop.classList.remove('over');
-  if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]);
-};
-
+/* --------------------------------------------------------------- controls */
 ['h','c','t'].forEach(function (id) {
   $(id).oninput = function () { $(id[0] + 'Val').textContent = $(id).value; render(); };
 });
-$('snap').onchange = render;
-$('cut').onchange = render;
+['snap','cut','isSheet','cols','rows'].forEach(function (id) { $(id).onchange = render; });
+$('who').onchange = render;
+$('mood').onchange = render;
 
-function fileName() { return $('who').value + '-' + $('mood').value + '.png'; }
-function paintName() { $('fname').textContent = fileName(); }
-$('who').onchange = paintName;
-$('mood').onchange = paintName;
-paintName();
+/* ------------------------------------------------------------ conditioning */
+function posterize(v, steps) { var s = 255 / (steps - 1); return Math.round(Math.round(v / s) * s); }
 
 function nearestPalette(r, g, b) {
-  var best = 0, bd = 1e9;
+  var best = PALETTE[0], bd = 1e9;
   for (var i = 0; i < PALETTE.length; i++) {
     var p = PALETTE[i];
     var d = (p[0]-r)*(p[0]-r) + (p[1]-g)*(p[1]-g) + (p[2]-b)*(p[2]-b);
-    if (d < bd) { bd = d; best = i; }
+    if (d < bd) { bd = d; best = p; }
   }
-  return PALETTE[best];
+  return best;
 }
 
-/* Median-cut-ish: quantise each channel to N steps. Cheap, and for a cel-shaded
-   source it collapses the near-identical tones that make AI output look muddy. */
-function posterize(v, steps) {
-  var s = 255 / (steps - 1);
-  return Math.round(Math.round(v / s) * s);
-}
+/* One panel: average down, knock out the backdrop, cut the palette.
+   Returns the canvas plus the bounds of what is actually drawn on it. */
+function conditionPanel(sx, sy, sw, sh, W, H) {
+  var cv = document.createElement('canvas');
+  cv.width = W; cv.height = H;
+  var cx = cv.getContext('2d');
+  cx.imageSmoothingEnabled = true;
+  cx.imageSmoothingQuality = 'high';
+  cx.drawImage(src, sx, sy, sw, sh, 0, 0, W, H);
 
-function render() {
-  if (!src) return;
-  var H = +$('h').value;
-  var cr = cropRect();
-  var W = Math.max(1, Math.round(H * (cr.w / cr.h)));
-
-  /* preview of the original, with the crop box drawn over it */
-  var bw = 420, bh = Math.round(bw * (src.naturalHeight / src.naturalWidth));
-  var bc = before.getContext('2d');
-  before.width = bw; before.height = bh;
-  bc.imageSmoothingEnabled = true;
-  bc.clearRect(0, 0, bw, bh);
-  bc.drawImage(src, 0, 0, bw, bh);
-  if (crop) {
-    bc.fillStyle = 'rgba(10,6,10,0.55)';
-    bc.fillRect(0, 0, bw, Math.round(crop.y * bh));
-    bc.fillRect(0, Math.round((crop.y + crop.h) * bh), bw, bh);
-    bc.fillRect(0, Math.round(crop.y * bh), Math.round(crop.x * bw), Math.round(crop.h * bh));
-    bc.fillRect(Math.round((crop.x + crop.w) * bw), Math.round(crop.y * bh), bw, Math.round(crop.h * bh));
-    bc.strokeStyle = '#f0bb63'; bc.lineWidth = 2;
-    bc.strokeRect(Math.round(crop.x * bw), Math.round(crop.y * bh),
-                  Math.round(crop.w * bw), Math.round(crop.h * bh));
-  }
-  $('cropInfo').textContent = crop
-    ? 'Cropped to ' + Math.round(crop.w * 100) + '% × ' + Math.round(crop.h * 100) + '% of the picture.'
-    : 'No crop — using the whole picture. Drag a box on the Before picture.';
-
-  /* Area-average down first. Nearest-neighbour straight off a soft AI image
-     gives you noise; averaging then hard-quantising gives you pixel art. */
-  var small = document.createElement('canvas');
-  small.width = W; small.height = H;
-  var sc = small.getContext('2d');
-  sc.imageSmoothingEnabled = true;
-  sc.imageSmoothingQuality = 'high';
-  sc.drawImage(src, cr.x, cr.y, cr.w, cr.h, 0, 0, W, H);
-
-  var img = sc.getImageData(0, 0, W, H), d = img.data;
+  var img = cx.getImageData(0, 0, W, H), d = img.data;
   var steps = Math.max(2, Math.round(+$('c').value / 4));
   var snap = $('snap').checked, cut = $('cut').checked, tol = +$('t').value;
 
-  /* the four corners tell us what the background is */
-  var corners = [[0,0], [W-1,0], [0,H-1], [W-1,H-1]].map(function (pt) {
-    var o = (pt[1] * W + pt[0]) * 4;
-    return [d[o], d[o+1], d[o+2]];
+  var corners = [[0,0],[W-1,0],[0,H-1],[W-1,H-1]].map(function (pt) {
+    var o = (pt[1] * W + pt[0]) * 4; return [d[o], d[o+1], d[o+2]];
   });
 
-  /* Background removal by flood fill from the edges, not by colour alone.
-     Keying globally on "anything close to the corner colour" eats parts of the
-     figure that happen to be a similar tone — a cream waistcoat against a sage
-     backdrop, say. Filling inward from the border only removes background that
-     is actually connected to the outside. */
+  /* Flood inward from the edges rather than keying on colour everywhere, so a
+     cream waistcoat that happens to resemble a sage backdrop survives. */
   if (cut) {
-    var seen = new Uint8Array(W * H);
-    var stack = [];
+    var seen = new Uint8Array(W * H), stack = [];
     for (var bx = 0; bx < W; bx++) { stack.push(bx); stack.push((H - 1) * W + bx); }
     for (var by = 0; by < H; by++) { stack.push(by * W); stack.push(by * W + W - 1); }
-
-    /* True Euclidean distance, not a sum of channel differences. Summing
-       exaggerates near-matches: a warm cream waistcoat against a sage backdrop
-       sums to a big number on one channel and reads as "close enough" to
-       delete, which is exactly how you lose half a character. */
-    function isBackdrop(idx) {
-      var o = idx * 4;
-      if (!d[o + 3]) return true;
-      for (var k = 0; k < corners.length; k++) {
-        var dr = d[o] - corners[k][0], dg = d[o+1] - corners[k][1], db = d[o+2] - corners[k][2];
-        if (Math.sqrt(dr*dr + dg*dg + db*db) <= tol) return true;
-      }
-      return false;
-    }
-
     while (stack.length) {
       var idx = stack.pop();
       if (idx < 0 || idx >= W * H || seen[idx]) continue;
-      if (!isBackdrop(idx)) continue;
-      seen[idx] = 1;
-      d[idx * 4 + 3] = 0;
-      var cx2 = idx % W, cy2 = (idx / W) | 0;
-      if (cx2 > 0) stack.push(idx - 1);
-      if (cx2 < W - 1) stack.push(idx + 1);
-      if (cy2 > 0) stack.push(idx - W);
-      if (cy2 < H - 1) stack.push(idx + W);
+      var o = idx * 4, isBg = !d[o + 3];
+      if (!isBg) {
+        for (var k = 0; k < corners.length; k++) {
+          var dr = d[o] - corners[k][0], dg = d[o+1] - corners[k][1], db = d[o+2] - corners[k][2];
+          if (Math.sqrt(dr*dr + dg*dg + db*db) <= tol) { isBg = true; break; }
+        }
+      }
+      if (!isBg) continue;
+      seen[idx] = 1; d[o + 3] = 0;
+      var px = idx % W, py = (idx / W) | 0;
+      if (px > 0) stack.push(idx - 1);
+      if (px < W - 1) stack.push(idx + 1);
+      if (py > 0) stack.push(idx - W);
+      if (py < H - 1) stack.push(idx + W);
     }
   }
 
-  for (var i = 0; i < d.length; i += 4) {
-    /* hard alpha only — a half-transparent edge ruins the pixel look */
-    d[i+3] = d[i+3] > 128 ? 255 : 0;
-    if (!d[i+3]) continue;
-    var r = posterize(d[i], steps), g = posterize(d[i+1], steps), b = posterize(d[i+2], steps);
-    if (snap) { var pc = nearestPalette(r, g, b); r = pc[0]; g = pc[1]; b = pc[2]; }
-    d[i] = r; d[i+1] = g; d[i+2] = b;
-  }
-
-  sc.putImageData(img, 0, 0);
-
-  /* Trim the empty margins. Generators leave wildly different amounts of space
-     around a figure; trimming means the game can anchor every sprite the same
-     way instead of you re-tuning the layout for each one. */
   var minX = W, minY = H, maxX = -1, maxY = -1;
   for (var y = 0; y < H; y++) {
     for (var x = 0; x < W; x++) {
-      if (d[(y * W + x) * 4 + 3]) {
-        if (x < minX) minX = x; if (x > maxX) maxX = x;
-        if (y < minY) minY = y; if (y > maxY) maxY = y;
-      }
+      var q = (y * W + x) * 4;
+      d[q+3] = d[q+3] > 128 ? 255 : 0;          /* hard alpha only */
+      if (!d[q+3]) continue;
+      var r = posterize(d[q], steps), g = posterize(d[q+1], steps), b = posterize(d[q+2], steps);
+      if (snap) { var pc = nearestPalette(r, g, b); r = pc[0]; g = pc[1]; b = pc[2]; }
+      d[q] = r; d[q+1] = g; d[q+2] = b;
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
     }
   }
-  if (maxX >= minX && maxY >= minY && (maxX - minX + 1 !== W || maxY - minY + 1 !== H)) {
-    var tw = maxX - minX + 1, th = maxY - minY + 1;
-    var trimmed = document.createElement('canvas');
-    trimmed.width = tw; trimmed.height = th;
-    var tc = trimmed.getContext('2d');
-    tc.imageSmoothingEnabled = false;
-    tc.drawImage(small, minX, minY, tw, th, 0, 0, tw, th);
-    small = trimmed; W = tw; H = th;
+  cx.putImageData(img, 0, 0);
+  return { cv: cv, box: (maxX < minX) ? null : { x: minX, y: minY, x2: maxX, y2: maxY } };
+}
+
+function cropCanvas(cv, box) {
+  var w = box.x2 - box.x + 1, h = box.y2 - box.y + 1;
+  var out = document.createElement('canvas');
+  out.width = w; out.height = h;
+  var c = out.getContext('2d');
+  c.imageSmoothingEnabled = false;
+  c.drawImage(cv, box.x, box.y, w, h, 0, 0, w, h);
+  return out;
+}
+
+/* ------------------------------------------------------------------ render */
+function render() {
+  if (!src) return;
+  var sheet = $('isSheet').checked;
+  var cols = sheet ? Math.max(1, +$('cols').value) : 1;
+  var rows = sheet ? Math.max(1, +$('rows').value) : 1;
+  $('moodWrap').hidden = sheet;
+
+  /* Before, with the crop and the panel grid drawn over it */
+  var bw = 420, bh = Math.round(bw * (src.naturalHeight / src.naturalWidth));
+  before.width = bw; before.height = bh;
+  var bc = before.getContext('2d');
+  bc.imageSmoothingEnabled = true;
+  bc.clearRect(0, 0, bw, bh);
+  bc.drawImage(src, 0, 0, bw, bh);
+  var cr = cropRect();
+  if (crop) {
+    bc.fillStyle = 'rgba(10,6,10,0.55)';
+    bc.fillRect(0, 0, bw, crop.y * bh);
+    bc.fillRect(0, (crop.y + crop.h) * bh, bw, bh);
+    bc.fillRect(0, crop.y * bh, crop.x * bw, crop.h * bh);
+    bc.fillRect((crop.x + crop.w) * bw, crop.y * bh, bw, crop.h * bh);
+    bc.strokeStyle = '#f0bb63'; bc.lineWidth = 2;
+    bc.strokeRect(crop.x * bw, crop.y * bh, crop.w * bw, crop.h * bh);
+  }
+  if (sheet && (cols > 1 || rows > 1)) {
+    var rx = (crop ? crop.x : 0) * bw, ry = (crop ? crop.y : 0) * bh;
+    var rw = (crop ? crop.w : 1) * bw, rh = (crop ? crop.h : 1) * bh;
+    bc.strokeStyle = 'rgba(240,187,99,0.8)'; bc.lineWidth = 1;
+    for (var i = 1; i < cols; i++) {
+      bc.beginPath(); bc.moveTo(rx + rw * i / cols, ry); bc.lineTo(rx + rw * i / cols, ry + rh); bc.stroke();
+    }
+    for (var j = 1; j < rows; j++) {
+      bc.beginPath(); bc.moveTo(rx, ry + rh * j / rows); bc.lineTo(rx + rw, ry + rh * j / rows); bc.stroke();
+    }
+  }
+  $('cropInfo').textContent = crop
+    ? 'Cropped to ' + Math.round(crop.w * 100) + '% × ' + Math.round(crop.h * 100) + '% of the picture.'
+    : 'No crop — using the whole picture.';
+
+  /* Condition every panel at the same size */
+  var panelH = +$('h').value;
+  var srcPanelW = cr.w / cols, srcPanelH = cr.h / rows;
+  var panelW = Math.max(1, Math.round(panelH * (srcPanelW / srcPanelH)));
+
+  var made = [];
+  for (var r2 = 0; r2 < rows; r2++) {
+    for (var c2 = 0; c2 < cols; c2++) {
+      made.push(conditionPanel(
+        Math.round(cr.x + c2 * srcPanelW), Math.round(cr.y + r2 * srcPanelH),
+        Math.round(srcPanelW), Math.round(srcPanelH), panelW, panelH));
+    }
   }
 
-  /* show it blown up, exactly the way the game will */
-  after.width = W * 2; after.height = H * 2;
-  var ac = after.getContext('2d');
-  ac.imageSmoothingEnabled = false;
-  ac.clearRect(0, 0, after.width, after.height);
-  ac.drawImage(small, 0, 0, W, H, 0, 0, after.width, after.height);
+  /* One box across all panels. Trimming each to its own contents would shift
+     the head between expressions, which is exactly what a sheet is meant to
+     avoid — so they all get cropped identically. */
+  var box = null;
+  made.forEach(function (m) {
+    if (!m.box) return;
+    box = box ? { x: Math.min(box.x, m.box.x), y: Math.min(box.y, m.box.y),
+                  x2: Math.max(box.x2, m.box.x2), y2: Math.max(box.y2, m.box.y2) } : m.box;
+  });
+  if (!box) box = { x: 0, y: 0, x2: panelW - 1, y2: panelH - 1 };
 
-  $('dims').textContent = W + ' × ' + H + ' pixels. Saved at that size.';
-  after._small = small;
+  outputs = made.map(function (m) { return cropCanvas(m.cv, box); });
+
+  /* After */
+  var grid = $('afterGrid');
+  grid.innerHTML = '';
+  outputs.forEach(function (cv, i) {
+    var cell = document.createElement('div');
+    cell.className = 'cell';
+    var shown = document.createElement('canvas');
+    shown.width = cv.width; shown.height = cv.height;
+    var sc2 = shown.getContext('2d');
+    sc2.imageSmoothingEnabled = false;
+    sc2.drawImage(cv, 0, 0);
+    shown.style.width = Math.min(220, cv.width * (outputs.length > 2 ? 1 : 2)) + 'px';
+    cell.appendChild(shown);
+    if (sheet) {
+      var lab = document.createElement('span');
+      lab.textContent = MOODS[i] || ('extra ' + (i + 1));
+      cell.appendChild(lab);
+    }
+    grid.appendChild(cell);
+  });
+
+  var w0 = outputs.length ? outputs[0].width : 0, h0 = outputs.length ? outputs[0].height : 0;
+  $('dims').textContent = outputs.length + (outputs.length === 1 ? ' sprite, ' : ' sprites, each ') +
+    w0 + ' × ' + h0 + ' pixels.';
+  paintNames();
+}
+
+/* ------------------------------------------------------------------ saving */
+function paintNames() {
+  var sheet = $('isSheet').checked, who = $('who').value;
+  if (sheet) {
+    var names = outputs.map(function (_, i) { return who + '-' + (MOODS[i] || ('extra' + (i+1))) + '.png'; });
+    $('fileHint').innerHTML = 'Saves as ' + names.map(function (n) { return '<code>' + n + '</code>'; }).join(', ') +
+      ' into <code>art/characters/</code>.';
+    $('save').textContent = 'Download all ' + outputs.length;
+  } else {
+    $('fileHint').innerHTML = 'Saves as <code>' + who + '-' + $('mood').value +
+      '.png</code>. Put it in <code>art/characters/</code> and it appears in the game.';
+    $('save').textContent = 'Download';
+  }
 }
 
 $('save').onclick = function () {
-  if (!after._small) return;
-  var a = document.createElement('a');
-  a.download = fileName();
-  a.href = after._small.toDataURL('image/png');
-  a.click();
+  if (!outputs.length) return;
+  var sheet = $('isSheet').checked, who = $('who').value;
+  outputs.forEach(function (cv, i) {
+    var name = sheet ? (who + '-' + (MOODS[i] || ('extra' + (i+1))) + '.png')
+                     : (who + '-' + $('mood').value + '.png');
+    /* staggered, because browsers throttle a burst of downloads */
+    setTimeout(function () {
+      var a = document.createElement('a');
+      a.download = name;
+      a.href = cv.toDataURL('image/png');
+      a.click();
+    }, i * 350);
+  });
 };
 </script>
 </body>

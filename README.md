@@ -252,8 +252,12 @@ To cut the game short, edit `ORDER` in `js/data.js`.
   enough to see somebody in the room.
 - **`tools/pixelate.html`** conditions a generated image into a usable sprite:
   area-averages it down to a real pixel grid, cuts the palette to the room's
-  own colours, knocks out a flat background, and forces hard alpha. Open it in
-  a browser; nothing is uploaded anywhere.
+  own colours, knocks out a flat background by flooding in from the edges, and
+  forces hard alpha. It also **slices a sheet of expressions** — tick the box,
+  say how many panels across and down, and it cuts them apart, names them in
+  order (neutral, warm, worried, stern) and trims every panel to one shared
+  box, so a character's head cannot jump when the game swaps expressions.
+  Open it in a browser; nothing is uploaded anywhere.
 - **Multi-day play.** Doesn't fit one period, but `js/scenes.js` and the `ORDER`
   array are fully separable, so a three-day version is an expansion rather than
   a rewrite.
