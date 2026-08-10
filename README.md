@@ -242,8 +242,11 @@ To cut the game short, edit `ORDER` in `js/data.js`.
 - **Real timing data.** See the timing note above.
 - **Per-character epilogues** on the closing screen ("Patience testified on
   Thursday") — designed but not built.
-- **Character art is procedural by default**, generated in code from one shared
-  `drawPerson()` character sheet. To replace it, drop a PNG into
+- **Character art is drawn in code**, in the manner of a modern pixel-art
+  visual novel: a hard dark outline found from the silhouette, three hard-edged
+  tones per material, hair as big shapes with one bright band, and hands
+  resting on the counter. Each pose is cached, so the whole figure is composed
+  once per expression rather than sixty times a second. To replace it, drop a PNG into
   `art/characters/` using the names listed in `js/sprites.js` — every path is
   already wired, so there is nothing to edit and nothing to uncomment. A file
   that isn't there is ignored and the drawn figure is used instead, so art can
