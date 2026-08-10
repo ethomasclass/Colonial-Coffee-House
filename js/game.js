@@ -80,6 +80,7 @@
 
   function showLine(who, text, isNarration, done, expr) {
     if (expr) st.expr = expr;
+    if (!isNarration && who) A.nudgeSprite();   /* a small settle as they speak */
     el.dialogue.hidden = false;
     el.speaker.textContent = isNarration ? '' : (who ? who.name : '');
     el.speaker.hidden = isNarration || !who;
@@ -186,6 +187,7 @@
     if (st.patronIndex >= ORDER.length) return endNight();
     st.patron = ORDER[st.patronIndex];
     st.expr = 'neutral';
+    A.enterSprite(frame);          /* they walk in rather than appearing */
     updateHud();
     save();
     var sc = S[st.patron.id];

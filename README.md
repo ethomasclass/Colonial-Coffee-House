@@ -253,6 +253,13 @@ To cut the game short, edit `ORDER` in `js/data.js`.
   arrive one face at a time. Missing expressions fall back down a chain, so
   four images per character covers all eight moods and `neutral` alone is
   enough to see somebody in the room.
+- **Sprites move.** A patron rises into the seat rather than appearing,
+  breathes, shifts their weight slowly, and settles a little on each line of
+  dialogue as though they had just spoken. A change of mood gets its own small
+  beat. All of it works off one still image, and every displacement is a whole
+  number of pixels, so the art never falls off its grid. Supply an
+  eyes-closed `-blink.png` and the character blinks by itself; leave it out and
+  nothing blinks.
 - **`tools/pixelate.html`** conditions a generated image into a usable sprite:
   area-averages it down to a real pixel grid, cuts the palette to the room's
   own colours, knocks out a flat background by flooding in from the edges, and

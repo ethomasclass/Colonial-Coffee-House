@@ -891,7 +891,8 @@
     warm: ['neutral'],
     thoughtful: ['neutral'],
     surprised: ['neutral'],
-    neutral: []
+    neutral: [],
+    blink: []            /* no blink art simply means no blinking */
   };
 
   function spriteUrl(charId, expr) {
@@ -914,15 +915,69 @@
     return null;
   }
 
-  function drawSpriteImage(img, f) {
+  /* =======================================================================
+     MOTION
+
+     A still portrait sits there; a moving one is in the room. All of this
+     works off a single image, and every displacement is a whole number of
+     pixels so the art never falls off its grid — no scaling, no rotation,
+     no resampling.
+     ======================================================================= */
+
+  var motion = { id: null, enter: -999, nudge: 0, expr: null, blinkAt: 0, blinkEnd: 0 };
+
+  /* Called when somebody new sits down, so they arrive rather than appear. */
+  function enterSprite(f) {
+    motion.enter = f;
+    motion.nudge = 0;
+    motion.blinkAt = f + 90 + Math.floor(rnd(f) * 160);
+    motion.blinkEnd = 0;
+  }
+
+  /* Called on each new line of dialogue: a small settle, as if they spoke. */
+  function nudgeSprite() { motion.nudge = 3.2; }
+
+  function motionOffsets(f, charId, exprName) {
+    if (motion.id !== charId) { motion.id = charId; motion.expr = exprName; }
+    if (motion.expr !== exprName) {
+      motion.expr = exprName;
+      motion.nudge = Math.max(motion.nudge, 2.4);   /* a beat on a mood change */
+    }
+
+    var age = f - motion.enter;
+    var t = Math.max(0, Math.min(1, age / 20));
+    var ease = 1 - Math.pow(1 - t, 3);
+
+    var dy = Math.round((1 - ease) * 30);           /* rises into the seat   */
+    dy += Math.round(Math.sin(f * 0.035));          /* breath                */
+    if (motion.nudge > 0.15) {
+      dy -= Math.round(motion.nudge);
+      motion.nudge *= 0.82;
+    } else motion.nudge = 0;
+
+    var dx = Math.round(Math.sin(f * 0.0115) * 1);  /* a slow shift of weight */
+
+    /* Blink, if there is a frame for it — otherwise this costs nothing. */
+    var blinking = false;
+    if (f > motion.blinkAt) {
+      motion.blinkEnd = f + 5;
+      motion.blinkAt = f + 130 + Math.floor(rnd(f * 0.37) * 220);
+    }
+    if (f < motion.blinkEnd) blinking = true;
+
+    return { dx: dx, dy: dy, alpha: Math.min(1, t * 1.5), blinking: blinking };
+  }
+
+  function drawSpriteImage(img, f, m) {
     var L = global.SPRITE_LAYOUT || { height: 0.70, centreX: 0.5, bottom: 0.84 };
-    var bob = Math.round(Math.sin(f * 0.035));
     var h = Math.round(H * L.height);
     var w = Math.round(h * (img.naturalWidth / img.naturalHeight));
-    var x = Math.round(W * L.centreX - w / 2);
-    var y = Math.round(H * L.bottom - h) + bob;
+    var x = Math.round(W * L.centreX - w / 2) + m.dx;
+    var y = Math.round(H * L.bottom - h) + m.dy;
     bctx.imageSmoothingEnabled = false;
+    if (m.alpha < 1) bctx.globalAlpha = m.alpha;
     bctx.drawImage(img, x, y, w, h);
+    bctx.globalAlpha = 1;
   }
 
   /* =======================================================================
@@ -999,18 +1054,30 @@
   }
 
   function drawPerson(cfg, exprName, f, charId) {
+    var m = motionOffsets(f, charId || 'anon', exprName);
+
     /* hand-made art wins, when there is any */
     if (charId) {
-      var url = spriteUrl(charId, exprName);
-      if (url) {
-        var img = getSprite(url);
-        if (img) return drawSpriteImage(img, f);
+      var img = null;
+      /* A blink frame is used only while the eyes are shut, and only if it has
+         actually loaded. Reaching for one that isn't there must not cost the
+         character their portrait for those few frames. */
+      if (m.blinking) {
+        var burl = spriteUrl(charId, 'blink');
+        if (burl) img = getSprite(burl);
       }
+      if (!img) {
+        var url = spriteUrl(charId, exprName);
+        if (url) img = getSprite(url);
+      }
+      if (img) return drawSpriteImage(img, f, m);
     }
-    var bob = Math.round(Math.sin(f * 0.035));
+
     var pose = posePixels(charId || 'anon', cfg, exprName);
     bctx.imageSmoothingEnabled = false;
-    bctx.drawImage(pose, 0, bob);
+    if (m.alpha < 1) bctx.globalAlpha = m.alpha;
+    bctx.drawImage(pose, m.dx, m.dy);
+    bctx.globalAlpha = 1;
   }
 
   /* the empty room between customers — a stool where somebody was */
@@ -1027,6 +1094,7 @@
     setPhase: setPhase, getPhase: getPhase, applyNightWash: applyNightWash,
     addRing: addRing, addTarnish: addTarnish, wipeAt: wipeAt, clearRings: clearRings, ringCount: ringCount,
     hitTest: hitTest, toLogical: toLogical, countKind: countKind,
+    enterSprite: enterSprite, nudgeSprite: nudgeSprite,
     hasSprite: function (id, expr) { return !!spriteUrl(id, expr); },
     ctx: function () { return bctx; }
   };

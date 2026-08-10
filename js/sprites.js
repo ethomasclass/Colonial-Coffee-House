@@ -14,6 +14,10 @@
    tools/pixelate.html will name the file for you if you pick the character
    and expression from its menu before downloading.
 
+   `blink` is optional and separate: supply an eyes-closed version and the
+   character blinks every few seconds by itself. It costs one image and buys
+   more life than anything else on this list. Leave it out and nothing blinks.
+
    You do NOT need all four expressions. Missing ones fall back:
        bright   -> warm    -> neutral
        downcast -> worried -> neutral
@@ -39,7 +43,8 @@ window.SPRITES = {
     neutral: 'art/characters/ezra-neutral.png',
     warm:    'art/characters/ezra-warm.png',
     worried: 'art/characters/ezra-worried.png',
-    stern:   'art/characters/ezra-stern.png'
+    stern:   'art/characters/ezra-stern.png',
+    blink:   'art/characters/ezra-blink.png'
   },
 
   /* Rev. Samuel Thorne — the Old Light minister */
@@ -47,7 +52,8 @@ window.SPRITES = {
     neutral: 'art/characters/thorne-neutral.png',
     warm:    'art/characters/thorne-warm.png',
     worried: 'art/characters/thorne-worried.png',
-    stern:   'art/characters/thorne-stern.png'
+    stern:   'art/characters/thorne-stern.png',
+    blink:   'art/characters/thorne-blink.png'
   },
 
   /* Cato Bell — the printer's apprentice */
@@ -55,7 +61,8 @@ window.SPRITES = {
     neutral: 'art/characters/cato-neutral.png',
     warm:    'art/characters/cato-warm.png',
     worried: 'art/characters/cato-worried.png',
-    stern:   'art/characters/cato-stern.png'
+    stern:   'art/characters/cato-stern.png',
+    blink:   'art/characters/cato-blink.png'
   },
 
   /* Capt. Jonas Bright — master of the sloop Dolphin */
@@ -63,7 +70,8 @@ window.SPRITES = {
     neutral: 'art/characters/bright-neutral.png',
     warm:    'art/characters/bright-warm.png',
     worried: 'art/characters/bright-worried.png',
-    stern:   'art/characters/bright-stern.png'
+    stern:   'art/characters/bright-stern.png',
+    blink:   'art/characters/bright-blink.png'
   },
 
   /* Patience Marsh — the merchant's daughter */
@@ -71,7 +79,8 @@ window.SPRITES = {
     neutral: 'art/characters/patience-neutral.png',
     warm:    'art/characters/patience-warm.png',
     worried: 'art/characters/patience-worried.png',
-    stern:   'art/characters/patience-stern.png'
+    stern:   'art/characters/patience-stern.png',
+    blink:   'art/characters/patience-blink.png'
   },
 
   /* Mr. Aldis Pym — His Majesty's Customs */
@@ -79,7 +88,8 @@ window.SPRITES = {
     neutral: 'art/characters/pym-neutral.png',
     warm:    'art/characters/pym-warm.png',
     worried: 'art/characters/pym-worried.png',
-    stern:   'art/characters/pym-stern.png'
+    stern:   'art/characters/pym-stern.png',
+    blink:   'art/characters/pym-blink.png'
   }
 
 };
