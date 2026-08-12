@@ -16,10 +16,12 @@
 
 window.BACKDROP = {
 
-  /* 384x216 exactly, so it lands on the pixel grid with no resampling.
-     art/room/tavern-night-source.png is the full-size original it came from,
-     kept so the small one can be remade if the room ever changes. */
-  image: 'art/room/tavern-night.png',
+  /* The painted room. Null means the game draws its own tavern instead —
+     which it does to these same measurements, so everything below still
+     applies either way. Point this at art/room/tavern-night.png to switch to
+     the painting; art/room/tavern-night-source.png is the full-size original
+     it was made from. */
+  image: null,   /* 'art/room/tavern-night.png' to use the painting instead */
 
   /* Top of the bar. The customer stands behind it and cups sit on it. */
   counterY: 168,

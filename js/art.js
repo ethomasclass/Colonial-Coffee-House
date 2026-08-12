@@ -135,6 +135,22 @@
   }
 
   /* deterministic pseudo-random so rain/flicker never reshuffles on resize */
+  /* A soft oval of light. Rings of flat colour read as a target; a shaped
+     falloff reads as a lamp. Only ever used while painting the cached room,
+     so it costs nothing per frame. */
+  function pool(cx, cy, rx, ry, stops) {
+    bctx.save();
+    bctx.translate(cx, cy);
+    bctx.scale(1, ry / rx);
+    var g = bctx.createRadialGradient(0, 0, 0, 0, 0, rx);
+    stops.forEach(function (st) { g.addColorStop(st[0], st[1]); });
+    bctx.fillStyle = g;
+    bctx.beginPath();
+    bctx.arc(0, 0, rx, 0, Math.PI * 2);
+    bctx.fill();
+    bctx.restore();
+  }
+
   function rnd(seed) { var x = Math.sin(seed * 12.9898) * 43758.5453; return x - Math.floor(x); }
 
   /* =========================================================================
@@ -268,8 +284,7 @@
   }
 
   /* Warm firelight breathing over a painted room, since a painting can’t. */
-  function hearthGlow(flick) {
-    var g = B.glow;
+  function hearthGlow(flick, g) {
     if (!g) return;
     var strength = (0.16 + 0.06 * flick) * (1 - phase * 0.7);
     if (strength <= 0.01) return;
@@ -282,61 +297,364 @@
     bctx.restore();
   }
 
+  /* =========================================================================
+     THE DRAWN TAVERN
+
+     The same room as the painting, built a rectangle at a time. It is drawn to
+     the measurements in backdrop.js rather than to its own, so the fire, the
+     rain, the spills and the click regions all land in the same places
+     whichever room is on screen.
+
+     Nothing in here moves, so it is painted once into a cached canvas and
+     blitted after that. Everything that does move — flame, rain, candles,
+     rings — is drawn over the top of it by drawRoom, exactly as it is over
+     the painting.
+     ========================================================================= */
+
+  /* Sampled off the painting, so the two rooms are lit by the same fire. */
+  var RC = {
+    ceil:        '#482118',
+    beam:        '#1f1010',
+    beamLit:     '#602918',
+    beamDark:    '#0f070b',
+    wood:        '#4e2318',
+    woodLit:     '#602918',
+    woodHi:      '#7a3a20',
+    woodDark:    '#2f1513',
+    woodDeep:    '#1f1010',
+    woodBlack:   '#14070a',
+    wallOlive:   '#7b672c',
+    wallOliveHi: '#93803a',
+    wallOliveDim:'#585039',
+    wallWarmDim: '#9e7e32',
+    wallWarm:    '#c18435',
+    wallWarmHi:  '#e19d45',
+    wallCore:    '#ffbe58',
+    wallCool:    '#2e3138',
+    brick:       '#632618',
+    brickLit:    '#923e1f',
+    brickDim:    '#461a12',
+    mortar:      '#2b1210',
+    glass:       '#1d304e',
+    glassLit:    '#2a4570',
+    glassDark:   '#141f36',
+    lead:        '#17253c',
+    signField:   '#8a7550',
+    signHi:      '#a68f66',
+    signDark:    '#5f4f34',
+    dragon:      '#4a6b34',
+    dragonDim:   '#33502a',
+    pewter:      '#7d8288',
+    pewterLit:   '#a8adb4',
+    pewterDim:   '#4e5257',
+    stone:       '#7a4c31',
+    stoneDim:    '#55301d',
+    china:       '#c9cdd4',
+    chinaBlue:   '#5a6b8e',
+    herb:        '#5e6b33',
+    herbDim:     '#3f4a24',
+    iron:        '#3a3438',
+    ironLit:     '#5a545a',
+    paper:       '#d6c3a0'
+  };
+
+  /* Where the drawn room keeps the things that move. Same shape as BACKDROP,
+     and it borrows that file's geometry so both rooms agree. The candles are
+     listed rather than drawn into the room, because they burn down. */
+  var GEO = {
+    window: B.window || { x: 122, y: 53, w: 50, h: 64 },
+    fire:   B.fire   || { x: 6, y: 100, w: 76, h: 88 },
+    shelf:  B.shelf  || { x: 298, y: 18, cols: 4, rows: 4, dx: 15, dy: 30 },
+    barL:   (B.bar ? B.bar.x : 24) - 6
+  };
+  var DRAWN = {
+    window:  { x: GEO.window.x, y: GEO.window.y, w: GEO.window.w, h: GEO.window.h },
+    fire:    { x: GEO.fire.x, y: GEO.fire.y, w: GEO.fire.w, h: GEO.fire.h, style: 'tips' },
+    glow:    { x: 44, y: 152, r: 104 },
+    candles: [ { x: 14, y: 64 }, { x: 344, y: 170 } ]
+  };
+
+  var tavernCache = null;
+  function tavern() {
+    if (!tavernCache) {
+      tavernCache = document.createElement('canvas');
+      tavernCache.width = W; tavernCache.height = H;
+      var keep = bctx;
+      bctx = tavernCache.getContext('2d');
+      bctx.imageSmoothingEnabled = false;
+      paintTavern();
+      bctx = keep;
+    }
+    return tavernCache;
+  }
+
+  function paintTavern() {
+    var win = GEO.window, fire = GEO.fire, shelf = GEO.shelf, barL = GEO.barL;
+    var wsTop = 126;                       /* top of the wainscot panelling */
+
+    clear(RC.woodBlack);
+
+    /* --- the wall, in three pools of light ------------------------------- */
+    r(0, 16, W, COUNTER_Y - 16, RC.wallOliveDim);
+    r(272, 16, W - 272, COUNTER_Y - 16, RC.wallCool);     /* away from the fire */
+    pool(202, 78, 118, 76, [[0, RC.wallOliveHi], [0.45, RC.wallOlive],
+                            [1, 'rgba(123,103,44,0)']]);
+    /* candlelight climbing the chimney breast */
+    pool(20, 52, 88, 68, [[0, RC.wallCore], [0.16, RC.wallWarmHi], [0.38, RC.wallWarm],
+                          [0.66, 'rgba(158,126,50,0.8)'], [1, 'rgba(158,126,50,0)']]);
+
+    /* --- ceiling boards and the beam under them -------------------------- */
+    r(0, 0, W, 8, RC.ceil);
+    for (var cb = 0; cb < W; cb += 46) r(cb, 0, 43, 7, RC.woodDark);
+    r(0, 7, W, 11, RC.beam);
+    hl(0, 7, W, RC.beamLit);
+    hl(0, 17, W, RC.beamDark);
+
+    /* --- the post that divides the warm end from the cold one ------------ */
+    r(272, 16, 16, COUNTER_Y - 16, RC.woodDark);
+    vl(272, 16, COUNTER_Y - 16, RC.woodLit);
+    vl(287, 16, COUNTER_Y - 16, RC.beamDark);
+    r(374, 16, 10, COUNTER_Y - 16, RC.woodDark);
+    vl(374, 16, COUNTER_Y - 16, RC.woodLit);
+
+    /* --- wainscot: vertical beading, as it is in the painting ------------ */
+    r(100, wsTop, 172, COUNTER_Y - wsTop, RC.woodDark);
+    hl(100, wsTop, 172, RC.woodHi);
+    hl(100, wsTop + 1, 172, RC.woodLit);
+    for (var bx = 104; bx < 272; bx += 7) {
+      vl(bx, wsTop + 3, COUNTER_Y - wsTop - 3, RC.woodDeep);
+      vl(bx + 1, wsTop + 3, COUNTER_Y - wsTop - 3, RC.wood);
+    }
+
+    paintHearth(fire, barL);
+    paintWindow(win);
+    paintSign();
+    paintCupboard(shelf);
+    paintBar(barL);
+  }
+
+  /* --- the hearth: brick, mantel, crane, and an empty firebox ------------- */
+  function paintHearth(fire, barL) {
+    /* brickwork */
+    r(0, 95, 100, 100, RC.brick);
+    for (var by = 95; by < 195; by += 5) {
+      hl(0, by, 100, RC.mortar);
+      for (var bx = (((by - 95) / 5) % 2 ? 8 : 0); bx < 100; bx += 16) vl(bx, by, 5, RC.mortar);
+    }
+    /* the courses nearest the fire catch it */
+    for (var lb = 0; lb < 14; lb++) {
+      var lx = (lb * 23) % 92, ly = 120 + ((lb * 31) % 66);
+      if (lx > 78 && ly > 150) continue;
+      r(lx, ly, 14, 4, RC.brickLit);
+    }
+    r(0, 176, 100, 19, RC.brickDim);
+
+    /* mantel shelf, with an almanac left on it */
+    r(0, 84, 106, 8, RC.woodLit);
+    hl(0, 84, 106, RC.woodHi);
+    r(0, 92, 106, 3, RC.woodDeep);
+    r(44, 70, 13, 14, RC.paper);
+    r(44, 70, 13, 3, '#b09b7c');
+    hl(46, 76, 9, RC.woodDark);
+    hl(46, 79, 7, RC.woodDark);
+
+    /* lintel over the opening */
+    r(fire.x - 5, fire.y - 9, fire.w + 10, 9, RC.woodDark);
+    hl(fire.x - 5, fire.y - 9, fire.w + 10, RC.woodHi);
+
+    /* the opening itself, and the sooty brick at the back of it */
+    r(fire.x, fire.y, fire.w, fire.h, RC.woodBlack);
+    r(fire.x + 3, fire.y + 3, fire.w - 6, fire.h - 14, '#20100e');
+    for (var sy = fire.y + 6; sy < fire.y + fire.h - 14; sy += 5) {
+      hl(fire.x + 5, sy, fire.w - 10, '#1c0e0c');
+    }
+
+    /* crane and kettle */
+    r(fire.x + 5, fire.y + 14, fire.w - 30, 2, RC.iron);
+    r(fire.x + 5, fire.y + 14, 2, 12, RC.iron);
+    vl(fire.x + fire.w - 28, fire.y + 16, 11, RC.iron);
+    r(fire.x + fire.w - 36, fire.y + 27, 17, 12, RC.pewterDim);
+    hl(fire.x + fire.w - 36, fire.y + 26, 17, RC.pewter);
+    r(fire.x + fire.w - 40, fire.y + 31, 4, 3, RC.pewterDim);
+    r(fire.x + fire.w - 30, fire.y + 24, 5, 3, RC.ironLit);
+
+    /* andirons and the logs the fire is drawn on top of */
+    r(fire.x + 6, fire.y + fire.h - 22, 3, 20, RC.iron);
+    r(fire.x + fire.w - 12, fire.y + fire.h - 22, 3, 20, RC.iron);
+    r(fire.x + 10, fire.y + fire.h - 14, fire.w - 24, 7, RC.woodDark);
+    r(fire.x + 15, fire.y + fire.h - 19, fire.w - 34, 6, '#3d2216');
+    hl(fire.x + 16, fire.y + fire.h - 19, fire.w - 36, RC.wood);
+    /* the bed of embers under them, which the drawn flames rise out of */
+    pool(fire.x + fire.w / 2, fire.y + fire.h - 12, 34, 15,
+         [[0, '#d4632a'], [0.35, '#a3411b'], [0.7, 'rgba(138,52,22,0.55)'],
+          [1, 'rgba(138,52,22,0)']]);
+
+    /* the flagged floor in front of it, where the bar hasn’t reached */
+    r(0, 195, barL + 5, H - 195, RC.stoneDim);
+    hl(0, 195, barL + 5, RC.stone);
+    for (var fx = 0; fx < barL + 5; fx += 19) vl(fx, 196, H - 196, '#3d2016');
+  }
+
+  /* --- leaded casement, with the night behind it -------------------------- */
+  function paintWindow(win) {
+    var x = win.x, y = win.y, w = win.w, h = win.h;
+    r(x - 7, y - 7, w + 14, h + 14, RC.woodDark);
+    r(x - 4, y - 4, w + 8, h + 8, RC.wood);
+    hl(x - 4, y - 4, w + 8, RC.woodHi);
+    r(x, y, w, h, RC.glass);
+
+    /* a little depth in the dark outside */
+    ell(x + w * 0.6, y + h * 0.35, 14, 11, RC.glassLit);
+    ell(x + w * 0.25, y + h * 0.75, 10, 8, RC.glassDark);
+
+    /* diamond leading */
+    for (var gy = 0; gy < h; gy++) {
+      for (var gx = 0; gx < w; gx++) {
+        if ((gx + gy) % 13 === 0 || (gx - gy + 1300) % 13 === 0) p(x + gx, y + gy, RC.lead);
+      }
+    }
+    /* the two casements, and the catch between them */
+    r(x + Math.floor(w / 2) - 1, y - 4, 3, h + 8, RC.wood);
+    vl(x + Math.floor(w / 2) - 1, y - 4, h + 8, RC.woodHi);
+    r(x + Math.floor(w / 2) - 2, y + Math.floor(h / 2), 5, 4, RC.iron);
+
+    /* sill, with a stoneware jug and a clay pipe on it */
+    r(x - 11, y + h + 5, w + 22, 6, RC.woodLit);
+    hl(x - 11, y + h + 5, w + 22, RC.woodHi);
+    r(x - 11, y + h + 11, w + 22, 2, RC.woodDeep);
+    r(x + 3, y + h - 5, 9, 10, RC.stoneDim);
+    r(x + 3, y + h - 7, 9, 3, RC.stone);
+    r(x + 12, y + h - 2, 3, 4, RC.stoneDim);
+    r(x + 22, y + h + 2, 15, 2, RC.paper);
+    r(x + 36, y + h, 3, 4, RC.paper);
+  }
+
+  /* --- the trade sign the house is named for ----------------------------- */
+  function paintSign() {
+    for (var cy = 18; cy < 26; cy += 2) { p(210, cy, RC.ironLit); p(240, cy, RC.ironLit); }
+    r(197, 25, 56, 32, RC.woodDark);
+    hl(197, 25, 56, RC.woodHi);
+    r(199, 27, 52, 28, RC.signDark);
+    r(200, 28, 50, 26, RC.signField);
+    hl(200, 28, 50, RC.signHi);
+    /* a crude dragon in profile, which is all the sign ever was */
+    poly([[208, 45], [214, 39], [224, 37], [234, 41], [241, 39],
+          [239, 46], [226, 49], [214, 48]], RC.dragon);
+    poly([[222, 39], [229, 31], [235, 42]], RC.dragonDim);
+    poly([[208, 45], [201, 50], [206, 43]], RC.dragon);
+    poly([[234, 41], [244, 36], [247, 41], [238, 46]], RC.dragon);
+    r(216, 48, 2, 5, RC.dragonDim);
+    r(230, 49, 2, 4, RC.dragonDim);
+    p(244, 38, RC.beamDark);
+  }
+
+  /* --- cupboard of pewter, stoneware and a little china ------------------ */
+  function paintCupboard(shelf) {
+    r(288, 22, 88, 126, RC.woodDeep);
+    r(291, 27, 82, 118, '#1a0d0c');
+    r(285, 19, 94, 6, RC.woodLit);
+    hl(285, 19, 94, RC.woodHi);
+    vl(289, 25, 123, RC.woodDark);
+    vl(374, 25, 123, RC.woodDark);
+
+    for (var row = 0; row < shelf.rows; row++) {
+      var sy = shelf.y + row * shelf.dy + 28;
+      for (var col = 0; col < shelf.cols; col++) {
+        paintVessel(shelf.x + col * shelf.dx + 5, sy, (row * 2 + col) % 3);
+      }
+      r(290, sy, 84, 3, RC.wood);
+      hl(290, sy, 84, RC.woodHi);
+      r(290, sy + 3, 84, 1, RC.woodBlack);
+    }
+
+    /* the closed cupboard under the shelves */
+    r(288, 148, 88, COUNTER_Y - 148, RC.woodDark);
+    hl(288, 148, 88, RC.woodHi);
+    r(293, 153, 36, 14, RC.woodDeep);
+    r(294, 154, 34, 12, '#3a1b15');
+    r(335, 153, 36, 14, RC.woodDeep);
+    r(336, 154, 34, 12, '#3a1b15');
+
+    /* bunches of herbs hung up to dry, either side */
+    paintHerbs(283, 34); paintHerbs(283, 92); paintHerbs(379, 40); paintHerbs(379, 98);
+  }
+
+  function paintVessel(cx, baseY, kind) {
+    if (kind === 0) {                          /* pewter tankard */
+      r(cx - 5, baseY - 14, 10, 14, RC.pewterDim);
+      r(cx - 5, baseY - 14, 8, 13, RC.pewter);
+      hl(cx - 5, baseY - 15, 10, RC.pewterLit);
+      vl(cx - 4, baseY - 13, 11, RC.pewterLit);
+      r(cx + 5, baseY - 10, 3, 6, RC.pewterDim);
+    } else if (kind === 1) {                   /* stoneware jar */
+      r(cx - 4, baseY - 15, 9, 15, RC.stoneDim);
+      r(cx - 4, baseY - 15, 9, 4, RC.stone);
+      vl(cx - 3, baseY - 11, 11, RC.stone);
+      hl(cx - 4, baseY - 8, 9, '#3f2417');
+    } else {                                   /* china, imported and dear */
+      ell(cx, baseY - 4, 6, 5, RC.china);
+      r(cx - 6, baseY - 8, 13, 2, RC.chinaBlue);
+      hl(cx - 5, baseY - 9, 11, RC.china);
+    }
+  }
+
+  function paintHerbs(x, y) {
+    vl(x, y, 5, RC.woodDark);
+    for (var i = 0; i < 9; i++) {
+      var lean = ((i % 3) - 1);
+      var sx = x + lean, sy = y + 5 + i * 2;
+      vl(sx, sy, 3, i % 2 ? RC.herbDim : RC.herb);
+      p(sx + lean, sy + 2, RC.herbDim);
+    }
+    p(x, y + 24, RC.herbDim);
+  }
+
+  /* --- the bar, which stops short of the hearth --------------------------- */
+  function paintBar(barL) {
+    var w = W - barL;
+    r(barL, COUNTER_Y, w, H - COUNTER_Y, RC.woodDeep);
+
+    /* the top the player works on */
+    r(barL, COUNTER_Y, w, 18, RC.wood);
+    hl(barL, COUNTER_Y, w, RC.woodHi);
+    hl(barL, COUNTER_Y + 1, w, RC.woodLit);
+    for (var i = 0; i < 26; i++) {
+      var gx = barL + ((i * 41) % w), gy = COUNTER_Y + 5 + ((i * 17) % 12);
+      hl(gx, gy, 8 + (i % 11), i % 3 ? RC.woodLit : RC.woodDark);
+    }
+    /* front edge, then the panelled face below it */
+    r(barL, COUNTER_Y + 18, w, 3, RC.woodBlack);
+    r(barL, COUNTER_Y + 21, w, H - COUNTER_Y - 21, RC.woodDeep);
+    for (var px = barL + 10; px < W - 12; px += 60) {
+      r(px, COUNTER_Y + 27, 48, 22, RC.woodDark);
+      r(px + 1, COUNTER_Y + 28, 46, 20, '#241110');
+      hl(px + 1, COUNTER_Y + 28, 46, RC.woodDark);
+    }
+    /* the end of the bar, so it reads as stopping rather than being cropped */
+    vl(barL, COUNTER_Y, H - COUNTER_Y, RC.woodHi);
+    vl(barL - 1, COUNTER_Y + 1, H - COUNTER_Y - 1, RC.woodBlack);
+  }
+
   function drawRoom(f) {
     var flick = 0.6 + 0.4 * Math.sin(f * 0.09) * Math.sin(f * 0.031);
+    var fx = backdrop ? B : DRAWN;
 
-    if (backdrop) {
-      bctx.drawImage(backdrop, 0, 0);
-      if (B.window) drawRainPane(B.window.x, B.window.y, B.window.w, B.window.h, f, B.window.lantern);
-      if (B.fire) {
-        if (B.fire.style === 'tips') drawFireTips(B.fire.x, B.fire.y, B.fire.w, B.fire.h, f);
-        else drawFire(B.fire.x, B.fire.y, B.fire.w, B.fire.h, f, flick);
-      }
-      (B.candles || []).forEach(function (c, i) {
-        if (c.flameOnly) drawFlame(c.x, c.y, f + i * 7);
-        else drawCandle(c.x, c.y - 16, f + i * 7);
-      });
-      hearthGlow(flick);
-      drawTarnish();
-      drawRings();
-      return;
+    /* The room itself is a still picture either way — painted, or drawn once
+       and cached. Only the things that move are drawn per frame. */
+    bctx.drawImage(backdrop || tavern(), 0, 0);
+
+    if (fx.window) drawRainPane(fx.window.x, fx.window.y, fx.window.w, fx.window.h, f, fx.window.lantern);
+    if (fx.fire) {
+      if (fx.fire.style === 'tips') drawFireTips(fx.fire.x, fx.fire.y, fx.fire.w, fx.fire.h, f);
+      else drawFire(fx.fire.x, fx.fire.y, fx.fire.w, fx.fire.h, f, flick);
     }
-
-    clear(C.ink);
-
-    /* --- back wall: lime plaster over lath, warmed unevenly by the fire --- */
-    r(0, 14, W, COUNTER_Y - 14, C.plaster);
-    for (var i = 0; i < 26; i++) {
-      var wx = (i * 37) % W, wy = 16 + ((i * 53) % (COUNTER_Y - 30));
-      p(wx, wy, C.plasterLit);
-    }
-
-    /* --- ceiling beam ----------------------------------------------------- */
-    r(0, 0, W, 14, C.woodDark);
-    r(0, 12, W, 2, C.ink);
-    for (var b = 0; b < 6; b++) r(20 + b * 64, 2, 26, 8, C.wood);
-    /* joists dropping down */
-    r(96, 14, 6, 10, C.woodDark);
-    r(288, 14, 6, 10, C.woodDark);
-
-    /* --- wainscot panelling along the lower wall -------------------------- */
-    r(0, 112, W, COUNTER_Y - 112, C.wood);
-    hl(0, 112, W, C.woodHi);
-    for (var q = 0; q < 12; q++) {
-      r(6 + q * 32, 118, 22, 46, C.woodDark);
-      r(7 + q * 32, 119, 20, 44, C.woodLit);
-    }
-
-    /* Hearth and cupboard stop short of the counter so there’s a clear strip
-       of counter-top to stand a candle and a served cup on. */
-    drawWindow(112, 22, f);
-    drawHearth(6, 42, f, flick);
-    drawShelf(292, 20);
-    drawSign(196, 18);
-    r(0, 152, W, 4, C.woodHi);            /* the shelf-edge above the bar */
-    r(0, 156, W, COUNTER_Y - 156, C.wood);
-
-    drawCounter(f);
+    (fx.candles || []).forEach(function (c, i) {
+      if (c.flameOnly) drawFlame(c.x, c.y, f + i * 7);
+      else drawCandle(c.x, c.y - 16, f + i * 7);
+    });
+    hearthGlow(flick, fx.glow);
+    drawTarnish();
+    drawRings();
   }
 
   /* Weather behind the glass. Kept on its own so a painted window can have
@@ -354,60 +672,6 @@
       var ry = y + 2 + ((Math.floor(rnd(i * 7.7) * h) + f * 2) % (h - 4));
       vl(rx, ry, 3, C.pewterDim);
     }
-  }
-
-  /* --- leaded casement window with rain ---------------------------------- */
-  function drawWindow(x, y, f) {
-    var w = 58, h = 62;
-    r(x - 3, y - 3, w + 6, h + 6, C.woodDark);
-    r(x, y, w, h, phase > 0.66 ? C.ink : C.night);
-    drawRainPane(x, y, w, h, f);
-    /* leading: small diamond panes */
-    for (var cx = 0; cx <= w; cx += 12) vl(x + cx, y, h, C.pewterDim);
-    for (var cy = 0; cy <= h; cy += 14) hl(x, y + cy, w, C.pewterDim);
-    /* sill */
-    r(x - 5, y + h + 3, w + 10, 4, C.woodLit);
-    /* a stoneware jug and a pipe on the sill */
-    r(x + 6, y + h - 6, 7, 9, C.linenDim);
-    r(x + 6, y + h - 8, 7, 3, C.linen);
-    r(x + 22, y + h + 1, 14, 2, C.cream);
-    r(x + 34, y + h - 1, 3, 4, C.cream);
-  }
-
-  /* --- open hearth, the light source of the whole room -------------------- */
-  function drawHearth(x, y, f, flick) {
-    var w = 74, h = 110;
-    /* brick surround */
-    r(x, y, w, h, C.redDim);
-    for (var by = 0; by < h; by += 6) {
-      hl(x, y + by, w, C.shadow);
-      for (var bx = (by % 12 === 0 ? 0 : 8); bx < w; bx += 16) vl(x + bx, y + by, 6, C.shadow);
-    }
-    /* firebox */
-    var fx = x + 10, fy = y + 34, fw = w - 20, fh = h - 44;
-    r(fx, fy, fw, fh, C.ink);
-    /* lintel */
-    r(x - 2, y + 26, w + 4, 8, C.woodDark);
-    r(x - 2, y + 26, w + 4, 2, C.woodLit);
-
-    /* logs */
-    r(fx + 6, fy + fh - 12, fw - 12, 6, C.woodDark);
-    r(fx + 10, fy + fh - 18, fw - 24, 6, C.brown);
-
-    drawFire(fx, fy, fw, fh, f, flick);
-
-    /* crane and hanging kettle */
-    r(fx + 4, fy + 4, fw - 8, 2, C.pewterDim);
-    vl(fx + fw - 22, fy + 6, 12, C.pewterDim);
-    r(fx + fw - 30, fy + 18, 18, 13, C.pewter);
-    r(fx + fw - 30, fy + 17, 18, 2, C.pewterLit);
-    r(fx + fw - 34, fy + 22, 4, 3, C.pewter);
-
-    /* mantel with candlestick and an almanac */
-    r(x - 4, y + 20, w + 8, 6, C.woodLit);
-    drawCandle(x + 12, y + 6, f);
-    r(x + 44, y + 12, 12, 8, C.linen);
-    r(x + 44, y + 12, 12, 2, C.linenDim);
   }
 
   /* Flame, coals and sparks in a firebox. Separate from the brickwork so a
@@ -442,11 +706,17 @@
   function drawFireTips(fx, fy, fw, fh, f) {
     var burn = 1 - phase * 0.72;
     var base = fy + fh - 10;
-    for (var i = 0; i < 4; i++) {
+    /* the fire has a body as well as tongues, or the hearth reads as a hole */
+    if (burn > 0.2) {
+      var bw = Math.round(fw * 0.34 * burn), bh = Math.round(7 * burn) + 2;
+      ell(fx + fw / 2, base - bh + 2, bw, bh, C.ember);
+      if (burn > 0.45) ell(fx + fw / 2, base - bh + 1, Math.round(bw * 0.6), Math.max(2, bh - 2), C.amber);
+    }
+    for (var i = 0; i < 5; i++) {
       var t = 0.5 + 0.5 * Math.sin(f * (0.11 + i * 0.037) + i * 2.3);
-      var h = Math.round((3 + t * 7) * burn);
+      var h = Math.round((5 + t * 13) * burn);
       if (h < 2) continue;
-      var cx = fx + Math.round(fw * (0.26 + i * 0.16));
+      var cx = fx + Math.round(fw * (0.22 + i * 0.14));
       vl(cx, base - h, h, C.ember);
       if (burn > 0.4) vl(cx, base - h + 2, Math.max(1, h - 3), C.amber);
       if (burn > 0.6 && h > 5) p(cx, base - h + 1, C.flame);
@@ -497,57 +767,6 @@
     });
   }
 
-  /* --- cupboard of pewter and stoneware ----------------------------------- */
-  function drawShelf(x, y) {
-    var w = 86, h = 132;
-    r(x, y, w, h, C.woodDark);
-    r(x + 2, y + 2, w - 4, h - 4, C.shadow);
-    for (var row = 0; row < 3; row++) {
-      var sy = y + 8 + row * 38;
-      r(x + 2, sy + 28, w - 4, 4, C.woodLit);
-      for (var i = 0; i < 5; i++) {
-        var ix = x + 7 + i * 16;
-        if ((row + i) % 3 === 0) {          /* pewter tankard */
-          r(ix, sy + 14, 10, 14, C.pewter);
-          r(ix, sy + 13, 10, 2, C.pewterLit);
-          r(ix + 10, sy + 18, 3, 6, C.pewterDim);
-        } else if ((row + i) % 3 === 1) {   /* stoneware jar */
-          r(ix + 1, sy + 12, 9, 16, C.linenDim);
-          r(ix + 1, sy + 12, 9, 3, C.linen);
-          r(ix + 2, sy + 20, 7, 2, C.brown);
-        } else {                             /* china bowl, imported, dear */
-          ell(ix + 5, sy + 24, 6, 5, C.white);
-          r(ix + 1, sy + 22, 9, 2, C.indigoLit);
-        }
-      }
-    }
-    drawTarnish();
-
-    /* hanging bunches of dried herbs */
-    for (var hb = 0; hb < 3; hb++) {
-      var hx = x - 12, hy = y + 10 + hb * 34;
-      vl(hx, hy, 6, C.brown);
-      ell(hx, hy + 10, 4, 6, C.moss);
-      ell(hx, hy + 9, 2, 4, C.mossLit);
-    }
-  }
-
-  /* --- the painted trade sign, hung indoors over the bar ------------------ */
-  function drawSign(x, y) {
-    var w = 66, h = 26;
-    r(x - 1, y - 1, w + 2, h + 2, C.woodDark);
-    r(x, y, w, h, C.moss);
-    r(x + 2, y + 2, w - 4, h - 4, C.mossLit);
-    /* a crude dragon in profile, which is all the sign ever was */
-    poly([[x + 12, y + 18], [x + 22, y + 9], [x + 34, y + 8], [x + 44, y + 13],
-          [x + 52, y + 10], [x + 48, y + 18], [x + 30, y + 20]], C.moss);
-    p(x + 30, y + 12, C.amberLit);
-    poly([[x + 44, y + 13], [x + 56, y + 6], [x + 52, y + 15]], C.moss);
-    /* chain */
-    vl(x + 14, y - 6, 6, C.pewterDim);
-    vl(x + w - 14, y - 6, 6, C.pewterDim);
-  }
-
   /* Rings and spills. Drawn with real contrast against the wood — a dark wet
      ring with a lit rim — because a stain the player can’t see isn’t a chore,
      it’s a bug. Kept separate so a painted bar can be dirtied too. */
@@ -573,25 +792,6 @@
       p(g.x + Math.round(g.r * 0.4), g.y + 1, C.linen);
       bctx.restore();
     });
-  }
-
-  /* --- the counter, foreground band the player works behind --------------- */
-  function drawCounter(f) {
-    r(0, COUNTER_Y, W, H - COUNTER_Y, C.woodDark);
-    r(0, COUNTER_Y, W, 5, C.woodHi);
-    r(0, COUNTER_Y + 5, W, 3, C.woodLit);
-    /* grain */
-    for (var i = 0; i < 40; i++) {
-      var gx = (i * 29) % W, gy = COUNTER_Y + 12 + ((i * 17) % 40);
-      hl(gx, gy, 10 + (i % 9), C.wood);
-    }
-    drawRings();
-
-    /* front edge shadow so the band reads as foreground */
-    r(0, H - 12, W, 12, C.shadow);
-    /* candle at each end of the bar */
-    drawCandle(36, COUNTER_Y - 20, f + 5);
-    drawCandle(344, COUNTER_Y - 20, f + 17);
   }
 
   /* a served cup steaming on the counter in front of the customer */
