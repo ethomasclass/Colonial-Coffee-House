@@ -159,12 +159,14 @@
   function addRing() {
     seed++;
     /* Spread across the whole bar rather than clustering where the cup was,
-       so there’s visibly something to do and it isn’t all in one corner. */
+       so there’s visibly something to do and it isn’t all in one corner. A
+       painted room whose bar stops short says so, and spills stay on wood. */
+    var bar = B.bar || { x: 24, w: W - 48 };
     rings.push({ kind: 'ring',
-                 x: 24 + Math.round(rnd(seed * 5.3) * (W - 48)),
+                 x: bar.x + Math.round(rnd(seed * 5.3) * bar.w),
                  /* kept high on the bar so the between-patron panel, which
                     sits along the bottom of the frame, never hides them */
-                 y: COUNTER_Y + 4 + Math.round(rnd(seed * 9.1) * 12),
+                 y: COUNTER_Y + 5 + Math.round(rnd(seed * 9.1) * 10),
                  r: 8 + Math.round(rnd(seed * 3.7) * 4) });
   }
 
@@ -285,9 +287,15 @@
 
     if (backdrop) {
       bctx.drawImage(backdrop, 0, 0);
-      if (B.window) drawRainPane(B.window.x, B.window.y, B.window.w, B.window.h, f);
-      if (B.fire)   drawFire(B.fire.x, B.fire.y, B.fire.w, B.fire.h, f, flick);
-      (B.candles || []).forEach(function (c, i) { drawFlame(c.x, c.y, f + i * 7); });
+      if (B.window) drawRainPane(B.window.x, B.window.y, B.window.w, B.window.h, f, B.window.lantern);
+      if (B.fire) {
+        if (B.fire.style === 'tips') drawFireTips(B.fire.x, B.fire.y, B.fire.w, B.fire.h, f);
+        else drawFire(B.fire.x, B.fire.y, B.fire.w, B.fire.h, f, flick);
+      }
+      (B.candles || []).forEach(function (c, i) {
+        if (c.flameOnly) drawFlame(c.x, c.y, f + i * 7);
+        else drawCandle(c.x, c.y - 16, f + i * 7);
+      });
       hearthGlow(flick);
       drawTarnish();
       drawRings();
@@ -333,9 +341,11 @@
 
   /* Weather behind the glass. Kept on its own so a painted window can have
      rain running down it too. */
-  function drawRainPane(x, y, w, h, f) {
-    /* the street lantern outside gutters out toward the small hours */
-    if (phase < 0.85) {
+  function drawRainPane(x, y, w, h, f, lantern) {
+    /* the street lantern outside gutters out toward the small hours. A
+       painted window usually has its own depth already, so this can be
+       switched off with `window.lantern: false`. */
+    if (lantern !== false && phase < 0.85) {
       ell(x + 40, y + 44, 16 - Math.round(phase * 6), 12 - Math.round(phase * 5), C.slate);
       if (phase < 0.6) ell(x + 40, y + 44, 8, 6, C.slateLit);
     }
@@ -421,6 +431,36 @@
       for (var s = 0; s < 5; s++) {
         var sy = fy + fh - 30 - ((f + s * 13) % 26);
         p(fx + 12 + ((s * 11 + Math.floor(f / 4)) % (fw - 24)), sy, C.amberLit);
+      }
+    }
+  }
+
+  /* A quieter fire, for a hearth that is already painted. Solid ellipses of
+     flame would hide the logs somebody drew, so this only adds the parts that
+     actually move: tongues licking up off the log line, coals breathing, and
+     the odd spark. */
+  function drawFireTips(fx, fy, fw, fh, f) {
+    var burn = 1 - phase * 0.72;
+    var base = fy + fh - 10;
+    for (var i = 0; i < 4; i++) {
+      var t = 0.5 + 0.5 * Math.sin(f * (0.11 + i * 0.037) + i * 2.3);
+      var h = Math.round((3 + t * 7) * burn);
+      if (h < 2) continue;
+      var cx = fx + Math.round(fw * (0.26 + i * 0.16));
+      vl(cx, base - h, h, C.ember);
+      if (burn > 0.4) vl(cx, base - h + 2, Math.max(1, h - 3), C.amber);
+      if (burn > 0.6 && h > 5) p(cx, base - h + 1, C.flame);
+      if (h > 7) p(cx + (i % 2 ? 1 : -1), base - h + 3, C.ember);
+    }
+    /* coals, which keep breathing after the flame has gone */
+    for (var cg = 0; cg < 5; cg++) {
+      var gx = fx + 8 + cg * Math.round((fw - 16) / 5);
+      p(gx, base + 2, (cg + Math.floor(f / 22)) % 3 === 0 ? C.amber : C.ember);
+    }
+    if (burn > 0.5) {
+      for (var s = 0; s < 4; s++) {
+        var sy = base - 14 - ((f + s * 17) % 30);
+        p(fx + 10 + ((s * 13 + Math.floor(f / 5)) % (fw - 20)), sy, C.amberLit);
       }
     }
   }
@@ -515,12 +555,23 @@
     rings.forEach(function (g) {
       if (g.kind !== 'ring') return;
       var ry = Math.max(2, Math.round(g.r * 0.5));
-      ell(g.x, g.y, g.r + 1, ry + 1, C.ink);
-      ell(g.x, g.y, g.r, ry, C.woodDark);
-      ell(g.x, g.y, g.r - 3, Math.max(1, ry - 2), C.woodLit);
-      /* the wet highlight that makes it read as a spill and not a hole */
-      hl(g.x - Math.round(g.r * 0.5), g.y - ry + 1, Math.round(g.r * 0.9), C.linenDim);
-      p(g.x + Math.round(g.r * 0.4), g.y + 1, C.linenDim);
+      bctx.save();
+      /* Darken whatever is underneath rather than painting a fixed brown over
+         it, so a ring reads as a wet stain on any bar — drawn or painted. */
+      bctx.globalCompositeOperation = 'multiply';
+      bctx.globalAlpha = 0.62;
+      ell(g.x, g.y, g.r, ry, C.brown);
+      /* the middle lifts again, so it’s a ring a cup left and not a hole */
+      bctx.globalCompositeOperation = 'lighter';
+      bctx.globalAlpha = 0.14;
+      ell(g.x, g.y, g.r - 3, Math.max(1, ry - 2), C.linenDim);
+      bctx.restore();
+      /* the highlight along the top that says it hasn’t dried yet */
+      bctx.save();
+      bctx.globalAlpha = 0.75;
+      hl(g.x - Math.round(g.r * 0.5), g.y - ry, Math.round(g.r * 0.9), C.linenDim);
+      p(g.x + Math.round(g.r * 0.4), g.y + 1, C.linen);
+      bctx.restore();
     });
   }
 

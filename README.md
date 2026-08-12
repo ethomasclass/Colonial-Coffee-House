@@ -245,6 +245,14 @@ To cut the game short, edit `ORDER` in `js/data.js`.
 - **Real timing data.** See the timing note above.
 - **Per-character epilogues** on the closing screen ("Patience testified on
   Thursday") — designed but not built.
+- **The room is painted.** `art/room/tavern-night.png` is the Green Dragon at
+  384×216, so it lands on the pixel grid with nothing resampled. Everything
+  that moves is still drawn over the top of it — rain on the glass, flames
+  licking off the logs, sparks, coals breathing, the candle on the bar burning
+  down, firelight flickering, and every ring and tarnish mark the player has
+  to wipe away. `js/backdrop.js` says where each of those sits in the picture.
+  Take the PNG away and the game draws its own tavern instead; the full-size
+  original is kept beside it so the small one can be remade.
 - **Character art is drawn in code**, in the manner of a modern pixel-art
   visual novel: a hard dark outline found from the silhouette, three hard-edged
   tones per material, hair as big shapes with one bright band, and hands

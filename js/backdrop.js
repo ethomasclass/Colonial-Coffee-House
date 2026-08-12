@@ -1,65 +1,70 @@
 /* ===========================================================================
-   backdrop.js — an optional painted room.
+   backdrop.js — the painted room, and where its moving parts live.
 
-   THIS IS ALREADY WIRED. You do not need to edit this file to try a backdrop.
+   THIS IS ALREADY WIRED. You do not need to edit it unless you change the art.
 
-   Drop a 384x216 PNG at the path below and the game stops drawing its own
-   tavern and paints yours instead. The file isn't there? Nothing breaks — the
-   built-in room draws exactly as before. Same rule as the character art.
+   art/room/tavern-night.png is the room. Take it away and the game falls back
+   to drawing its own tavern, exactly as it used to — nothing breaks.
 
-   WHAT STAYS ALIVE ON TOP
-   -----------------------
-   A painted room is a still picture, so everything that moves is still drawn
-   by the game over the top of it: rain on the window, the fire and its
-   sparks, the candle flames, the light sinking as the night wears on, and the
-   rings and tarnish the player has to wipe away. The rectangles below tell
-   the game where those things sit in YOUR picture.
-
-   If a flame lands in the wrong place, change the numbers here. Nothing else
-   in the game needs touching. Set any entry to null to switch that effect off
-   — e.g. if your painting already shows a lit fire you like, set `fire: null`
-   and only the sparks-and-glow will be skipped.
+   A painting can't flicker, so everything that moves is still drawn by the
+   game over the top of it: rain on the glass, the fire and its sparks, the
+   candle burning down, the firelight breathing, and every ring and smudge the
+   player has to wipe away. The numbers below say where those things sit in
+   the picture. They were measured off the current painting; if you replace
+   it, re-measure.
    =========================================================================== */
 
 window.BACKDROP = {
 
-  /* The painting. 384x216 exactly, or an exact multiple (768x432, 1152x648,
-     1536x864) which is downscaled cleanly on load. */
+  /* 384x216 exactly, so it lands on the pixel grid with no resampling.
+     art/room/tavern-night-source.png is the full-size original it came from,
+     kept so the small one can be remade if the room ever changes. */
   image: 'art/room/tavern-night.png',
 
-  /* Top edge of the bar, in buffer pixels. Cups, rings and the served drink
-     all sit relative to this, and the customer stands behind it. */
-  counterY: 172,
+  /* Top of the bar. The customer stands behind it and cups sit on it. */
+  counterY: 168,
 
-  /* The glass only — not the frame. Rain falls inside this box, and the
-     street lantern outside gutters out within it as the night goes on. */
-  window: { x: 112, y: 22, w: 58, h: 62 },
+  /* The bar doesn't reach the left wall in this painting — the hearth floor
+     does — so spills are only left within this span. Otherwise the player
+     would be handed rings floating in the fireplace. */
+  bar: { x: 116, w: 250 },
 
-  /* The opening of the hearth: where flame, coals and sparks are drawn. */
-  fire: { x: 16, y: 76, w: 54, h: 66 },
+  /* The glass only, inside the frame. Rain falls here, and the street lantern
+     outside gutters out as the night wears on — switched off here, because
+     this painting's glass already has depth of its own. */
+  window: { x: 122, y: 53, w: 50, h: 64, lantern: false },
 
-  /* Warm firelight washing over the room, brightest at this point. */
-  glow: { x: 43, y: 110, r: 150 },
+  /* The firebox. `style: 'tips'` is the quiet fire, for a hearth that is
+     already painted: flames lick up off the log line, coals breathe and
+     sparks rise, but nothing solid is drawn over the logs. Drop the style and
+     a whole fire is drawn instead, for a hearth painted empty. */
+  fire: { x: 6, y: 100, w: 76, h: 88, style: 'tips' },
 
-  /* Every candle flame. `y` is the top of the wick at the start of the night;
-     each one sinks a little as its candle burns down. */
+  /* Firelight breathing over the room. The painting already has warm light
+     baked into the left wall, so this is kept low and close to the hearth —
+     it's there to move, not to light the room. */
+  glow: { x: 42, y: 162, r: 68 },
+
+  /* Candles the game draws and burns down. The painting has a lit one on the
+     mantel already, so that one is left alone; this is the one standing at
+     the far end of the bar, clear of where the customer stands.
+     `flameOnly: true` on an entry means the candle is already painted and
+     only wants a flame flickering on top of it. */
   candles: [
-    { x: 18,  y: 56  },
-    { x: 36,  y: 160 },
-    { x: 344, y: 160 }
+    { x: 344, y: 170 }
   ],
 
-  /* Where the pewter on the shelf sits, so tarnish lands on the shelf and not
-     on the wall. Rows and columns of the cupboard. */
-  shelf: { x: 299, y: 28, cols: 5, rows: 3, dx: 16, dy: 38 },
+  /* Where the pewter sits in the cupboard, so tarnish lands on the vessels
+     and not on the wall behind them. */
+  shelf: { x: 298, y: 18, cols: 4, rows: 4, dx: 15, dy: 30 },
 
-  /* Things the player can click to read a note about. Rectangles in buffer
-     pixels; retune these to match wherever they ended up in the painting. */
+  /* Things worth clicking. First match wins, so the candle is listed before
+     the hearth it stands in front of. */
   hits: [
-    { id: 'hearth', x: 6,   y: 42,  w: 74, h: 110 },
-    { id: 'window', x: 109, y: 19,  w: 64, h: 74  },
-    { id: 'sign',   x: 196, y: 18,  w: 66, h: 26  },
-    { id: 'shelf',  x: 292, y: 20,  w: 86, h: 132 },
-    { id: 'candle', x: 30,  y: 148, w: 14, h: 26  }
+    { id: 'candle', x: 8,   y: 54, w: 24, h: 32  },
+    { id: 'hearth', x: 0,   y: 84, w: 100, h: 112 },
+    { id: 'window', x: 116, y: 46, w: 62, h: 80  },
+    { id: 'sign',   x: 198, y: 26, w: 54, h: 30  },
+    { id: 'shelf',  x: 288, y: 24, w: 96, h: 124 }
   ]
 };
