@@ -141,7 +141,10 @@
      THE ROOM — Green Dragon Tavern & Coffee House, Union Street, night
      ========================================================================= */
 
-  var COUNTER_Y = 172;
+  /* An optional painted room, if js/backdrop.js points at one that exists.
+     Everything below falls back to the built-in room when it doesn’t. */
+  var B = global.BACKDROP || {};
+  var COUNTER_Y = B.counterY || 172;
 
   /* How far through the evening we are, 0 at opening and 1 at closing. The
      candles burn down, the fire sinks, and the window darkens against it. */
@@ -168,8 +171,9 @@
   /* Pewter dulls as the evening goes on. Same cloth, different surface. */
   function addTarnish() {
     seed++;
-    var row = Math.floor(rnd(seed * 2.9) * 3), col = Math.floor(rnd(seed * 6.1) * 5);
-    rings.push({ kind: 'tarnish', x: 299 + col * 16 + 5, y: 28 + row * 38 + 20, r: 9 });
+    var s = B.shelf || { x: 299, y: 28, cols: 5, rows: 3, dx: 16, dy: 38 };
+    var row = Math.floor(rnd(seed * 2.9) * s.rows), col = Math.floor(rnd(seed * 6.1) * s.cols);
+    rings.push({ kind: 'tarnish', x: s.x + col * s.dx + 5, y: s.y + row * s.dy + 20, r: 9 });
   }
   function ringCount() { return rings.length; }
   function wipeAt(lx, ly, radius) {
@@ -191,7 +195,7 @@
   }
 
   /* Things in the room worth looking at. Logical-space rectangles. */
-  var HITS = [
+  var HITS = B.hits || [
     { id: 'hearth', x: 6,   y: 42,  w: 74, h: 110 },
     { id: 'window', x: 109, y: 19,  w: 64, h: 74  },
     { id: 'sign',   x: 196, y: 18,  w: 66, h: 26  },
@@ -224,8 +228,71 @@
     bctx.fillRect(0, 0, W, H);
   }
 
+  /* --- the painted room, if there is one ---------------------------------- */
+  var backdrop = null;          /* the finished 384x216 canvas, once ready    */
+  if (B.image) {
+    (function () {
+      var img = new Image();
+      img.onload = function () {
+        /* Painted at 2x or 4x? Step it down by halves so the pixels stay
+           square and sharp instead of being resampled into mush. */
+        var c = document.createElement('canvas'), cx;
+        c.width = img.width; c.height = img.height;
+        cx = c.getContext('2d');
+        cx.imageSmoothingEnabled = false;
+        cx.drawImage(img, 0, 0);
+        while (c.width >= W * 2 && c.height >= H * 2) {
+          var half = document.createElement('canvas');
+          half.width = Math.round(c.width / 2); half.height = Math.round(c.height / 2);
+          var hx = half.getContext('2d');
+          hx.imageSmoothingEnabled = true;   /* averaging, only on exact halves */
+          hx.drawImage(c, 0, 0, half.width, half.height);
+          c = half;
+        }
+        if (c.width !== W || c.height !== H) {
+          var fit = document.createElement('canvas');
+          fit.width = W; fit.height = H;
+          var fx2 = fit.getContext('2d');
+          fx2.imageSmoothingEnabled = (c.width > W);
+          fx2.drawImage(c, 0, 0, W, H);
+          c = fit;
+        }
+        backdrop = c;
+      };
+      /* Missing file: the console notes it and the built-in room carries on. */
+      img.onerror = function () { backdrop = null; };
+      img.src = B.image;
+    })();
+  }
+
+  /* Warm firelight breathing over a painted room, since a painting can’t. */
+  function hearthGlow(flick) {
+    var g = B.glow;
+    if (!g) return;
+    var strength = (0.16 + 0.06 * flick) * (1 - phase * 0.7);
+    if (strength <= 0.01) return;
+    bctx.save();
+    bctx.globalCompositeOperation = 'lighter';
+    for (var i = 3; i >= 1; i--) {
+      bctx.globalAlpha = strength / (i * 2.2);
+      ell(g.x, g.y, g.r * i / 3, g.r * i / 3 * 0.8, C.ember);
+    }
+    bctx.restore();
+  }
+
   function drawRoom(f) {
     var flick = 0.6 + 0.4 * Math.sin(f * 0.09) * Math.sin(f * 0.031);
+
+    if (backdrop) {
+      bctx.drawImage(backdrop, 0, 0);
+      if (B.window) drawRainPane(B.window.x, B.window.y, B.window.w, B.window.h, f);
+      if (B.fire)   drawFire(B.fire.x, B.fire.y, B.fire.w, B.fire.h, f, flick);
+      (B.candles || []).forEach(function (c, i) { drawFlame(c.x, c.y, f + i * 7); });
+      hearthGlow(flick);
+      drawTarnish();
+      drawRings();
+      return;
+    }
 
     clear(C.ink);
 
@@ -264,22 +331,27 @@
     drawCounter(f);
   }
 
-  /* --- leaded casement window with rain ---------------------------------- */
-  function drawWindow(x, y, f) {
-    var w = 58, h = 62;
-    r(x - 3, y - 3, w + 6, h + 6, C.woodDark);
-    r(x, y, w, h, phase > 0.66 ? C.ink : C.night);
+  /* Weather behind the glass. Kept on its own so a painted window can have
+     rain running down it too. */
+  function drawRainPane(x, y, w, h, f) {
     /* the street lantern outside gutters out toward the small hours */
     if (phase < 0.85) {
       ell(x + 40, y + 44, 16 - Math.round(phase * 6), 12 - Math.round(phase * 5), C.slate);
       if (phase < 0.6) ell(x + 40, y + 44, 8, 6, C.slateLit);
     }
-    /* rain streaks */
     for (var i = 0; i < 30; i++) {
       var rx = x + 2 + Math.floor(rnd(i * 3.1) * (w - 4));
       var ry = y + 2 + ((Math.floor(rnd(i * 7.7) * h) + f * 2) % (h - 4));
       vl(rx, ry, 3, C.pewterDim);
     }
+  }
+
+  /* --- leaded casement window with rain ---------------------------------- */
+  function drawWindow(x, y, f) {
+    var w = 58, h = 62;
+    r(x - 3, y - 3, w + 6, h + 6, C.woodDark);
+    r(x, y, w, h, phase > 0.66 ? C.ink : C.night);
+    drawRainPane(x, y, w, h, f);
     /* leading: small diamond panes */
     for (var cx = 0; cx <= w; cx += 12) vl(x + cx, y, h, C.pewterDim);
     for (var cy = 0; cy <= h; cy += 14) hl(x, y + cy, w, C.pewterDim);
@@ -312,26 +384,7 @@
     r(fx + 6, fy + fh - 12, fw - 12, 6, C.woodDark);
     r(fx + 10, fy + fh - 18, fw - 24, 6, C.brown);
 
-    /* flame, flickering, and sinking toward embers as the evening wears on */
-    var burn = 1 - phase * 0.72;
-    var fl = Math.round(flick * 7 * burn);
-    ell(fx + fw / 2, fy + fh - 20, Math.round(16 * burn) + 4, Math.round((12 + fl) * burn) + 2, C.ember);
-    if (burn > 0.45) {
-      ell(fx + fw / 2, fy + fh - 22, Math.round(11 * burn), Math.round((9 + fl) * burn), C.amber);
-      ell(fx + fw / 2, fy + fh - 24, Math.round(6 * burn), Math.round((6 + fl) * burn), C.flame);
-    }
-    if (burn > 0.7) ell(fx + fw / 2, fy + fh - 25, 3, 3 + Math.round(fl / 2), C.flameHot);
-    /* a few coals still glowing even once the flame is gone */
-    for (var cg = 0; cg < 4; cg++) {
-      p(fx + 10 + cg * 9, fy + fh - 10, (cg + Math.floor(f / 20)) % 3 === 0 ? C.amber : C.ember);
-    }
-    /* sparks, which stop once there isn’thing left to throw them */
-    if (burn > 0.5) {
-      for (var s = 0; s < 5; s++) {
-        var sy = fy + fh - 30 - ((f + s * 13) % 26);
-        p(fx + 12 + ((s * 11 + Math.floor(f / 4)) % (fw - 24)), sy, C.amberLit);
-      }
-    }
+    drawFire(fx, fy, fw, fh, f, flick);
 
     /* crane and hanging kettle */
     r(fx + 4, fy + 4, fw - 8, 2, C.pewterDim);
@@ -347,6 +400,41 @@
     r(x + 44, y + 12, 12, 2, C.linenDim);
   }
 
+  /* Flame, coals and sparks in a firebox. Separate from the brickwork so a
+     painted hearth can still have a fire burning down in it. */
+  function drawFire(fx, fy, fw, fh, f, flick) {
+    /* flame, flickering, and sinking toward embers as the evening wears on */
+    var burn = 1 - phase * 0.72;
+    var fl = Math.round(flick * 7 * burn);
+    ell(fx + fw / 2, fy + fh - 20, Math.round(16 * burn) + 4, Math.round((12 + fl) * burn) + 2, C.ember);
+    if (burn > 0.45) {
+      ell(fx + fw / 2, fy + fh - 22, Math.round(11 * burn), Math.round((9 + fl) * burn), C.amber);
+      ell(fx + fw / 2, fy + fh - 24, Math.round(6 * burn), Math.round((6 + fl) * burn), C.flame);
+    }
+    if (burn > 0.7) ell(fx + fw / 2, fy + fh - 25, 3, 3 + Math.round(fl / 2), C.flameHot);
+    /* a few coals still glowing even once the flame is gone */
+    for (var cg = 0; cg < 4; cg++) {
+      p(fx + 10 + cg * 9, fy + fh - 10, (cg + Math.floor(f / 20)) % 3 === 0 ? C.amber : C.ember);
+    }
+    /* sparks, which stop once there’s nothing left to throw them */
+    if (burn > 0.5) {
+      for (var s = 0; s < 5; s++) {
+        var sy = fy + fh - 30 - ((f + s * 13) % 26);
+        p(fx + 12 + ((s * 11 + Math.floor(f / 4)) % (fw - 24)), sy, C.amberLit);
+      }
+    }
+  }
+
+  /* Just the flame on a wick, sinking as the candle under it burns down. */
+  function drawFlame(x, y, f) {
+    var fy = y - 3 + Math.round(phase * 6);
+    var w = (f % 24 < 12) ? 0 : 1;
+    p(x + 1 + w, fy + 2, C.amberLit);
+    p(x + 1 + w, fy + 1, C.flame);
+    if (phase < 0.8) p(x + 1 + w, fy, C.flameHot);
+    p(x + 2 + w, fy + 2, C.amber);
+  }
+
   function drawCandle(x, y, f) {
     /* A tallow candle burns down over the evening. The stub sinks toward the
        stick and the flame goes with it, so the room quietly gets darker. */
@@ -355,12 +443,18 @@
     if (len > 0) r(x, top, 4, len, C.cream);
     if (used > 2) { p(x - 1, top + 1, C.linenDim); p(x + 4, top + 2, C.linenDim); }
     r(x - 2, y + 16, 8, 2, C.pewter);
-    var w = (f % 24 < 12) ? 0 : 1;
-    var fy = top - 3;
-    p(x + 1 + w, fy + 2, C.amberLit);
-    p(x + 1 + w, fy + 1, C.flame);
-    if (phase < 0.8) p(x + 1 + w, fy, C.flameHot);
-    p(x + 2 + w, fy + 2, C.amber);
+    drawFlame(x, y + 8, f);
+  }
+
+  /* Dulled pewter, waiting for a cloth. Same rule as the rings: it has to be
+     obvious, so it is drawn over the shelf rather than painted into it. */
+  function drawTarnish() {
+    rings.forEach(function (g) {
+      if (g.kind !== 'tarnish') return;
+      ell(g.x, g.y, g.r, g.r, C.shadow);
+      ell(g.x, g.y, g.r - 2, g.r - 2, '#4a4238');
+      ell(g.x - 2, g.y - 2, Math.max(1, g.r - 5), Math.max(1, g.r - 5), '#6b6154');
+    });
   }
 
   /* --- cupboard of pewter and stoneware ----------------------------------- */
@@ -387,13 +481,7 @@
         }
       }
     }
-    /* Dulled pewter, waiting for a cloth. Same rule: it has to be obvious. */
-    rings.forEach(function (g) {
-      if (g.kind !== 'tarnish') return;
-      ell(g.x, g.y, g.r, g.r, C.shadow);
-      ell(g.x, g.y, g.r - 2, g.r - 2, '#4a4238');
-      ell(g.x - 2, g.y - 2, Math.max(1, g.r - 5), Math.max(1, g.r - 5), '#6b6154');
-    });
+    drawTarnish();
 
     /* hanging bunches of dried herbs */
     for (var hb = 0; hb < 3; hb++) {
@@ -420,19 +508,10 @@
     vl(x + w - 14, y - 6, 6, C.pewterDim);
   }
 
-  /* --- the counter, foreground band the player works behind --------------- */
-  function drawCounter(f) {
-    r(0, COUNTER_Y, W, H - COUNTER_Y, C.woodDark);
-    r(0, COUNTER_Y, W, 5, C.woodHi);
-    r(0, COUNTER_Y + 5, W, 3, C.woodLit);
-    /* grain */
-    for (var i = 0; i < 40; i++) {
-      var gx = (i * 29) % W, gy = COUNTER_Y + 12 + ((i * 17) % 40);
-      hl(gx, gy, 10 + (i % 9), C.wood);
-    }
-    /* Rings and spills. Drawn with real contrast against the wood — a dark wet
-       ring with a lit rim — because a stain the player can’t see isn’t a
-       chore, it’s a bug. */
+  /* Rings and spills. Drawn with real contrast against the wood — a dark wet
+     ring with a lit rim — because a stain the player can’t see isn’t a chore,
+     it’s a bug. Kept separate so a painted bar can be dirtied too. */
+  function drawRings() {
     rings.forEach(function (g) {
       if (g.kind !== 'ring') return;
       var ry = Math.max(2, Math.round(g.r * 0.5));
@@ -443,6 +522,19 @@
       hl(g.x - Math.round(g.r * 0.5), g.y - ry + 1, Math.round(g.r * 0.9), C.linenDim);
       p(g.x + Math.round(g.r * 0.4), g.y + 1, C.linenDim);
     });
+  }
+
+  /* --- the counter, foreground band the player works behind --------------- */
+  function drawCounter(f) {
+    r(0, COUNTER_Y, W, H - COUNTER_Y, C.woodDark);
+    r(0, COUNTER_Y, W, 5, C.woodHi);
+    r(0, COUNTER_Y + 5, W, 3, C.woodLit);
+    /* grain */
+    for (var i = 0; i < 40; i++) {
+      var gx = (i * 29) % W, gy = COUNTER_Y + 12 + ((i * 17) % 40);
+      hl(gx, gy, 10 + (i % 9), C.wood);
+    }
+    drawRings();
 
     /* front edge shadow so the band reads as foreground */
     r(0, H - 12, W, 12, C.shadow);

@@ -208,6 +208,9 @@ index.html        markup and all the panels
 css/style.css     candlelight, pewter, dark wood
 js/art.js         pixel renderer, the room, the shared character sheet,
                   the night phase, the chore marks, click regions
+js/sprites.js     which character art file is which — already wired
+js/backdrop.js    an optional painted room, and where the fire, rain and
+                  candles sit in it — already wired
 js/audio.js       rain, hearth, a slow tune, scrubbing and a chime —
                   all synthesised, no sound files
 js/chores.js      the cleaning game: both scenes, the dirt grid, the rag
