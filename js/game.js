@@ -226,9 +226,10 @@
     el.dialogue.hidden = true;
     el.brew.hidden = false;
     st.sel = { base: null, sweet: null, add: null };
-    el.orderEcho.textContent = '“' + st.patron.order + '”';
+    el.orderEcho.innerHTML = '“' + markup(st.patron.order) + '”';
     el.orderWho.textContent = st.patron.name + ', ' + st.patron.title;
     el.ingNote.textContent = '';
+    showLawCardOnce();
     cup.pours = [];
     buildShelf();
     updateCup();
@@ -249,7 +250,18 @@
     ct.textContent = ing.id === 'honey' ? (st.honeyLeft + ' left')
                                         : (ing.cost === 0 ? 'free' : ing.cost + 'd');
     b.appendChild(ct);
-    if (ing.legal === false) {
+    /* Every sweetener states where it stands with the law, not just the
+       unlawful one. A single odd label reads as a warning to avoid; four
+       labels read as a choice being offered, which is the point. */
+    if (kind === 'sweet' && ing.id !== 'none') {
+      var duty = document.createElement('span');
+      duty.className = 'ing-duty' + (ing.legal === false ? ' unpaid' : '');
+      duty.textContent = ing.legal === false ? 'duty unpaid'
+                       : ing.cost === 0      ? 'ours &middot; no duty'
+                                             : 'duty paid';
+      duty.innerHTML = duty.textContent;
+      b.appendChild(duty);
+    } else if (ing.legal === false) {
       var fl = document.createElement('span'); fl.className = 'ing-flag';
       fl.textContent = 'unlawful'; b.appendChild(fl);
     }
@@ -268,6 +280,16 @@
     if (st.sel[kind] === ing.id) b.classList.add('on');
     Ico.bottleIcon(cv, ing.id);
     return b;
+  }
+
+  /* Shown the first time somebody opens the brewing bench, and never again.
+     Without it a student can serve six drinks without ever noticing that the
+     sweetener shelf is the lesson. */
+  function showLawCardOnce() {
+    if (!el.lawCard) return;
+    var seen = false;
+    try { seen = localStorage.getItem('greendragon.lawSeen') === '1'; } catch (e) {}
+    el.lawCard.hidden = seen;
   }
 
   function buildShelf() {
@@ -305,6 +327,32 @@
   }
 
   function complete() { return st.sel.base && st.sel.sweet && st.sel.add; }
+
+  /* The whole Molasses Act argument is an arithmetic problem, so the
+     arithmetic is kept on screen while the choice is being made rather than
+     revealed in the ledger once it is too late to matter. */
+  function updateStrip() {
+    if (!el.ledgerStrip) return;
+    var gap = D.LEDGER.rent - st.purse;
+    var bits = ['Purse <b>' + D.pence(st.purse) + '</b>',
+                'rent <b>' + D.pence(D.LEDGER.rent) + '</b>'];
+    bits.push(gap > 0 ? '<span class="short">' + D.pence(gap) + ' still to find</span>'
+                      : '<span class="ok">rent covered</span>');
+    if (complete()) {
+      var rec = D.findRecipe(st.sel.base, st.sel.sweet, st.sel.add);
+      var cost = D.drinkCost(st.sel.base, st.sel.sweet, st.sel.add);
+      if (rec) bits.push('this cup earns <b>' + D.pence(D.priceOf(rec, cost) - cost) + '</b>');
+    }
+    if (st.sel.sweet) {
+      var sw = D.byId(D.SWEETENERS, st.sel.sweet);
+      if (sw.legal === false) {
+        var lawful = D.SWEETENERS.filter(function (x) { return x.legal !== false && x.id !== 'none' && x.cost > 0; })
+                                 .map(function (x) { return x.cost; }).sort(function (a, b) { return a - b; })[0];
+        bits.push('<span class="short">saves ' + D.pence(lawful - sw.cost) + ' by not paying the duty</span>');
+      }
+    }
+    el.ledgerStrip.innerHTML = bits.join(' &middot; ');
+  }
 
   /* --- the cup, and things falling into it ------------------------------- */
   var cup = { pours: [], t: 0, raf: null };
@@ -397,6 +445,7 @@
   }
 
   function updateCup() {
+    updateStrip();
     var s = st.sel;
     if (!complete()) {
       el.cupName.textContent = st.sel.base ? 'Not finished yet' : 'An empty cup';
@@ -564,6 +613,11 @@
   function updateHud() {
     el.purse.textContent = D.pence(st.purse);
     el.purse.className = st.purse < D.LEDGER.rent ? 'short' : '';
+    if (el.rentGap) {
+      var behind = D.LEDGER.rent - st.purse;
+      el.rentGap.textContent = behind > 0 ? ' \u2014 ' + D.pence(behind) + ' short' : ' \u2014 covered';
+      el.rentGap.className = 'rent-gap' + (behind > 0 ? ' short' : ' ok');
+    }
     el.suspicion.innerHTML = '';
     for (var i = 0; i < D.LEDGER.suspicionCap; i++) {
       var pip = document.createElement('span');
@@ -790,6 +844,7 @@
   function init() {
     ['dialogue', 'speaker', 'line', 'choices', 'advance', 'brew', 'baseShelf',
      'sweetShelf', 'addShelf', 'cupName', 'cupDesc', 'cupCost', 'cupNew',
+     'ledgerStrip', 'rentGap', 'lawCard',
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
@@ -811,6 +866,11 @@
     $('bookBtn').onclick = openBook;
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
+    var lawOk = $('lawCardOk');
+    if (lawOk) lawOk.onclick = function () {
+      el.lawCard.hidden = true;
+      try { localStorage.setItem('greendragon.lawSeen', '1'); } catch (e) {}
+    };
     el.serveBtn.onclick = serve;
     el.pourBtn.onclick = pourOut;
 

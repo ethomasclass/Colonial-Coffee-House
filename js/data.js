@@ -326,7 +326,7 @@
       id: 'officer', art: 'officer',
       name: 'Mr. Aldis Pym', title: 'of His Majesty’s Customs',
       thread: 'The Navigation Acts — and your evening’s accounts',
-      order: 'Bohea. Sugar, cream. And I should be glad to know what you have been sweetening with tonight.',
+      order: '{{bohea|Bohea}}. Sugar, cream. And I should be glad to know what you have been sweetening with tonight.',
       wants: ['genteel', 'imported', 'smooth'],
       avoids: ['humble', 'local'],
       ideal: 'english_bohea'

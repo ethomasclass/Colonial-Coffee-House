@@ -140,7 +140,7 @@
             { say: "It’s a good time to be a thinking Christian. It’s a bad time to be a shouting one.", expr: 'stern' } ] },
         { label: '"What did the letter say? The one you didn’t want to write."',
           then: [
-            { say: "That a traveling preacher isn’t to have my pulpit. He asked. I refused. Fourteen of my congregation have written to say they will go hear him anyway, out in a field.", expr: 'downcast' },
+            { say: "That an {{itinerant|itinerant}} isn’t to have my pulpit. He asked. I refused. Fourteen of my congregation have written to say they will go hear him anyway, out in a field.", expr: 'downcast' },
             { say: "They aren’t wicked people. That’s the difficulty. I have baptised most of them.", expr: 'downcast' } ] }
       ]},
       { say: "They call us {{oldlight|Old Lights}}, as though we had let a lamp go out. What we have is order. A settled minister, a settled congregation, a covenant that holds.", expr: 'stern' },
@@ -219,6 +219,7 @@
           then: [
             { say: "I make of it that a man ought to be able to say what follows from a thing, and have the saying of it count for something.", expr: 'thoughtful' } ] }
       ]},
+      { say: "You learn a good deal about a colony from what it needs printed. I set a notice last spring for the {{landbank|Land Bank}} — paper money backed on farmland, got up by country men because there is no silver in this colony to trade with. Word came over in the summer that Parliament had voided the whole scheme from London. I set that notice too.", expr: 'neutral' },
       { narrate: 'He turns the book over, considering whether to say the next part.' },
       { say: "I will tell you what I keep catching on. These gentlemen write a great deal about liberty. Natural rights. Consent. Government by agreement of the governed.", expr: 'neutral' },
       { choose: [
@@ -286,14 +287,17 @@
         { label: '"Good cargo?"',
           then: [ { say: "Cheap cargo. Which is the same as a good one, if you’re the man buying.", expr: 'warm' } ] },
         { label: '"You don’t look like a man who just made money."',
-          then: [ { say: "I made money. I’m wondering how long I’ll be let keep making it. There’s a new man at the Customs.", expr: 'worried' } ] }
+          then: [ { say: "I made money. I’m wondering how long I’ll be let keep making it. There’s a new man at the {{customs|Customs}}.", expr: 'worried' } ] }
       ]},
       { say: "Here is the law, since you’re pouring and I’m talking. There’s an {{molassesact|Act of 1733}}. Sixpence the gallon on any molasses not grown in a British island. Sixpence.", expr: 'neutral' },
+      { say: "And it sits on top of a whole stack of older ones — the {{navigation|Navigation Acts}}. English or colonial ships only. English ports on the way. And a list of goods that must touch England first even when the buyer is nearer. Sugar and molasses are on that list; {{enumerated|enumerated}}, they call it.", expr: 'neutral' },
       { choose: [
         { label: '"And do you pay it?"',
           then: [
             { say: "Does the tide pay it? Nobody pays it. If we paid it there would be no rum made in Massachusetts, and if there’s no rum made in Massachusetts there’s no Massachusetts worth the name.", expr: 'stern' },
-            { say: "Sixty distilleries in this colony. Sixty. Not one of them could survive a sixpence.", expr: 'stern' } ] },
+            { say: "Call it by its name, if you like. {{smuggling|Smuggling}}. I land French and I write British in the book, and the officer who signs it knows the pen is lying.", expr: 'stern' },
+            { say: "Sixty distilleries in this colony. Sixty. Not one of them could survive a sixpence.", expr: 'stern' },
+            { say: "And I’ll say the rest of it, since you poured me an honest cup. The cane that syrup comes off is cut by {{triangle|people carried there in chains}}, who are not paid and did not choose it. That’s in the barrel as much as the molasses is. I carry it. I don’t pretend otherwise.", expr: 'downcast' } ] },
         { label: '"Why is the law there at all?"',
           then: [
             { say: "To please the sugar planters in Barbados and Antigua, who have friends in Parliament and can’t sell their molasses so cheap as the French can. It was never about the money. It was about *them*.", expr: 'stern' },
@@ -316,7 +320,7 @@
     ],
     confession: [
       { narrate: 'He looks at the door for a moment before he says it.' },
-      { say: "The new Customs man came to me on Friday.", expr: 'worried' },
+      { say: "The new {{customs|Customs}} man came to me on Friday.", expr: 'worried' },
       { say: "Not to seize anything. To *talk*. Very civil. Said he understood how the trade worked and had no wish to ruin honest men, and that a master who told him which coves were busy would find his own entries went very smooth indeed.", expr: 'downcast' },
       { choose: [
         { label: '"What did you tell him?"',
@@ -495,6 +499,7 @@
     },
     talk: [
       { say: "I have been in this port eleven days. In eleven days I have read the shipping records for the last two years.", expr: 'neutral' },
+      { say: "That is my office in one sentence. The {{navigation|Navigation Acts}} say where a cargo may go and in whose ship. The {{molassesact|Act of 1733}} says what is owed on it. My work is the distance between what those books say and what actually came off the wharves.", expr: 'neutral' },
       { say: "Do you know what I found? Molasses. A very great deal of molasses, all of it, without exception, from British islands. Antigua. Barbados. St. Kitts.", expr: 'thoughtful' },
       { choose: [
         { label: '"That sounds lawful enough."',

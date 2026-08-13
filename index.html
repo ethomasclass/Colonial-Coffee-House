@@ -15,6 +15,7 @@
     <div class="hud-l">
       <span class="hud-label">Purse</span>
       <span id="purse" class="hud-val">3s</span>
+      <span class="hud-rent">of <b>5s 6d</b> rent<span id="rentGap" class="rent-gap"></span></span>
     </div>
     <div class="hud-c">
       <span class="sign">The Green Dragon &mdash; Union Street</span>
@@ -123,6 +124,7 @@
               <div id="cupDesc" class="cup-desc">Click a base, a sweetener, and one thing more. Anything you make goes into the book, whether you serve it or not.</div>
               <div id="cupCost" class="cup-cost"></div>
               <div id="ingNote" class="ing-note-line"></div>
+              <div id="ledgerStrip" class="ledger-strip"></div>
               <div id="pourNote" class="pour-note" hidden></div>
               <div class="cup-actions">
                 <button id="pourBtn" class="ghost-btn" disabled>Pour it out</button>
@@ -138,6 +140,13 @@
             </section>
             <section>
               <h4>Sweetener <span>and this is where the law lives</span></h4>
+              <div id="lawCard" class="law-card" hidden>
+                <p><b>Three of these are lawful. The cheapest one is not.</b></p>
+                <p>French molasses costs a penny because the sixpence duty on it was
+                   never paid. Rent is <b>5s&nbsp;6d</b> tonight and your purse holds
+                   <b>3s</b>. Every cup you sell has to close that gap.</p>
+                <button id="lawCardOk" class="ghost-btn">I understand</button>
+              </div>
               <div id="sweetShelf" class="shelf"></div>
             </section>
             <section>

@@ -26,6 +26,11 @@ terms** box that says the whole thing in one sentence.
 Read it. Everything the patrons argue about tonight is explained here first,
 and there is no other place to catch up.
 
+**Click every underlined word.**
+Underlined words are terms you are meant to learn. Clicking one gives you its
+definition and why it mattered, then puts you straight back where you were.
+They appear in the newspaper, in what people say, and in the order itself.
+
 **2. Open the shop.** A patron comes in and sits down at the bar.
 
 **3. Listen to the order.**

@@ -18,6 +18,16 @@ accounts, no student data leaves the machine.
 The design principle throughout: **students should reach the concept by acting,
 and only then be given its name.** Nothing in the game announces a thesis.
 
+**Vocabulary is taught in place.** Sixteen terms are defined in the game, and
+they are marked in the dialogue itself — an underlined word a student can click
+to get a definition and its context, without leaving the conversation. Every
+concept the game teaches is named by a character at the moment they explain it:
+*itinerant*, *New Light*, *Old Light*, *New Birth*, *enthusiasm*, *to testify*,
+the *Navigation Acts*, *enumerated goods*, the *Molasses Act of 1733*,
+*salutary neglect*, *smuggling*, the *Land Bank*, *customs officer*, *Bohea*,
+*the trade*, and *John Locke*. The same words are clickable in the newspaper
+and in the order a patron gives you.
+
 ### The Great Awakening — carried by three people, not one
 
 The revival is deliberately not presented as a movement students observe from
@@ -104,6 +114,15 @@ These numbers are tuned, not arbitrary:
 - A **flawless lawful night** clears rent by roughly a penny.
 - An **ordinary lawful night** — one or two drinks slightly wrong — does not.
 - **Smuggling clears it comfortably.**
+
+**The arithmetic is on screen while they choose, not revealed afterwards.**
+Every sweetener carries its standing with the law — *duty unpaid*, *duty paid*,
+*ours, no duty* — so the four read as a choice being offered rather than one
+odd option to avoid. Under the cup a running account shows the purse, the rent,
+what is still to find, what this cup earns, and, when they reach for the French
+molasses, exactly what the unpaid duty saves them. The rent target also sits
+beside the purse in the top bar all night. The first time a student opens the
+brewing bench, a card names the problem once and then never appears again.
 
 That gap is the lesson. A student who reaches for the French molasses has
 performed salutary neglect rather than been told about it, and the closing
