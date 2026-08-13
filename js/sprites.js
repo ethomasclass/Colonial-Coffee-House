@@ -102,6 +102,18 @@ window.SPRITES = {
    figures sit, so art conditioned by tools/pixelate.html should land right
    without touching anything. If one of yours rides high or low, nudge
    `bottom`; if it is too big for the room, drop `height`. */
+/* Per-character nudges, in room pixels, for art that is framed differently
+   from the rest. Positive `dy` seats somebody lower.
+
+   Mr. Pym is drawn further back than the others: at six pixels above his
+   bottom edge his silhouette is 28% as wide as his frame, where everyone else
+   is 61-79%. What reaches the bottom of his picture is a hand and the corner
+   of his ledger, not his forearms — so lining his picture up with the counter
+   leaves his body floating above it. */
+window.SPRITE_ADJUST = {
+  officer: { dy: 5 }
+};
+
 window.SPRITE_LAYOUT = {
   height: 0.70,      /* of the 216px room, so about 151px tall           */
   centreX: 0.50,     /* across the frame                                  */

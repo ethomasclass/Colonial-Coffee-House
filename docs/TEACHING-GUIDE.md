@@ -169,8 +169,11 @@ The sweetener shelf **is** the Molasses Act. Students meet it as arithmetic.
 | Loaf sugar | 6d | Yes |
 | Honey | free | Yes — but only six servings exist |
 
-**The purse opens at 3 shillings (36d). Rent is 5 shillings 6 pence (66d),
-due tonight.**
+**The purse opens at 36 pence. Rent is 66 pence, due tonight.** Money is
+counted in pence only — shillings-and-pence is what they really used, but it
+made every figure a two-part conversion before a student could compare
+anything, and the mechanic is one subtraction. The period voice survives in
+the dialogue, where *sixpence the gallon* still gets said out loud.
 
 These numbers are tuned, not arbitrary:
 
@@ -201,7 +204,7 @@ from a menu into a decision with a named consequence attached, before most of
 the night's cups are poured. It costs about two minutes; drop `'officer_early'`
 from `ORDER` if you need them back.
 
-**The money notation is spelled out.** `d` and `s` mean nothing to a
+**Money is in pence, full stop.** No shillings anywhere in the interface — see the note under the sweetener table. **The notation is spelled out.** `d` and `s` mean nothing to a
 fifteen-year-old, so the shelf carries a key — *d = pence, s = shillings,
 12d = 1s, rent tonight is 5s 6d, which is 66d* — and the opening card states
 the gap in pence: thirty pence to find across six customers.

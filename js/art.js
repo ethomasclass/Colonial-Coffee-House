@@ -1329,7 +1329,7 @@
     }
     if (f < motion.blinkEnd) blinking = true;
 
-    return { dx: dx, dy: dy, alpha: Math.min(1, t * 1.5), blinking: blinking };
+    return { dx: dx, dy: dy, alpha: Math.min(1, t * 1.5), blinking: blinking, charId: charId };
   }
 
   /* The room is lit by one fire on the left and a couple of candles. Art
@@ -1374,7 +1374,8 @@
     var h = Math.round(H * L.height);
     var w = Math.round(h * (lit.width / lit.height));
     var x = Math.round(W * L.centreX - w / 2) + m.dx;
-    var y = Math.round(H * L.bottom - h) + m.dy;
+    var adj = (global.SPRITE_ADJUST || {})[m.charId] || {};
+    var y = Math.round(H * L.bottom - h) + m.dy + (adj.dy || 0);
     bctx.imageSmoothingEnabled = false;
     if (m.alpha < 1) bctx.globalAlpha = m.alpha;
     bctx.drawImage(lit, x, y, w, h);

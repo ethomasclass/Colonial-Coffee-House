@@ -137,7 +137,7 @@ The sweetener shelf is the entire Molasses Act:
 | Loaf sugar | 6d | Yes |
 | Honey | free | Yes, but only six servings exist |
 
-Rent is 5s 6d and the purse opens at 3s. A **flawless** lawful night clears
+Rent is 66d and the purse opens at 36d. A **flawless** lawful night clears
 rent by one penny; an ordinary lawful night does not; smuggling clears it
 comfortably. Students discover *salutary neglect* by running the numbers, not
 by being told — and the closing screen only names the concept after they have

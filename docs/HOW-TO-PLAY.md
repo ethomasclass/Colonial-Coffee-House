@@ -83,7 +83,8 @@ play the same game come out with different notes.**
 
 ## Money, and the awkward part
 
-You start with **3 shillings**. Rent is **5 shillings 6 pence**, due tonight.
+You start with **36 pence** (written **36d**). Rent is **66 pence**, due
+tonight. That is a **30d gap** across six customers.
 
 Sweeteners cost differently:
 

@@ -661,3 +661,22 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   letter-spacing: .01em;
 }
 .coin-key b { color: var(--amber-lit); font-weight: 600; }
+
+/* The one thing on the title screen a student must not skim past. */
+.warnbox {
+  border: 2px solid var(--red);
+  background: rgba(140, 47, 35, .13);
+  padding: .85rem 1.1rem;
+  margin: 1.1rem 0;
+  text-align: left;
+  font-size: .93rem;
+  line-height: 1.55;
+}
+.warnbox p { margin: 0 0 .55rem; }
+.warnbox p:last-child { margin-bottom: 0; }
+.warnbox-head {
+  font-weight: 600;
+  color: var(--amber-lit);
+  letter-spacing: .01em;
+}
+.warnbox b { color: var(--cream); }

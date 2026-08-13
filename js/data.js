@@ -6,7 +6,9 @@
    served — it’s the thing molasses *becomes* once it leaves this counter, and
    that’s precisely why the molasses on the shelf is a political object.
 
-   Money is reckoned in pence (d). Twelve pence to the shilling. Massachusetts
+   Money is reckoned in pence (d) throughout, deliberately — see pence().
+   Twelve pence made a shilling in 1741, but the game does not ask anybody to
+   convert. Massachusetts
    paper money in 1741 was badly inflated, which is why the rent hurts.
    =========================================================================== */
 
@@ -245,8 +247,8 @@
   ];
 
   var LEDGER = {
-    startPurse: 36,     /* three shillings, and it isn’t enough           */
-    rent: 66,           /* due to the landlord at close of business.       */
+    startPurse: 36,     /* 36d, and it isn’t enough                       */
+    rent: 66,           /* 66d, due to the landlord at close of business.  */
                         /* Tuned so that a perfect lawful night clears it by  */
                         /* a whisker and an ordinary lawful night doesn’t,   */
                         /* while smuggling clears it comfortably. That gap IS */
@@ -261,12 +263,14 @@
     allowPourOut: true
   };
 
+  /* Pence, and only pence. Shillings-and-pence is what they really used, and
+     it made every number in the game a two-part conversion a fifteen-year-old
+     has to do before they can compare anything. The whole mechanic is one
+     subtraction — rent minus takings — so it is counted in a single unit and
+     the period voice is left to the dialogue, where "sixpence the gallon"
+     still gets said out loud. */
   function pence(d) {
-    if (d === 0) return '0d';
-    var neg = d < 0; d = Math.abs(d);
-    var s = Math.floor(d / 12), rem = d % 12;
-    var out = s > 0 ? (s + 's ' + (rem > 0 ? rem + 'd' : '')) : (rem + 'd');
-    return (neg ? '−' : '') + out.trim();
+    return (d < 0 ? '\u2212' : '') + Math.abs(d) + 'd';
   }
 
   /* =======================================================================

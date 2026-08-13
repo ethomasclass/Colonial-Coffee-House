@@ -68,7 +68,7 @@ each, your own words.**
 
 | | | | |
 |---|---|---|---|
-| Purse at the start | `______` | Rent due tonight | `______` |
+| Purse at the start | `36d` | Rent due tonight | `66d` |
 | The sweetener you used most | `______` | **Made rent?** | **YES** / **NO** |
 
 **If you used French molasses, say why.** If you never did, say what that cost
