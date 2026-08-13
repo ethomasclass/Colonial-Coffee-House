@@ -204,10 +204,12 @@ from a menu into a decision with a named consequence attached, before most of
 the night's cups are poured. It costs about two minutes; drop `'officer_early'`
 from `ORDER` if you need them back.
 
-**Money is in pence, full stop.** No shillings anywhere in the interface — see the note under the sweetener table. **The notation is spelled out.** `d` and `s` mean nothing to a
-fifteen-year-old, so the shelf carries a key — *d = pence, s = shillings,
-12d = 1s, rent tonight is 5s 6d, which is 66d* — and the opening card states
-the gap in pence: thirty pence to find across six customers.
+**Money is in pence, full stop.** No shillings anywhere in the interface. `d`
+means nothing to a fifteen-year-old on its own, so the shelf carries a key —
+*prices are in pence, written d; rent tonight is 66d and you started with 36d*
+— and the title screen leads with the gap stated plainly: thirty pence to
+find, six customers, five pence a cup before you have paid for anything that
+went in it.
 
 **Expect this to be the moment worth teaching into.** The most productive
 classroom conversation is usually not *was smuggling wrong* but *what does it
