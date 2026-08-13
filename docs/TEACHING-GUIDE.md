@@ -13,6 +13,65 @@ accounts, no student data leaves the machine.
 
 ---
 
+## Concepts covered, at a glance
+
+Every row is something a character says out loud, not something the game
+gestures at. The **term** column lists the words a student can click in
+dialogue for a definition; all sixteen are defined in-game.
+
+### The Great Awakening
+
+| Concept | Term | Who raises it | What a student should be able to say afterwards |
+|---|---|---|---|
+| Itinerant preaching | *itinerant* | Ezra, Patience, Thorne, newspaper p.1 | Preachers travelled town to town instead of serving one settled parish, and preached in fields and barns when no pulpit would have them |
+| Conversion as sudden and personal | *New Birth* | Ezra, Patience | The revival asked whether you *knew* you were saved, not whether you attended — a felt event rather than an inherited practice |
+| The revival's supporters | *New Light* | Ezra, Patience, newspaper p.1 | Colonists who welcomed the revivals as a fresh flame |
+| The revival's opponents | *Old Light* | Thorne, Patience | Mostly the settled clergy, who saw disorder and a threat to church authority |
+| The period's insult for it | *enthusiasm* | Ezra, Thorne, newspaper p.1 | Claiming direct inspiration from God with no training, office, or permission — dangerous to public order |
+| Who gained a voice | *to testify* | Patience, Ezra, newspaper p.1 | In a field with no pulpit to defend, servants, women and Black colonists could stand and speak — which is precisely what alarmed the Old Lights |
+| Congregations splitting | — | Ezra, Thorne, newspaper p.1 | The disagreement was not academic; whole churches divided over it |
+
+### The Enlightenment
+
+| Concept | Term | Who raises it | What a student should be able to say afterwards |
+|---|---|---|---|
+| The mind at birth | *John Locke* | Cato | If nothing is written in a person at birth, no one is born knowing more than another — and nobody is born fit to rule anybody else |
+| Government by consent | *John Locke* | Cato | Authority rests on the agreement of the governed, not on inheritance |
+| Reason and observation | — | Cato, Thorne, newspaper p.3 | Asking how a thing can be *shown* to be true rather than who said it — and Thorne wanting reason held alongside faith, not against it |
+| How the ideas travelled | — | Cato, newspaper p.3 | Not universities — newspapers, almanacs, printers and coffee houses. A book printed in London in spring is argued over in Boston by autumn |
+| The contradiction | *the trade* | Cato | Men in Boston quoted Locke on the rights of man before dinner and signed for a slave-grown cargo after it |
+
+### Trade, empire, and the law
+
+| Concept | Term | Who raises it | What a student should be able to say afterwards |
+|---|---|---|---|
+| Mercantile trade law | *Navigation Acts* | Bright, Pym, newspaper p.2 | Colonial goods had to move in English or colonial ships and route through English ports, so English merchants and the Crown took a cut |
+| Goods that must go through England | *enumerated goods* | Bright, Patience, newspaper p.2 | Sugar and molasses were on the list, even when a better price waited nearer |
+| The duty at the centre of the game | *Molasses Act of 1733* | Bright, Pym, newspaper p.2, **the sweetener shelf** | Sixpence a gallon on non-British molasses, written to protect British West Indian planters who could not match the French price |
+| Evading it | *smuggling* | Bright, **the sweetener shelf** | Landing French molasses without paying the duty — ordinary commercial practice, not a criminal fringe |
+| Why the law went unenforced | *salutary neglect* | Pym, the closing ledger | Strict law barely enforced for so long that colonists came to experience enforcement as an outrage rather than a correction |
+| Who was meant to enforce it | *customs officer* | Bright, Pym | A Crown official who inspected cargo and collected duties — and who was frequently bribable, which is much of why the laws went uncollected |
+| Whose labour it rested on | *the trade* | Bright, Cato, newspaper p.2 | The cane was cut by enslaved people who were not paid and did not choose it; New England distilled the molasses into rum, and some of that rum bought more enslaved people |
+
+### Colonial economy and society
+
+| Concept | Term | Who raises it | What a student should be able to say afterwards |
+|---|---|---|---|
+| The money shortage | *Land Bank* | Cato, newspaper p.3 | Massachusetts could not coin money and silver sailed back to England; a 1740 scheme to issue paper backed by farmland was voided from London in 1741 |
+| Country against merchant | — | Cato, newspaper p.3 | Country debtors wanted the paper; Boston merchants did not — a colonial split that had nothing to do with Britain |
+| Tea before it was political | *Bohea* | Pym's order, the recipe book | In 1741 tea is cheap, ordinary and uncontroversial. The boycotts are a generation away |
+| Material life | — | The room's five clickable objects | Tallow candles rather than beeswax, pewter to drink from and china to be *seen*, window glass that crossed the Atlantic in straw, and a painted trade sign because most people could not read a name at forty paces |
+
+### What the mechanics teach on their own
+
+| Concept | Where it lives | What a student should be able to say afterwards |
+|---|---|---|
+| The economics of obeying the law | The sweetener shelf and the rent target | Keeping the law meant paying more for the same goods than every smuggler on the wharf — so the law did not go unenforced because colonists were lawless, but because keeping it did not pay |
+| Enforcement as a choice, not a fact | The suspicion count and Pym's closing scene | A law is only as real as somebody's willingness to collect it |
+| Testimony has to be earned | The confession mechanic | People tell you what they are frightened of only when you have paid attention to them first |
+
+---
+
 ## 1. What it is actually teaching
 
 The design principle throughout: **students should reach the concept by acting,
