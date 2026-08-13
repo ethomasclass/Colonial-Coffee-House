@@ -41,7 +41,11 @@ window.SPRITES = {
   /* Ezra Hale — the barrel-maker */
   convert: {
     neutral: 'art/characters/ezra-neutral.png',
-    warm:    'art/characters/ezra-warm.png',
+    /* Deliberately absent. The sheet came back with a grimace here rather than
+       a smile, which put a distressed face on his kindest lines. His neutral
+       is already a broad grin, so warm falls back to it and reads correctly.
+       Point this at a file whenever a better one exists. */
+    warm:    null,
     worried: 'art/characters/ezra-worried.png',
     stern:   'art/characters/ezra-stern.png',
     blink:   'art/characters/ezra-blink.png'
