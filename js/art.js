@@ -364,14 +364,13 @@
   var GEO = {
     window: B.window || { x: 122, y: 53, w: 50, h: 64 },
     fire:   B.fire   || { x: 6, y: 100, w: 76, h: 88 },
-    shelf:  B.shelf  || { x: 298, y: 18, cols: 4, rows: 4, dx: 15, dy: 30 },
-    barL:   (B.bar ? B.bar.x : 24) - 6
+    shelf:  B.shelf  || { x: 298, y: 18, cols: 4, rows: 4, dx: 15, dy: 30 }
   };
   var DRAWN = {
     window:  { x: GEO.window.x, y: GEO.window.y, w: GEO.window.w, h: GEO.window.h },
     fire:    { x: GEO.fire.x, y: GEO.fire.y, w: GEO.fire.w, h: GEO.fire.h, style: 'tips' },
-    glow:    { x: 44, y: 152, r: 104 },
-    candles: [ { x: 14, y: 64 }, { x: 344, y: 170 } ]
+    glow:    { x: 44, y: 128, r: 104 },
+    candles: [ { x: 14, y: 72 }, { x: 40, y: 170 }, { x: 344, y: 170 } ]
   };
 
   var tavernCache = null;
@@ -389,7 +388,7 @@
   }
 
   function paintTavern() {
-    var win = GEO.window, fire = GEO.fire, shelf = GEO.shelf, barL = GEO.barL;
+    var win = GEO.window, fire = GEO.fire, shelf = GEO.shelf;
     var wsTop = 126;                       /* top of the wainscot panelling */
 
     clear(RC.woodBlack);
@@ -418,45 +417,46 @@
     vl(374, 16, COUNTER_Y - 16, RC.woodLit);
 
     /* --- wainscot: vertical beading, as it is in the painting ------------ */
-    r(100, wsTop, 172, COUNTER_Y - wsTop, RC.woodDark);
-    hl(100, wsTop, 172, RC.woodHi);
-    hl(100, wsTop + 1, 172, RC.woodLit);
-    for (var bx = 104; bx < 272; bx += 7) {
+    r(96, wsTop, 176, COUNTER_Y - wsTop, RC.woodDark);
+    hl(96, wsTop, 176, RC.woodHi);
+    hl(96, wsTop + 1, 176, RC.woodLit);
+    for (var bx = 100; bx < 272; bx += 7) {
       vl(bx, wsTop + 3, COUNTER_Y - wsTop - 3, RC.woodDeep);
       vl(bx + 1, wsTop + 3, COUNTER_Y - wsTop - 3, RC.wood);
     }
 
-    paintHearth(fire, barL);
+    paintHearth(fire);
     paintWindow(win);
     paintSign();
     paintCupboard(shelf);
-    paintBar(barL);
+    paintBar();
   }
 
-  /* --- the hearth: brick, mantel, crane, and an empty firebox ------------- */
-  function paintHearth(fire, barL) {
-    /* brickwork */
-    r(0, 95, 100, 100, RC.brick);
-    for (var by = 95; by < 195; by += 5) {
-      hl(0, by, 100, RC.mortar);
-      for (var bx = (((by - 95) / 5) % 2 ? 8 : 0); bx < 100; bx += 16) vl(bx, by, 5, RC.mortar);
+  /* --- the hearth: brick, mantel, crane, and an empty firebox -------------
+     It stands against the back wall now, with the bar running past in front
+     of it, so its base is hidden rather than sharing the foreground. */
+  function paintHearth(fire) {
+    var top = 80;                          /* where the brickwork starts */
+    r(0, top, 96, COUNTER_Y - top, RC.brick);
+    for (var by = top; by < COUNTER_Y; by += 5) {
+      hl(0, by, 96, RC.mortar);
+      for (var bx = (((by - top) / 5) % 2 ? 8 : 0); bx < 96; bx += 16) vl(bx, by, 5, RC.mortar);
     }
     /* the courses nearest the fire catch it */
-    for (var lb = 0; lb < 14; lb++) {
-      var lx = (lb * 23) % 92, ly = 120 + ((lb * 31) % 66);
-      if (lx > 78 && ly > 150) continue;
-      r(lx, ly, 14, 4, RC.brickLit);
+    for (var lb = 0; lb < 12; lb++) {
+      var lx = (lb * 23) % 88, ly = 96 + ((lb * 29) % 62);
+      if (lx > 6 && lx < 82 && ly > 88 && ly < 158) continue;   /* not over the opening */
+      r(lx, ly, 13, 4, RC.brickLit);
     }
-    r(0, 176, 100, 19, RC.brickDim);
 
     /* mantel shelf, with an almanac left on it */
-    r(0, 84, 106, 8, RC.woodLit);
-    hl(0, 84, 106, RC.woodHi);
-    r(0, 92, 106, 3, RC.woodDeep);
-    r(44, 70, 13, 14, RC.paper);
-    r(44, 70, 13, 3, '#b09b7c');
-    hl(46, 76, 9, RC.woodDark);
-    hl(46, 79, 7, RC.woodDark);
+    r(0, 72, 102, 8, RC.woodLit);
+    hl(0, 72, 102, RC.woodHi);
+    r(0, 80, 102, 2, RC.woodDeep);
+    r(44, 58, 13, 14, RC.paper);
+    r(44, 58, 13, 3, '#b09b7c');
+    hl(46, 64, 9, RC.woodDark);
+    hl(46, 67, 7, RC.woodDark);
 
     /* lintel over the opening */
     r(fire.x - 5, fire.y - 9, fire.w + 10, 9, RC.woodDark);
@@ -489,10 +489,6 @@
          [[0, '#d4632a'], [0.35, '#a3411b'], [0.7, 'rgba(138,52,22,0.55)'],
           [1, 'rgba(138,52,22,0)']]);
 
-    /* the flagged floor in front of it, where the bar hasn’t reached */
-    r(0, 195, barL + 5, H - 195, RC.stoneDim);
-    hl(0, 195, barL + 5, RC.stone);
-    for (var fx = 0; fx < barL + 5; fx += 19) vl(fx, 196, H - 196, '#3d2016');
   }
 
   /* --- leaded casement, with the night behind it -------------------------- */
@@ -609,30 +605,26 @@
     p(x, y + 24, RC.herbDim);
   }
 
-  /* --- the bar, which stops short of the hearth --------------------------- */
-  function paintBar(barL) {
-    var w = W - barL;
-    r(barL, COUNTER_Y, w, H - COUNTER_Y, RC.woodDeep);
+  /* --- the bar, running the whole width of the room ----------------------- */
+  function paintBar() {
+    r(0, COUNTER_Y, W, H - COUNTER_Y, RC.woodDeep);
 
     /* the top the player works on */
-    r(barL, COUNTER_Y, w, 18, RC.wood);
-    hl(barL, COUNTER_Y, w, RC.woodHi);
-    hl(barL, COUNTER_Y + 1, w, RC.woodLit);
-    for (var i = 0; i < 26; i++) {
-      var gx = barL + ((i * 41) % w), gy = COUNTER_Y + 5 + ((i * 17) % 12);
+    r(0, COUNTER_Y, W, 18, RC.wood);
+    hl(0, COUNTER_Y, W, RC.woodHi);
+    hl(0, COUNTER_Y + 1, W, RC.woodLit);
+    for (var i = 0; i < 34; i++) {
+      var gx = (i * 41) % W, gy = COUNTER_Y + 5 + ((i * 17) % 12);
       hl(gx, gy, 8 + (i % 11), i % 3 ? RC.woodLit : RC.woodDark);
     }
     /* front edge, then the panelled face below it */
-    r(barL, COUNTER_Y + 18, w, 3, RC.woodBlack);
-    r(barL, COUNTER_Y + 21, w, H - COUNTER_Y - 21, RC.woodDeep);
-    for (var px = barL + 10; px < W - 12; px += 60) {
+    r(0, COUNTER_Y + 18, W, 3, RC.woodBlack);
+    r(0, COUNTER_Y + 21, W, H - COUNTER_Y - 21, RC.woodDeep);
+    for (var px = 8; px < W - 12; px += 60) {
       r(px, COUNTER_Y + 27, 48, 22, RC.woodDark);
       r(px + 1, COUNTER_Y + 28, 46, 20, '#241110');
       hl(px + 1, COUNTER_Y + 28, 46, RC.woodDark);
     }
-    /* the end of the bar, so it reads as stopping rather than being cropped */
-    vl(barL, COUNTER_Y, H - COUNTER_Y, RC.woodHi);
-    vl(barL - 1, COUNTER_Y + 1, H - COUNTER_Y - 1, RC.woodBlack);
   }
 
   function drawRoom(f) {

@@ -26,10 +26,11 @@ window.BACKDROP = {
   /* Top of the bar. The customer stands behind it and cups sit on it. */
   counterY: 168,
 
-  /* The bar doesn't reach the left wall in this painting — the hearth floor
-     does — so spills are only left within this span. Otherwise the player
-     would be handed rings floating in the fireplace. */
-  bar: { x: 116, w: 250 },
+  /* The span spills are scattered over. The drawn room's bar runs the whole
+     width; the painting's stops a quarter of the way across, with the hearth
+     floor beside it, so switching back to the painting means narrowing this
+     to { x: 116, w: 250 } or the player gets rings in the fireplace. */
+  bar: { x: 20, w: 344 },
 
   /* The glass only, inside the frame. Rain falls here, and the street lantern
      outside gutters out as the night wears on — switched off here, because
@@ -40,7 +41,7 @@ window.BACKDROP = {
      already painted: flames lick up off the log line, coals breathe and
      sparks rise, but nothing solid is drawn over the logs. Drop the style and
      a whole fire is drawn instead, for a hearth painted empty. */
-  fire: { x: 6, y: 100, w: 76, h: 88, style: 'tips' },
+  fire: { x: 12, y: 92, w: 68, h: 64, style: 'tips' },
 
   /* Firelight breathing over the room. The painting already has warm light
      baked into the left wall, so this is kept low and close to the hearth —
@@ -63,8 +64,8 @@ window.BACKDROP = {
   /* Things worth clicking. First match wins, so the candle is listed before
      the hearth it stands in front of. */
   hits: [
-    { id: 'candle', x: 8,   y: 54, w: 24, h: 32  },
-    { id: 'hearth', x: 0,   y: 84, w: 100, h: 112 },
+    { id: 'candle', x: 6,   y: 42, w: 24, h: 32  },
+    { id: 'hearth', x: 0,   y: 72, w: 100, h: 96  },
     { id: 'window', x: 116, y: 46, w: 62, h: 80  },
     { id: 'sign',   x: 198, y: 26, w: 54, h: 30  },
     { id: 'shelf',  x: 288, y: 24, w: 96, h: 124 }
