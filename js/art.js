@@ -1235,7 +1235,15 @@
     if (!table || !table[charId]) return null;
     var set = table[charId];
     var chain = [expr].concat(EXPR_FALLBACK[expr] || ['neutral']);
-    for (var i = 0; i < chain.length; i++) if (set[chain[i]]) return set[chain[i]];
+    for (var i = 0; i < chain.length; i++) {
+      var url = set[chain[i]];
+      /* Every path is declared here whether or not the file exists, so a
+         declared path is not proof of a picture. Step over the ones we have
+         already tried and failed to load, or a character missing a single
+         expression drops to the built-in figure instead of falling back to
+         their own face. */
+      if (url && spriteCache[url] !== 'failed') return url;
+    }
     return null;
   }
 

@@ -27,18 +27,46 @@ every time the conversation turns.
 Usage: slice.py <sheet.png> <char> <outdir> [x0 y0 x1 y1 as fractions]
 """
 import sys, os
-from PIL import Image
+from PIL import Image, ImageDraw
 
 TARGET_H = 151
 NAMES = ['neutral', 'warm', 'worried', 'stern', 'blink']
 
-# The face band, as fractions of the trimmed figure. Default is tuned to Cato:
-# it starts below the hairline, stops above the collar, and stays inside the
-# edge of the head so both cuts land on flat skin rather than on an outline.
-BAND = (0.349, 0.152, 0.678, 0.384)
+BAND = None      # worked out from the figure unless given on the command line
 
 
-def knockout(im, tol=26):
+def find_band(fig):
+    """Work out where the face is, rather than being told.
+
+    The head is the narrow part above the shoulders, so scanning down the
+    silhouette until it suddenly gets wider finds the neckline. From that the
+    band follows: start below the hairline, stop at the collar, and stay inside
+    the edge of the head so both cuts land on flat skin instead of on an
+    outline. Doing it per character matters — a wig, a linen cap and a bare
+    head all put the hairline somewhere different."""
+    w, h = fig.size
+    a = fig.getchannel('A').load()
+    rows = []
+    for y in range(h):
+        xs = [x for x in range(w) if a[x, y] > 24]
+        rows.append((min(xs), max(xs)) if xs else None)
+    filled = [y for y, r in enumerate(rows) if r]
+    top = filled[0]
+    probe = [rows[y][1] - rows[y][0] for y in filled[:max(4, len(filled) // 5)]]
+    probe.sort()
+    head_w = probe[len(probe) // 2]
+    shoulder = h
+    for y in filled:
+        if y < top + h * 0.12: continue
+        if rows[y][1] - rows[y][0] > head_w * 1.55: shoulder = y; break
+    hx0 = min(rows[y][0] for y in range(top, shoulder) if rows[y])
+    hx1 = max(rows[y][1] for y in range(top, shoulder) if rows[y])
+    inset = (hx1 - hx0) * 0.13
+    return (round(hx0 + inset), round(top + (shoulder - top) * 0.36),
+            round(hx1 - inset), shoulder)
+
+
+def knockout(im, tol=34):
     """Flood the white background in from the edges, leaving enclosed whites
     (a linen cravat, a cap, the whites of eyes) alone."""
     im = im.convert('RGBA')
@@ -114,9 +142,18 @@ def main(path, char, outdir, band=BAND):
 
     cut = [im.crop((x0, 0, x1, im.size[1])).crop((L, T, R, Bm)) for (x0, x1) in runs]
     fw, fh = cut[0].size
-    fx0, fy0 = round(band[0] * fw), round(band[1] * fh)
-    fx1, fy1 = round(band[2] * fw), round(band[3] * fh)
+    if band:
+        fx0, fy0 = round(band[0] * fw), round(band[1] * fh)
+        fx1, fy1 = round(band[2] * fw), round(band[3] * fh)
+    else:
+        fx0, fy0, fx1, fy1 = find_band(cut[0])
     print('face band %s of %s' % ((fx0, fy0, fx1, fy1), (fw, fh)))
+
+    # a picture of where it decided the face was, to be checked before trusting
+    chk = cut[0].convert('RGB')
+    d = ImageDraw.Draw(chk)
+    d.rectangle([fx0, fy0, fx1 - 1, fy1 - 1], outline=(255, 0, 255), width=3)
+    chk.save(os.path.join(outdir, '_band-%s.png' % char))
 
     w = max(1, round(fw * TARGET_H / fh))
     for i, panel in enumerate(cut):
@@ -134,5 +171,5 @@ def main(path, char, outdir, band=BAND):
 
 
 if __name__ == '__main__':
-    b = tuple(float(v) for v in sys.argv[4:8]) if len(sys.argv) >= 8 else BAND
+    b = tuple(float(v) for v in sys.argv[4:8]) if len(sys.argv) >= 8 else None
     sys.exit(main(sys.argv[1], sys.argv[2], sys.argv[3], b))

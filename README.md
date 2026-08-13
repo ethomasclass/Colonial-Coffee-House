@@ -264,6 +264,14 @@ To cut the game short, edit `ORDER` in `js/data.js`.
   arrive one face at a time. Missing expressions fall back down a chain, so
   four images per character covers all eight moods and `neutral` alone is
   enough to see somebody in the room.
+- **All six have faces.** Neutral, warm, worried, stern and a blink apiece,
+  cut from five-panel sheets by `tools/slice-sheet.py`. That script finds the
+  panels by the gaps between them, crops all five with one shared box, and
+  takes only a band across the face from each — the body always comes from the
+  neutral, because a generator asked to change an expression will also redraw
+  the coat and, once, turn a man's hair grey. It works out where each face is
+  by finding the shoulders, so a wig, a linen cap and a bare head all land
+  right without being measured by hand.
 - **Sprites move.** A patron rises into the seat rather than appearing,
   breathes, shifts their weight slowly, and settles a little on each line of
   dialogue as though they had just spoken. A change of mood gets its own small
