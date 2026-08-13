@@ -14,6 +14,8 @@ files — open `index.html` and it runs.
 
 - **[docs/HOW-TO-PLAY.md](docs/HOW-TO-PLAY.md)** — student directions. Printable,
   or project it while they start.
+- **[docs/STUDENT-HANDOUT.md](docs/STUDENT-HANDOUT.md)** — one double-sided
+  sheet. Filled in while playing, answered after closing.
 - **[docs/TEACHING-GUIDE.md](docs/TEACHING-GUIDE.md)** — what the game teaches,
   the answer key, timing, discussion prompts, and what it deliberately leaves
   out.

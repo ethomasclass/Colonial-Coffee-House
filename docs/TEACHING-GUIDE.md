@@ -334,8 +334,10 @@ Worth knowing before you plan around it:
 - **Slavery is present but not examined in depth.** The Caribbean sugar
   economy is stated plainly and repeatedly; the lived experience of enslaved
   people is not portrayed. Do not use this as your slavery lesson.
-- **No assessment is built in.** The closing ledger is laid out to be copied
-  onto paper, but the worksheet itself does not exist yet.
+- **The handout is light on purpose.** `docs/STUDENT-HANDOUT.md` is one
+  double-sided sheet, sized for a 35-minute play-through: quick capture while
+  they play, explanations after closing. It is not a full assessment, and it
+  does not try to be one.
 
 ---
 
