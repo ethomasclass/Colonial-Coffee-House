@@ -301,6 +301,8 @@ stalled, and so you can tell at a glance whose confession a student missed.
 
 ### Immediately after play — five minutes, whole class
 
+1. **Hold up your night codes.** Find somebody whose first number differs from
+   yours and ask them what that person said.
 1. **Who did you believe?** Ezra or Thorne? (Almost nobody picks Thorne, and
    the reasons why are worth pulling on.)
 2. **Did you make rent? What did you have to do?** Take a show of hands on who

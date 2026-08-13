@@ -738,3 +738,25 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   border: 1px dashed var(--amber); padding: .55rem 1rem;
   display: inline-block; margin: .3rem 0 .5rem;
 }
+
+/* A student can click a word once and lose it three lines later. This is the
+   place they get it back — every term they have met, with what it meant. */
+.words-inner {
+  background: var(--panel); border: 3px solid var(--amber); border-radius: 3px;
+  padding: 1.4rem 1.6rem; max-width: 52rem; width: 92%;
+  max-height: 88vh; display: flex; flex-direction: column;
+}
+.words-inner h3 { margin: 0 0 .2rem; color: var(--amber-lit); font-size: 1.3rem; }
+.words-body { overflow-y: auto; margin: .7rem 0 1rem; padding-right: .4rem; }
+.words-group {
+  font-size: .72rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--amber); margin: 1rem 0 .5rem; padding-bottom: .2rem;
+  border-bottom: 1px solid rgba(217,144,56,.28);
+}
+.words-group:first-child { margin-top: 0; }
+.word-row { margin-bottom: .75rem; }
+.word-row b { color: var(--cream); }
+.word-row p { margin: .12rem 0 0; line-height: 1.55; color: var(--dim); font-size: .92rem; }
+.words-none {
+  color: var(--dim); font-style: italic; line-height: 1.6;
+}

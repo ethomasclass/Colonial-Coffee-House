@@ -56,6 +56,7 @@
         { label: '"Your master will forgive you or he won’t."',
           then: [ { say: "He won’t. But I mind it less than I did a week ago, which honestly scares me.", expr: 'thoughtful' } ] }
       ]},
+      { say: "They’re calling it {{awakening|a great awakening}}, and I didn’t believe a word of that phrase until Tuesday.", expr: 'bright' },
       { say: "He asked us — each of us, one by one, close enough — whether we knew we were saved. Not hoped. Not reckoned. {{newbirth|Knew}}. And I couldn’t answer him. Then in his second hour I found I could.", expr: 'warm' },
       { choose: [
         { label: '"And what does your minister say to that?"',
@@ -208,6 +209,7 @@
         { label: '"Sounds like heavy going."',
           then: [ { say: "It is. I have read the same twelve pages four times. But it’s heavy the way a load is heavy, not the way a stone is.", expr: 'thoughtful' } ] }
       ]},
+      { say: "There’s a name going about for this way of thinking — {{enlightenment|enlightened}}, they say, as though everyone before us had been sitting in the dark. I don’t love the word. I do rather love the books.", expr: 'thoughtful' },
       { say: "His argument is that we come into the world knowing nothing at all. No ideas built in ahead of time. Everything we have, we got — from what we saw, and heard, and were told.", expr: 'warm' },
       { choose: [
         { label: '"That seems obvious enough."',

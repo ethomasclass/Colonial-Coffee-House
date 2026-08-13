@@ -28,6 +28,7 @@
     wasted: 0,
     confessions: 0,
     opened: {},          /* who told you the thing, by id */
+    seenWords: {},       /* every glossary term met on screen */
     patronIndex: -1,
     patron: null,
     expr: 'neutral',
@@ -71,6 +72,10 @@
     return String(text)
       .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
       .replace(/\{\{(\w+)\|([^}]+)\}\}/g, function (_, k, words) {
+        /* Meeting a word on screen is what puts it in the notebook — not
+           clicking it. A student who read the line has encountered the term
+           whether or not they stopped to check it. */
+        if (st.seenWords) st.seenWords[k] = true;
         return '<button class="gloss" data-k="' + k + '">' + words + '</button>';
       })
       .replace(/\*([^*]+)\*/g, '<em>$1</em>');
@@ -310,6 +315,40 @@
     next.onclick = function () { if (at < slides.length - 1) { at++; show(); } };
     back.onclick = function () { if (at > 0) { at--; show(); } };
     show();
+  }
+
+  /* The notebook. Grouped, because eighteen terms in one alphabetical list is
+     a wall — and grouped this way it also shows a student that the evening had
+     four subjects in it, which the dialogue never says outright. */
+  var WORD_GROUPS = [
+    ['The Great Awakening', ['awakening', 'itinerant', 'newbirth', 'newlight', 'oldlight', 'enthusiasm', 'testify']],
+    ['The Enlightenment',   ['enlightenment', 'lockeref', 'rights', 'authority']],
+    ['Trade, empire and the law', ['navigation', 'enumerated', 'molassesact', 'smuggling', 'neglect', 'customs', 'triangle']],
+    ['Money and daily life', ['landbank', 'bohea']]
+  ];
+
+  function openWords() {
+    var seen = st.seenWords || {}, total = 0, got = 0, html = '';
+    WORD_GROUPS.forEach(function (grp) {
+      var rows = '';
+      grp[1].forEach(function (k) {
+        var g = D.GLOSSARY[k];
+        if (!g) return;
+        total++;
+        if (!seen[k]) return;
+        got++;
+        rows += '<div class="word-row"><b>' + g.term + '</b><p>' + g.def + '</p></div>';
+      });
+      if (rows) html += '<div class="words-group">' + grp[0] + '</div>' + rows;
+    });
+    if (!html) {
+      html = '<p class="words-none">You haven\u2019t met any of tonight\u2019s words yet. ' +
+             'They show up underlined in the newspaper and in what people say &mdash; ' +
+             'click one and it lands here, so you can come back to it.</p>';
+    }
+    el.wordsBody.innerHTML = html;
+    el.wordsCount.textContent = got + ' of ' + total + ' met so far';
+    el.words.hidden = false;
   }
 
   function showLawCardOnce() {
@@ -747,6 +786,7 @@
         purse: st.purse, suspicion: st.suspicion, honeyLeft: st.honeyLeft,
         frenchUses: st.frenchUses, britishUses: st.britishUses, wasted: st.wasted,
         confessions: st.confessions, chores: st.chores, patronIndex: st.patronIndex,
+        seenWords: st.seenWords, opened: st.opened,
         log: st.log, discovered: st.discovered, journal: st.journal
       }));
     } catch (e) {}
@@ -922,6 +962,7 @@
     ['dialogue', 'speaker', 'line', 'choices', 'advance', 'brew', 'baseShelf',
      'sweetShelf', 'addShelf', 'cupName', 'cupDesc', 'cupCost', 'cupNew',
      'ledgerStrip', 'rentGap', 'lawCard', 'tasteBtn',
+     'words', 'wordsBody', 'wordsCount',
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
@@ -944,6 +985,8 @@
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
     el.tasteBtn.onclick = tasteCup;
+    $('wordsBtn').onclick = openWords;
+    $('wordsClose').onclick = function () { el.words.hidden = true; };
     setupSlides();
     var lawOk = $('lawCardOk');
     if (lawOk) lawOk.onclick = function () {
@@ -1022,6 +1065,7 @@
       }
       if (ev.key === 'Escape') {
         el.book.hidden = true; el.gloss.hidden = true; el.settings.hidden = true;
+        el.words.hidden = true;
       }
     });
 
