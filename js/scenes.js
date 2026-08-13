@@ -638,9 +638,9 @@
      ===================================================================== */
   officer_early: {
     enter: [
-      { narrate: 'The door opens on a neat man in a red coat with a small ledger under his arm. He does not sit down.' },
-      { say: "Don\u2019t get up. I\u2019m not stopping.", expr: 'neutral' },
-      { say: "Aldis Pym. His Majesty\u2019s {{customs|Customs}}. I\u2019ve been in this port eleven days and I\u2019m calling on every house on Union Street, so don\u2019t take it personally.", expr: 'neutral' }
+      { narrate: 'You have not been open five minutes. The door opens on a neat man in a red coat with a small ledger under his arm. He does not sit down.' },
+      { say: "Don\u2019t get up. I\u2019m not stopping, and I don\u2019t want anything.", expr: 'neutral' },
+      { say: "Aldis Pym. His Majesty\u2019s {{customs|Customs}}. I\u2019ve been in this port eleven days and I\u2019m calling on every house on Union Street before they get busy, so don\u2019t take it personally.", expr: 'neutral' }
     ],
     talk: [
       { narrate: 'He opens the ledger, looks at a page, and turns it so you can see a column of figures you did not write.' },
@@ -656,8 +656,8 @@
           then: [
             { say: "No. They haven\u2019t. That is precisely the thing I was sent here to change.", expr: 'stern' } ] }
       ]},
-      { say: "So. I\u2019ll come back at closing and ask you plainly what you\u2019ve been sweetening with tonight, and you will tell me, and I will write it here.", expr: 'neutral' },
-      { say: "You have all evening to decide what the answer is going to be. I find people appreciate the warning.", expr: 'thoughtful' }
+      { say: "So. I\u2019ll come back at closing and ask you plainly what you\u2019ve been sweetening with tonight, and you will tell me, and I will write it in this book.", expr: 'neutral' },
+      { say: "You haven\u2019t poured a cup yet. That means every one you pour from here is a thing you chose knowing I would ask. I find people appreciate the warning. They don\u2019t always thank me for it.", expr: 'thoughtful' }
     ],
     exit: [
       { narrate: 'He closes the ledger, tucks it under his arm, and goes back out into the rain without ordering anything.' }

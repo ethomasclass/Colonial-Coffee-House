@@ -196,13 +196,16 @@ screen only names the concept *after* they have already lived it. Using French
 molasses also raises a suspicion count that the customs officer's closing scene
 reads back to them.
 
-**Pym calls twice.** He now appears once in the middle of the evening, buys
-nothing, and tells the keeper to his face that he will ask at closing what they
-have been sweetening with — *"you have all evening to decide what the answer is
-going to be."* Then he comes back and asks. The point is to convert the shelf
+**Pym opens and closes the night.** He is the very first person through the
+door, before a single cup is poured. He buys nothing, opens his ledger, and
+says he will come back at closing and ask what they have been sweetening with —
+*"you haven't poured a cup yet. That means every one you pour from here is a
+thing you chose knowing I would ask."* Then he comes back and asks. The point is to convert the shelf
 from a menu into a decision with a named consequence attached, before most of
 the night's cups are poured. It costs about two minutes; drop `'officer_early'`
-from `ORDER` if you need them back.
+from `ORDER` if you need them back — but it is the cheapest two minutes in the
+build, because it turns the shelf into a decision before the first drink
+rather than after the sixth.
 
 **Money is in pence, full stop.** No shillings anywhere in the interface. `d`
 means nothing to a fifteen-year-old on its own, so the shelf carries a key —
@@ -226,6 +229,10 @@ do to a law when nearly everyone breaks it and nearly no one is punished.*
 2. Decide whether you are cutting scenes (see timing below).
 3. Read the molasses story in the newspaper, for the slavery content.
 
+**The opening is three short slides**, not one block of text — where you are,
+what you do, and the catch — with Next, Back and a dot for each. Weary readers
+face one short panel at a time.
+
 ### The period
 
 | Minutes | |
@@ -247,7 +254,7 @@ not timed it with real students; do that before you commit a class to it.
 To shorten, edit the `ORDER` array near the bottom of `js/data.js`:
 
 ```js
-var ORDER = ['convert', 'reader', 'minister', 'officer_early', 'patience',
+var ORDER = ['officer_early', 'convert', 'reader', 'minister', 'patience',
              'captain', 'convert_return', 'patience_return', 'officer'];
 ```
 

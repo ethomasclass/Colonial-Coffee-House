@@ -285,6 +285,31 @@
   /* Shown the first time somebody opens the brewing bench, and never again.
      Without it a student can serve six drinks without ever noticing that the
      sweetener shelf is the lesson. */
+  /* The opening is three short panels rather than one long one. Weary readers
+     face a paragraph at a time, and the Next button is the only thing on
+     screen asking to be pressed. */
+  function setupSlides() {
+    var slides = [].slice.call(document.querySelectorAll('.slide'));
+    var back = $('slideBack'), next = $('slideNext'), dots = $('slideDots');
+    var begin = $('beginBtn');
+    if (!slides.length || !next || !begin) return;
+    var at = 0;
+    dots.innerHTML = slides.map(function () { return '<i></i>'; }).join('');
+    function show() {
+      slides.forEach(function (sl, i) { sl.hidden = i !== at; });
+      [].forEach.call(dots.children, function (d, i) {
+        d.className = i === at ? 'on' : '';
+      });
+      back.hidden = at === 0;
+      var last = at === slides.length - 1;
+      next.hidden = last;
+      begin.hidden = !last;
+    }
+    next.onclick = function () { if (at < slides.length - 1) { at++; show(); } };
+    back.onclick = function () { if (at > 0) { at--; show(); } };
+    show();
+  }
+
   function showLawCardOnce() {
     if (!el.lawCard) return;
     var seen = false;
@@ -866,6 +891,7 @@
     $('bookBtn').onclick = openBook;
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
+    setupSlides();
     var lawOk = $('lawCardOk');
     if (lawOk) lawOk.onclick = function () {
       el.lawCard.hidden = true;

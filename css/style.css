@@ -680,3 +680,24 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   letter-spacing: .01em;
 }
 .warnbox b { color: var(--cream); }
+
+/* The opening used to be one long block of text. Three short ones with a
+   Next button is the same information and a great deal less to face. */
+.slides { min-height: 15.5rem; display: flex; align-items: center; }
+.slide { width: 100%; text-align: left; }
+.slide p { margin: 0 0 .8rem; }
+.slide p:last-child { margin-bottom: 0; }
+.slide-kicker {
+  font-size: .72rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--amber); margin-bottom: .8rem !important;
+}
+.slide-nav {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1rem; margin-top: 1.4rem;
+}
+.slide-dots { display: flex; gap: .4rem; }
+.slide-dots i {
+  width: .5rem; height: .5rem; border-radius: 50%;
+  background: rgba(217,144,56,.28); display: block;
+}
+.slide-dots i.on { background: var(--amber); }

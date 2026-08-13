@@ -349,8 +349,8 @@
     },
     {
       id: 'officer_early', art: 'officer', noOrder: true,
-      name: 'Mr. Aldis Pym', title: 'of His Majesty\u2019s Customs, making himself known',
-      thread: 'A warning, before it counts'
+      name: 'Mr. Aldis Pym', title: 'of His Majesty\u2019s Customs, before you have poured anything',
+      thread: 'The rule, stated in advance'
     },
     {
       id: 'patience_return', art: 'patience', noOrder: true,
@@ -361,7 +361,10 @@
 
   /* Ezra opens the night and comes back near the end of it; Patience sits in
      the middle and returns after she has been home. Pym always closes. */
-  var ORDER = ['convert', 'reader', 'minister', 'officer_early', 'patience',
+  /* Pym opens the night. He buys nothing and sets the rule out loud before a
+     single cup is poured, so the sweetener shelf is a decision from the first
+     drink rather than a menu that turns out to have been a decision. */
+  var ORDER = ['officer_early', 'convert', 'reader', 'minister', 'patience',
                'captain', 'convert_return', 'patience_return', 'officer'];
 
   function runningOrder() {

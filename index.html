@@ -50,28 +50,54 @@
       <h1>The Green Dragon</h1>
       <h2>A Coffee House in Boston, 1741</h2>
       <div class="title-rule"></div>
-      <p>You keep the coffee house on Union Street. Tonight six people will sit
-         at your counter: a cooper who has just been converted, a minister who
-         wishes he hadn’t been, a printer’s apprentice reading Locke by
-         candlelight, a captain whose cargo won’t survive an honest question,
-         a merchant’s daughter caught between them, and a customs officer who
-         has been reading the books.</p>
-      <div class="warnbox">
-        <p class="warnbox-head">Before you start: the sweetener shelf is the whole problem.</p>
-        <p>Your purse holds <b>36 pence</b>. Rent is <b>66 pence</b>, due at closing.
-           You have six customers to find the difference with.</p>
-        <p>There are four sweeteners. Three are lawful and cost <b>4d</b>, <b>6d</b>,
-           or are free but nearly gone. The fourth is <b>French molasses at 1d</b> —
-           and it is only that cheap because the tax on it was never paid.</p>
-        <p><b>Watch what that does to your takings.</b> A man from His Majesty&rsquo;s
-           Customs will call twice tonight, and the second time he will ask you
-           what you have been sweetening with.</p>
+
+      <div class="slides">
+
+        <section class="slide" data-slide="1">
+          <p class="slide-kicker">Where you are</p>
+          <p>You keep the coffee house on Union Street. It has been raining since
+             Saturday.</p>
+          <p>Tonight <b>six people</b> will sit at your counter, one at a time, and
+             talk to you while you make them something.</p>
+          <p class="quiet">You cannot lose. Nobody storms out and every cup gets paid
+             for. The only thing that changes is <b>how much people tell you</b>.</p>
+        </section>
+
+        <section class="slide" data-slide="2" hidden>
+          <p class="slide-kicker">What you do</p>
+          <p>Nobody asks for a menu item. They tell you a <b>mood</b> —
+             <i>&ldquo;something warm and sweet and honest&rdquo;</i> — and you work out
+             what that means.</p>
+          <p>Every drink is three clicks: <b>a base</b>, <b>a sweetener</b>, and
+             <b>one thing more</b>. Pour it out and start again as often as you like.</p>
+          <p class="quiet">Get somebody&rsquo;s drink right and they tell you the thing
+             they are actually afraid of. Get it wrong and you never find out.</p>
+        </section>
+
+        <section class="slide" data-slide="3" hidden>
+          <p class="slide-kicker">The catch</p>
+          <div class="warnbox">
+            <p class="warnbox-head">The sweetener shelf is the whole problem.</p>
+            <p>Your purse holds <b>36 pence</b>. Rent is <b>66 pence</b>, due at
+               closing. Six customers to find the difference.</p>
+            <p>Three sweeteners are lawful, at <b>4d</b>, <b>6d</b>, or free but nearly
+               gone. The fourth is <b>French molasses at 1d</b> — that cheap only
+               because the tax on it was never paid.</p>
+          </div>
+          <p class="quiet">Money is in <b>pence</b>, written <b>d</b>. Click any
+             <span class="gloss-demo">underlined term</span> to see what it means.
+             None of the drinks are alcoholic.</p>
+        </section>
+
       </div>
-      <p class="quiet">Money is counted in <b>pence</b>, written <b>d</b>. Every drink
-         here was really drunk in New England in the 1740s. None of them are
-         alcoholic. Click any <span class="gloss-demo">underlined term</span> to see
-         what it means.</p>
-      <button id="beginBtn" class="big-btn">Read the morning paper</button>
+
+      <div class="slide-nav">
+        <button id="slideBack" class="ghost-btn" hidden>&#9664; Back</button>
+        <span id="slideDots" class="slide-dots"></span>
+        <button id="slideNext" class="big-btn">Next &#9654;</button>
+        <button id="beginBtn" class="big-btn" hidden>Read the morning paper</button>
+      </div>
+
       <div id="resumeRow" class="resume-row" hidden>
         <p class="quiet">You left an evening half-finished.</p>
         <button id="resumeBtn" class="big-btn">Carry on where you stopped</button>

@@ -151,7 +151,7 @@ scenes plus the confessions is realistically 50–58 minutes before discussion.
 If you need it shorter, edit the `ORDER` array near the bottom of `js/data.js`:
 
 ```js
-var ORDER = ['convert', 'reader', 'minister', 'officer_early', 'patience',
+var ORDER = ['officer_early', 'convert', 'reader', 'minister', 'patience',
              'captain', 'convert_return', 'patience_return', 'officer'];
 ```
 
