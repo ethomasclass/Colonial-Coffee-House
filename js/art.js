@@ -77,8 +77,17 @@
     if (!view) return;
     var host = view.parentElement;
     var aw = host.clientWidth, ah = host.clientHeight;
-    var s = Math.max(1, Math.min(Math.floor(aw / W), Math.floor(ah / H)));
-    if (aw / W < 1 || ah / H < 1) s = Math.min(aw / W, ah / H);
+    /* Fill the space rather than stepping down to a whole-number scale. An
+       integer scale keeps every pixel identical but on a 1200-wide screen it
+       drops to 2x and leaves a third of the width empty, which is what made
+       the room look like a picture hanging in the page. */
+    var s = Math.max(aw / W, ah / H);
+    /* Cover, so there is no letterbox — but never crop away more than a fifth
+       of the room, or a tall narrow window would cut the customer's head off.
+       Beyond that, fall back to fitting inside. */
+    /* Generous sideways, mean vertically: the room has spare wall at both
+       edges and none above the customer's head. */
+    if (H * s > ah * 1.14 || W * s > aw * 1.45) s = Math.min(aw / W, ah / H);
     view.width = Math.round(W * s);
     view.height = Math.round(H * s);
     view.style.width = view.width + 'px';
@@ -430,6 +439,7 @@
     paintWindow(win);
     paintSign();
     paintCupboard(shelf);
+    paintStools();
     paintBar();
   }
 
@@ -618,14 +628,73 @@
       var gx = (i * 41) % W, gy = COUNTER_Y + 5 + ((i * 17) % 12);
       hl(gx, gy, 8 + (i % 11), i % 3 ? RC.woodLit : RC.woodDark);
     }
-    /* front edge, then the panelled face below it */
+    /* front edge, then the working side of the bar below it */
     r(0, COUNTER_Y + 18, W, 3, RC.woodBlack);
     r(0, COUNTER_Y + 21, W, H - COUNTER_Y - 21, RC.woodDeep);
-    for (var px = 8; px < W - 12; px += 60) {
-      r(px, COUNTER_Y + 27, 48, 22, RC.woodDark);
-      r(px + 1, COUNTER_Y + 28, 46, 20, '#241110');
-      hl(px + 1, COUNTER_Y + 28, 46, RC.woodDark);
+
+    /* Open cubbies. The camera stands behind the counter, so what shows under
+       the top is the keeper's own side of it — the shelf they reach into all
+       night, not the panelling a customer sees. */
+    var top = COUNTER_Y + 24, hgt = H - top - 2;
+    for (var cx = 6; cx < W - 20; cx += 54) {
+      var cw = 46;
+      r(cx, top, cw, hgt, RC.woodBlack);            /* the opening         */
+      r(cx + 2, top + 2, cw - 4, hgt - 2, '#190c0b');
+      hl(cx, top, cw, RC.woodDark);                 /* lip of the shelf    */
+      vl(cx, top, hgt, RC.woodDark);
+      vl(cx + cw - 1, top, hgt, RC.beamDark);
+      cubbyGoods(cx + 4, top + 3, cw - 8, (cx / 54) | 0);
     }
+  }
+
+  /* What is stacked in each cubby. Kept small and dim — it is under a counter
+     in a room lit by one fire, and it should read as clutter rather than as
+     another shelf competing with the cupboard. */
+  function cubbyGoods(x, y, w, seed) {
+    var kind = seed % 4;
+    if (kind === 0) {                                  /* stacked pewter mugs */
+      for (var i = 0; i < 3; i++) {
+        var mx = x + 1 + i * 13;
+        r(mx, y + 4, 10, 12, RC.pewterDim);
+        r(mx, y + 4, 8, 11, RC.pewter);
+        hl(mx, y + 3, 10, RC.pewterLit);
+        r(mx + 10, y + 8, 2, 5, RC.pewterDim);
+      }
+    } else if (kind === 1) {                           /* stoneware jars      */
+      for (var j = 0; j < 2; j++) {
+        var jx = x + 3 + j * 18;
+        r(jx, y + 2, 12, 15, RC.stoneDim);
+        r(jx, y + 2, 12, 4, RC.stone);
+        hl(jx + 1, y + 9, 10, '#3f2417');
+      }
+    } else if (kind === 2) {                           /* a stack of saucers  */
+      for (var k = 0; k < 4; k++) {
+        r(x + 6, y + 13 - k * 3, 22, 2, RC.china);
+        hl(x + 6, y + 13 - k * 3, 22, RC.chinaBlue);
+      }
+      r(x + 30, y + 6, 7, 11, RC.stoneDim);
+    } else {                                           /* cloths and a scoop  */
+      r(x + 2, y + 7, 16, 9, RC.paper);
+      hl(x + 2, y + 7, 16, '#efe0c2');
+      hl(x + 2, y + 11, 16, '#b09b7c');
+      r(x + 22, y + 5, 4, 12, RC.wood);
+      ell(x + 24, y + 16, 5, 3, RC.pewterDim);
+    }
+  }
+
+  /* Two seats nobody is in. The room reads as a room with one customer in it
+     rather than a booth built for exactly one person. */
+  function paintStools() {
+    /* Clear of the hearth on one side and the cupboard on the other, and just
+       inside where the customer sits, so they frame whoever is at the bar. */
+    [104, 292].forEach(function (sx, i) {
+      var top = COUNTER_Y - 16 + (i ? 1 : 0);
+      ell(sx, top + 7, 14, 5, RC.beamDark);          /* shadow under the rim */
+      ell(sx, top + 5, 14, 5, RC.woodLit);           /* the seat             */
+      ell(sx - 2, top + 4, 9, 3, RC.woodHi);         /* worn where they sit  */
+      r(sx - 2, top + 9, 4, 8, RC.woodDark);         /* the post below it    */
+      vl(sx - 2, top + 9, 8, RC.wood);
+    });
   }
 
   function drawRoom(f) {

@@ -27,6 +27,7 @@
     britishUses: 0,
     wasted: 0,
     confessions: 0,
+    opened: {},          /* who told you the thing, by id */
     patronIndex: -1,
     patron: null,
     expr: 'neutral',
@@ -182,6 +183,7 @@
   }
 
   function nextPatron() {
+    if (Snd && Snd.bell) Snd.bell();
     st.patronIndex++;
     st.servedCup = null;
     if (st.patronIndex >= ORDER.length) return endNight();
@@ -203,7 +205,7 @@
     playNodes(outcome && sc.react ? sc.react[outcome] : null, function () {
       playNodes(sc.talk, function () {
         var earned = (outcome === 'matched') && sc.confession;
-        if (earned) st.confessions++;
+        if (earned) { st.confessions++; st.opened[st.patron.id] = true; }
         playNodes(earned ? sc.confession : null, function () {
           playNodes(sc.exit, function () {
             st.journal.push(sc.journal);
@@ -353,6 +355,27 @@
 
   function complete() { return st.sel.base && st.sel.sweet && st.sel.add; }
 
+  /* Taste it yourself before you hand it over. Costs nothing and changes
+     nothing — it only tells you whether you have read the person right. A
+     student who is guessing gets to stop guessing, which matters because the
+     confession is the payoff and missing it through bad luck rather than
+     inattention teaches nobody anything. */
+  function tasteCup() {
+    if (!complete() || !st.patron) return;
+    var verdict = D.judge(st.patron, D.drinkTags(st.sel.base, st.sel.sweet, st.sel.add));
+    var says;
+    if (verdict === 'matched') {
+      says = 'You taste it. That is exactly what they asked for, even if they didn\u2019t say so in words.';
+    } else if (verdict === 'near') {
+      says = 'You taste it. Close. It is the right sort of thing, but something in it is fighting what they asked for.';
+    } else {
+      says = 'You taste it. This is not what they were describing at all. Read the order again \u2014 they told you a mood, not a drink.';
+    }
+    el.pourNote.textContent = says;
+    el.pourNote.hidden = false;
+    if (Snd) Snd.knock(520, 0.04);
+  }
+
   /* The whole Molasses Act argument is an arithmetic problem, so the
      arithmetic is kept on screen while the choice is being made rather than
      revealed in the ledger once it is too late to matter. */
@@ -471,6 +494,7 @@
 
   function updateCup() {
     updateStrip();
+    if (el.tasteBtn) el.tasteBtn.disabled = !complete() || !st.patron;
     var s = st.sel;
     if (!complete()) {
       el.cupName.textContent = st.sel.base ? 'Not finished yet' : 'An empty cup';
@@ -528,6 +552,7 @@
 
     st.purse -= cost;
     st.purse += paid;
+    if (Snd && Snd.coin) Snd.coin();
     if (outcome === 'matched') st.purse += 2;
 
     if (s.sweet === 'french') {
@@ -853,6 +878,33 @@
         st.confessions + '</b> of those. Somebody else in this room heard different things than you did &mdash; that’s worth comparing.</p></div>';
     }
 
+    /* One line each on what became of the people who trusted you. Only for the
+       ones who did — a blank space where somebody's ending should be is the
+       clearest possible statement of what a careless cup costs. */
+    var epi = D.CAST.filter(function (c) { return c.epilogue; });
+    html += '<div class="epi"><h3>What became of them</h3>';
+    epi.forEach(function (c) {
+      var got = st.opened[c.id];
+      html += '<div class="epi-row' + (got ? '' : ' locked') + '"><b>' + c.name + '</b>' +
+        '<p>' + (got ? c.epilogue :
+          '&mdash; you never got him to say the thing he was afraid of, so this part of his night is closed to you.'
+            .replace(' him ', c.id === 'patience' ? ' her ' : ' him ')
+            .replace('his night', c.id === 'patience' ? 'her night' : 'his night')) + '</p></div>';
+    });
+    html += '</div>';
+
+    /* A short line they can copy onto paper and hold up against a neighbour's.
+       Two students who played the same eight scenes will not have the same
+       one, which is the entire argument for playing it rather than reading
+       about it. */
+    var code = 'GD1741-' + st.confessions + '/6-' + (st.frenchUses ? 'F' + st.frenchUses : 'LAWFUL') +
+               '-' + (madeRent ? 'RENT' : 'SHORT') + '-' + Object.keys(st.discovered).length + 'R';
+    html += '<div class="nightcode"><h3>Your night, in one line</h3>' +
+      '<p class="code">' + code + '</p>' +
+      '<p class="quiet">Copy that onto your sheet. It says how many people opened up to you, ' +
+      'how many cups you sweetened unlawfully, whether you made rent, and how many recipes ' +
+      'you found. Compare it with somebody else&rsquo;s.</p></div>';
+
     html += '<div class="jrn"><h3>Notes from the Evening</h3>';
     st.journal.forEach(function (j) { html += '<div class="note"><b>' + j.title + '</b><p>' + j.text + '</p></div>'; });
     html += '</div><button id="againBtn" class="big-btn">Open again tomorrow night</button>';
@@ -869,7 +921,7 @@
   function init() {
     ['dialogue', 'speaker', 'line', 'choices', 'advance', 'brew', 'baseShelf',
      'sweetShelf', 'addShelf', 'cupName', 'cupDesc', 'cupCost', 'cupNew',
-     'ledgerStrip', 'rentGap', 'lawCard',
+     'ledgerStrip', 'rentGap', 'lawCard', 'tasteBtn',
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
@@ -891,6 +943,7 @@
     $('bookBtn').onclick = openBook;
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };
+    el.tasteBtn.onclick = tasteCup;
     setupSlides();
     var lawOk = $('lawCardOk');
     if (lawOk) lawOk.onclick = function () {

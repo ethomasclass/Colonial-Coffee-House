@@ -76,13 +76,12 @@ html, body {
   flex: 1 1 auto;
   display: flex; align-items: center; justify-content: center;
   min-height: 0;
-  padding: .5rem;
+  padding: 0;
 }
 #stage {
   image-rendering: pixelated;
   image-rendering: crisp-edges;
   display: block;
-  box-shadow: 0 0 0 3px var(--wood), 0 0 40px rgba(0,0,0,.9), 0 0 90px rgba(217,144,56,.12);
 }
 
 /* ===================== DIALOGUE ===================== */
@@ -701,3 +700,41 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   background: rgba(217,144,56,.28); display: block;
 }
 .slide-dots i.on { background: var(--amber); }
+
+/* The room used to sit in a framed window with a wooden border, which read as
+   a picture of a game rather than a game. It now fills everything above the
+   dialogue, and the dialogue sits over the bottom of it the way a visual
+   novel's does, so the counter runs off both edges of the screen. */
+.frame > .stage-wrap { position: relative; }
+.dialogue {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 4;
+  background: linear-gradient(to bottom, rgba(12,8,16,0) 0%, rgba(12,8,16,.88) 16%, rgba(12,8,16,.97) 100%);
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-top: 2.6rem;
+  margin: 0 !important;
+  max-width: none !important;
+}
+.stage-wrap { overflow: hidden; }
+.stage-wrap::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 120px rgba(0,0,0,.55), inset 0 0 40px rgba(0,0,0,.35);
+}
+
+/* Endings, and the blanks where endings would have been. */
+.epi { margin: 1.4rem 0; }
+.epi-row { border-left: 3px solid var(--amber); padding: .5rem .9rem; margin-bottom: .7rem; }
+.epi-row b { color: var(--amber-lit); }
+.epi-row p { margin: .2rem 0 0; line-height: 1.55; }
+.epi-row.locked { border-left-color: rgba(217,144,56,.22); opacity: .62; }
+.epi-row.locked p { font-style: italic; }
+
+.nightcode { margin: 1.4rem 0; text-align: center; }
+.nightcode .code {
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 1.35rem; letter-spacing: .06em;
+  color: var(--amber-lit); background: rgba(217,144,56,.10);
+  border: 1px dashed var(--amber); padding: .55rem 1rem;
+  display: inline-block; margin: .3rem 0 .5rem;
+}

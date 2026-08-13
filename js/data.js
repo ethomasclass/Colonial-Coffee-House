@@ -283,6 +283,7 @@
   var CAST = [
     {
       id: 'convert', art: 'convert',
+      epilogue: 'Ezra was turned out by his master on the Tuesday and preached in a field on the Sunday. He was twenty-six. Nobody wrote down whether the feeling wore off.',
       name: 'Ezra Hale', title: 'a young barrel-maker, newly converted',
       thread: 'The Great Awakening',
       order: 'Something to keep me awake. Nothing fancy — I’m not in the mood for fancy tonight.',
@@ -292,6 +293,7 @@
     },
     {
       id: 'minister', art: 'minister',
+      epilogue: 'Rev. Thorne kept his pulpit and lost fourteen of his congregation to a meeting-house down the road. He was right that he was losing. He was wrong that it was his fault.',
       name: 'Rev. Samuel Thorne', title: 'settled minister, and an Old Light',
       thread: 'The Great Awakening — the other half',
       order: 'As I always take it, if you please. Sugar and cream both. You can keep good order in small things as well as large ones.',
@@ -301,6 +303,7 @@
     },
     {
       id: 'reader', art: 'reader',
+      epilogue: 'Cato finished his indenture, set type in Boston for another nineteen years, and never signed a word he printed. The argument he was reading got printed a great many more times.',
       name: 'Cato Bell', title: "a printer’s apprentice",
       thread: 'The Enlightenment',
       order: 'Something I can sit with a long while without it going bitter on me. I mean to finish this before the candle does.',
@@ -310,6 +313,7 @@
     },
     {
       id: 'captain', art: 'captain',
+      epilogue: 'Capt. Bright sailed Thursday and did not give Mr. Pym the coves. He also did not stop landing French molasses. Both of those things stayed true for years.',
       name: 'Capt. Jonas Bright', title: 'master of the sloop Dolphin',
       thread: 'The Molasses Act',
       order: 'Something warm and sweet and honest. I have been on the water since Tuesday and I want none of your London manners.',
@@ -319,6 +323,7 @@
     },
     {
       id: 'patience', art: 'patience',
+      epilogue: 'Patience stood up on the Thursday and spoke for eleven minutes. Her father did not attend. Her cousin wrote it down, which is the only reason anybody knows.',
       name: 'Patience Marsh', title: "a shipping merchant’s daughter",
       thread: 'The Awakening and the trade, in one person',
       order: "Something that won’t keep me up — but won’t let me go soft and sleepy either. I have thinking to do.",
@@ -328,6 +333,7 @@
     },
     {
       id: 'officer', art: 'officer',
+      epilogue: 'Mr. Pym was never posted to Antigua. He filed his reports, they were read by nobody in particular, and twenty-two years later Parliament finally decided to start collecting.',
       name: 'Mr. Aldis Pym', title: 'of His Majesty’s Customs',
       thread: 'The Navigation Acts — and your evening’s accounts',
       order: '{{bohea|Bohea}}. Sugar, cream. And I should be glad to know what you have been sweetening with tonight.',

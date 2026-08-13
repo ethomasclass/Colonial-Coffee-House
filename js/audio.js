@@ -234,6 +234,35 @@
   }
 
   /* Two notes for a job finished. Small, not a fanfare. */
+  /* The door, and the money. Two more shapes out of the same oscillators —
+     no files, nothing to load. */
+  function bell() {
+    if (!on || !ctx) return;
+    [1180, 1760].forEach(function (fq, i) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'triangle'; o.frequency.value = fq;
+      g.gain.setValueAtTime(0.0001, ctx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.05 / (i + 1), ctx.currentTime + 0.008);
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.9);
+      o.connect(g); g.connect(master);
+      o.start(); o.stop(ctx.currentTime + 0.95);
+    });
+  }
+
+  function coin() {
+    if (!on || !ctx) return;
+    [2400, 3100].forEach(function (fq, i) {
+      var o = ctx.createOscillator(), g = ctx.createGain();
+      o.type = 'square'; o.frequency.value = fq;
+      var t = ctx.currentTime + i * 0.045;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.028, t + 0.005);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.16);
+      o.connect(g); g.connect(master);
+      o.start(t); o.stop(t + 0.18);
+    });
+  }
+
   function chime() {
     if (!on || !ctx) return;
     var t = ctx.currentTime;
@@ -252,7 +281,7 @@
 
   global.Sound = {
     setEnabled: setEnabled, isOn: isOn, preference: preference,
-    knock: knock, scrub: scrub, chime: chime
+    knock: knock, scrub: scrub, chime: chime, bell: bell, coin: coin
   };
 
 })(window);
