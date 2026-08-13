@@ -109,9 +109,14 @@ window.SPRITES = {
    bottom edge his silhouette is 28% as wide as his frame, where everyone else
    is 61-79%. What reaches the bottom of his picture is a hand and the corner
    of his ledger, not his forearms — so lining his picture up with the counter
-   leaves his body floating above it. */
+   leaves his body floating above it.
+
+   Five pixels closed the gap under his coat hem but left the bar top showing
+   between his sleeves and his waistcoat, which still read as hovering. At
+   fourteen his torso meets the counter the way everyone else's does, and his
+   ledger still sits clear of the front edge. */
 window.SPRITE_ADJUST = {
-  officer: { dy: 5 }
+  officer: { dy: 14 }
 };
 
 window.SPRITE_LAYOUT = {

@@ -383,6 +383,17 @@
     candles: [ { x: 14, y: 72 }, { x: 40, y: 170 }, { x: 344, y: 170 } ]
   };
 
+  /* The trade sign the house is named for. Painted art if it is there, drawn
+     if it is not. It arrives after the room has already been cached, so the
+     cache is thrown away when it loads and the room repaints once with it. */
+  var signImg = null;
+  (function () {
+    var img = new Image();
+    img.onload = function () { signImg = img; tavernCache = null; };
+    img.onerror = function () { signImg = null; };
+    img.src = 'art/room/sign.png';
+  })();
+
   var tavernCache = null;
   function tavern() {
     if (!tavernCache) {
@@ -538,6 +549,14 @@
 
   /* --- the trade sign the house is named for ----------------------------- */
   function paintSign() {
+    if (signImg) {
+      /* Hung from the beam, clear of the window on one side and the post on
+         the other. Drawn at its own size so the pixels stay square. */
+      var sw = signImg.naturalWidth, sh = signImg.naturalHeight;
+      bctx.imageSmoothingEnabled = false;
+      bctx.drawImage(signImg, 191, 16, sw, sh);
+      return;
+    }
     for (var cy = 18; cy < 26; cy += 2) { p(210, cy, RC.ironLit); p(240, cy, RC.ironLit); }
     r(197, 25, 56, 32, RC.woodDark);
     hl(197, 25, 56, RC.woodHi);
