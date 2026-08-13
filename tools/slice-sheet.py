@@ -89,6 +89,45 @@ def knockout(im, tol=34):
         px[x, y] = (0, 0, 0, 0)
         stack.append((x + 1, y)); stack.append((x - 1, y))
         stack.append((x, y + 1)); stack.append((x, y - 1))
+    return drop_trapped_white(im)
+
+
+def drop_trapped_white(im, floor=0.55):
+    """Clear background the edge flood can't walk to.
+
+    The gap under an arm resting on a counter is walled off by the figure's own
+    outline, so flooding in from the border never reaches it and each character
+    keeps a pair of white wedges at their sides. What is left has to be told
+    apart from the linen they are wearing, and two things separate them: the
+    background is neutral (red, green and blue within a few points of each
+    other) where every cloth white in this art is warm, and it sits low, under
+    the arms, where the collars and caps never are."""
+    w, h = im.size
+    px = im.load()
+    seen = bytearray(w * h)
+
+    def whiteish(v):
+        r, g, b, a = v
+        return a > 200 and min(r, g, b) >= 215 and (max(r, g, b) - min(r, g, b)) <= 12
+
+    for sy in range(h):
+        for sx in range(w):
+            i = sy * w + sx
+            if seen[i] or not whiteish(px[sx, sy]): continue
+            cells, stack = [], [(sx, sy)]
+            seen[i] = 1
+            while stack:
+                x, y = stack.pop()
+                cells.append((x, y))
+                for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < w and 0 <= ny < h:
+                        j = ny * w + nx
+                        if not seen[j] and whiteish(px[nx, ny]):
+                            seen[j] = 1; stack.append((nx, ny))
+            if len(cells) < 40: continue
+            if sum(y for _, y in cells) / len(cells) < h * floor: continue
+            for x, y in cells: px[x, y] = (0, 0, 0, 0)
     return im
 
 

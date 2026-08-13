@@ -1311,15 +1311,52 @@
     return { dx: dx, dy: dy, alpha: Math.min(1, t * 1.5), blinking: blinking };
   }
 
+  /* The room is lit by one fire on the left and a couple of candles. Art
+     arrives lit flat and bright, which puts a character on top of the room
+     rather than in it. So each sprite is relit once when it loads: knocked
+     down and warmed to the room's key, then given the hearth on one side and
+     the cold end of the room on the other. Cached on the image, so a character
+     is relit once and never again. */
+  var KEY = {
+    dim:  'rgba(206,162,116,0.44)',   /* multiplied over the whole figure */
+    warm: 'rgba(255,148,56,0.26)',    /* firelight, hearth side           */
+    cool: 'rgba(56,72,116,0.20)'      /* away from it                     */
+  };
+  function relight(img) {
+    if (img.__lit) return img.__lit;
+    var w = img.naturalWidth, h = img.naturalHeight;
+    var c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    var x = c.getContext('2d');
+    x.imageSmoothingEnabled = false;
+    x.drawImage(img, 0, 0);
+    /* multiply floods the transparent parts too, so the original goes back
+       over it as a stencil to cut the figure out again */
+    x.globalCompositeOperation = 'multiply';
+    x.fillStyle = KEY.dim; x.fillRect(0, 0, w, h);
+    x.globalCompositeOperation = 'destination-in';
+    x.drawImage(img, 0, 0);
+    /* then which way the light is coming from */
+    x.globalCompositeOperation = 'source-atop';
+    var g = x.createLinearGradient(0, 0, w, 0);
+    g.addColorStop(0, KEY.warm);
+    g.addColorStop(0.55, 'rgba(0,0,0,0)');
+    g.addColorStop(1, KEY.cool);
+    x.fillStyle = g; x.fillRect(0, 0, w, h);
+    img.__lit = c;
+    return c;
+  }
+
   function drawSpriteImage(img, f, m) {
     var L = global.SPRITE_LAYOUT || { height: 0.70, centreX: 0.5, bottom: 0.84 };
+    var lit = relight(img);
     var h = Math.round(H * L.height);
-    var w = Math.round(h * (img.naturalWidth / img.naturalHeight));
+    var w = Math.round(h * (lit.width / lit.height));
     var x = Math.round(W * L.centreX - w / 2) + m.dx;
     var y = Math.round(H * L.bottom - h) + m.dy;
     bctx.imageSmoothingEnabled = false;
     if (m.alpha < 1) bctx.globalAlpha = m.alpha;
-    bctx.drawImage(img, x, y, w, h);
+    bctx.drawImage(lit, x, y, w, h);
     bctx.globalAlpha = 1;
   }
 
