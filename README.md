@@ -10,6 +10,16 @@ files — open `index.html` and it runs.
 
 ---
 
+## Documentation
+
+- **[docs/HOW-TO-PLAY.md](docs/HOW-TO-PLAY.md)** — student directions. Printable,
+  or project it while they start.
+- **[docs/TEACHING-GUIDE.md](docs/TEACHING-GUIDE.md)** — what the game teaches,
+  the answer key, timing, discussion prompts, and what it deliberately leaves
+  out.
+
+---
+
 ## Running it
 
 **Locally:** double-click `index.html`. It is deliberately built with plain
