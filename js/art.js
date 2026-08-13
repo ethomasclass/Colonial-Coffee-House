@@ -1267,13 +1267,28 @@
      no resampling.
      ======================================================================= */
 
+  /* Blink timing, in frames, at the 60fps the loop actually runs at.
+
+     A five-frame blink is 83ms — roughly half the shortest a real one lasts,
+     and it reads as a flicker or a dropped frame rather than as an eye
+     closing. Nine frames is 150ms, the middle of the natural range.
+
+     The gap is left a little longer than a resting person's fifteen-a-minute.
+     These are people sitting still in a warm room talking to somebody, which
+     is the low end of how often anyone blinks, and a patron who blinks on the
+     human average looks anxious when there is nothing else moving. */
+  var BLINK_HOLD  = 9;     /* 150ms  */
+  var BLINK_GAP   = 170;   /* 2.8s minimum between blinks */
+  var BLINK_VARY  = 220;   /* up to 6.5s */
+  var BLINK_FIRST = 110;   /* the first one after sitting down comes sooner */
+
   var motion = { id: null, enter: -999, nudge: 0, expr: null, blinkAt: 0, blinkEnd: 0 };
 
   /* Called when somebody new sits down, so they arrive rather than appear. */
   function enterSprite(f) {
     motion.enter = f;
     motion.nudge = 0;
-    motion.blinkAt = f + 90 + Math.floor(rnd(f) * 160);
+    motion.blinkAt = f + BLINK_FIRST + Math.floor(rnd(f) * 150);
     motion.blinkEnd = 0;
   }
 
@@ -1303,8 +1318,8 @@
     /* Blink, if there is a frame for it — otherwise this costs nothing. */
     var blinking = false;
     if (f > motion.blinkAt) {
-      motion.blinkEnd = f + 5;
-      motion.blinkAt = f + 130 + Math.floor(rnd(f * 0.37) * 220);
+      motion.blinkEnd = f + BLINK_HOLD;
+      motion.blinkAt = f + BLINK_GAP + Math.floor(rnd(f * 0.37) * BLINK_VARY);
     }
     if (f < motion.blinkEnd) blinking = true;
 
