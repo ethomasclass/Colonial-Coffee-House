@@ -62,8 +62,13 @@ def find_band(fig):
     hx0 = min(rows[y][0] for y in range(top, shoulder) if rows[y])
     hx1 = max(rows[y][1] for y in range(top, shoulder) if rows[y])
     inset = (hx1 - hx0) * 0.13
-    return (round(hx0 + inset), round(top + (shoulder - top) * 0.36),
+    full = (round(hx0 + inset), round(top + (shoulder - top) * 0.36),
             round(hx1 - inset), shoulder)
+    # A blink is only the eyes. Taking the whole face band for it drags the
+    # mouth along, so a character's smile flickers every few seconds while they
+    # are simply blinking. This band stops at the nose.
+    eyes = (full[0], full[1], full[2], round(top + (shoulder - top) * 0.70))
+    return full, eyes
 
 
 def knockout(im, tol=34):
@@ -184,14 +189,16 @@ def main(path, char, outdir, band=BAND):
     if band:
         fx0, fy0 = round(band[0] * fw), round(band[1] * fh)
         fx1, fy1 = round(band[2] * fw), round(band[3] * fh)
+        eyes = (fx0, fy0, fx1, round(fy0 + (fy1 - fy0) * 0.53))
     else:
-        fx0, fy0, fx1, fy1 = find_band(cut[0])
-    print('face band %s of %s' % ((fx0, fy0, fx1, fy1), (fw, fh)))
+        (fx0, fy0, fx1, fy1), eyes = find_band(cut[0])
+    print('face band %s   blink band %s   of %s' % ((fx0, fy0, fx1, fy1), eyes, (fw, fh)))
 
     # a picture of where it decided the face was, to be checked before trusting
     chk = cut[0].convert('RGB')
     d = ImageDraw.Draw(chk)
     d.rectangle([fx0, fy0, fx1 - 1, fy1 - 1], outline=(255, 0, 255), width=3)
+    d.rectangle([eyes[0] + 4, eyes[1] + 4, eyes[2] - 5, eyes[3] - 5], outline=(0, 200, 255), width=3)
     chk.save(os.path.join(outdir, '_band-%s.png' % char))
 
     w = max(1, round(fw * TARGET_H / fh))
@@ -201,8 +208,9 @@ def main(path, char, outdir, band=BAND):
             name = '%s-neutral.png' % char
         else:
             out = cut[0].copy()                       # the body is always the neutral's
-            face = panel.crop((fx0, fy0, fx1, fy1))
-            out.paste(face, (fx0, fy0), band_mask(face.size))
+            box = eyes if NAMES[i] == 'blink' else (fx0, fy0, fx1, fy1)
+            face = panel.crop(box)
+            out.paste(face, (box[0], box[1]), band_mask(face.size))
             name = '%s-%s.png' % (char, NAMES[i])
         out.resize((w, TARGET_H), Image.Resampling.BOX).save(os.path.join(outdir, name))
         print('  wrote', name)

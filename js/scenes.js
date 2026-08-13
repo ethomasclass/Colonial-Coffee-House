@@ -144,6 +144,9 @@
             { say: "They aren’t wicked people. That’s the difficulty. I have baptised most of them.", expr: 'downcast' } ] }
       ]},
       { say: "They call us {{oldlight|Old Lights}}, as though we had let a lamp go out. What we have is order. A settled minister, a settled congregation, a covenant that holds.", expr: 'stern' },
+      { say: "And I will tell you what troubles me more than any of the shouting. There are books coming off the ships now that say a man is born knowing nothing, and that no man is set above another by birth.", expr: 'worried' },
+      { say: "Put that beside a farmhand in a field announcing that God has spoken to him personally, and you have the same idea twice. That {{authority|nobody above you has any claim on what you believe}}.", expr: 'worried' },
+      { say: "A man who decides his own faith this year will decide his own government soon enough. I may be the only person in Boston who finds that a frightening sentence. I expect I shan’t be, in thirty years.", expr: 'downcast' },
       { say: "Take that away and what’s left? Everybody their own church. Every woman her own preacher. Every apprentice certain God told him something his boss didn’t hear.", expr: 'worried' },
       { narrate: 'He turns the cup around on the counter without drinking from it.' },
       { say: "I may be wrong. I have written a great deal in my life about how carefully a man ought to hold that possibility. It’s harder to practice than to write.", expr: 'thoughtful' }
@@ -210,7 +213,9 @@
         { label: '"That seems obvious enough."',
           then: [
             { say: "It isn’t obvious at all, and here is why. If nothing is written in us at birth, then no man is born knowing more than another. And nobody is born fit to rule anybody else.", expr: 'bright' },
-            { say: "That isn’t a small thing to print. That’s a very large thing to print.", expr: 'thoughtful' } ] },
+            { say: "That isn’t a small thing to print. That’s a very large thing to print.", expr: 'thoughtful' },
+            { say: "He goes further. He says there are {{rights|natural rights}} — that being alive, being free, and keeping what you’ve worked for belong to you because you’re a person. Not because a king handed them down. And a thing no king gave you is a thing no king can take back.", expr: 'bright' },
+            { say: "Which means a government holds its power on loan. From the people it governs. On their say-so, and no other.", expr: 'bright' } ] },
         { label: '"Who else is reading this?"',
           then: [
             { say: "In Boston? More people than you would think. That’s what the press is for. A thing printed in London in the spring is argued over in a Boston coffee house by fall.", expr: 'warm' },
@@ -221,14 +226,17 @@
       ]},
       { say: "You learn a good deal about a colony from what it needs printed. I set a notice last spring for the {{landbank|Land Bank}} — paper money backed on farmland, got up by country men because there is no silver in this colony to trade with. Word came over in the summer that Parliament had voided the whole scheme from London. I set that notice too.", expr: 'neutral' },
       { narrate: 'He turns the book over, considering whether to say the next part.' },
-      { say: "I will tell you what I keep catching on. These gentlemen write a great deal about liberty. Natural rights. Consent. Government by agreement of the governed.", expr: 'neutral' },
+      { say: "I will tell you what I keep catching on. These gentlemen write a great deal about liberty. {{rights|Natural rights}}. Consent. Government by agreement of the governed.", expr: 'neutral' },
       { choose: [
         { label: '"And?"',
           then: [ { say: "And several of them own shares in the {{triangle|trade}}. There are men in this town who will quote you Locke on the rights of man before dinner and sign for a cargo after it. I’m free. Not everyone I know is.", expr: 'stern' } ] },
         { label: '"You sound like you have an objection."',
           then: [ { say: "Not an objection. Just something I notice. I set type for a living — I notice when a word is used carefully and when it’s used loosely. Liberty gets used both ways in the same paragraph, sometimes.", expr: 'stern' } ] }
       ]},
-      { say: "Still. It’s a better argument than they mean it to be. That’s the useful thing about printing something. Once it’s set, anyone at all can read it.", expr: 'thoughtful' }
+      { say: "Still. It’s a better argument than they mean it to be. That’s the useful thing about printing something. Once it’s set, anyone at all can read it.", expr: 'thoughtful' },
+      { narrate: 'He glances at the door, where somebody came in earlier soaked and talking about a preacher.' },
+      { say: "And here’s the thing nobody in this town has said out loud yet. The man shouting in a field that God spoke to him direct, and the man in this book saying no one is born fit to rule — they’re asking the *same question*.", expr: 'bright' },
+      { say: "{{authority|Who told you so, and why should that settle it?}} One of them asks it about the church. The other asks it about the king. I don’t think they can be kept apart for long.", expr: 'bright' }
     ],
     confession: [
       { say: "Can I tell you what I would set, if it were my press and not his?", expr: 'thoughtful' },
@@ -624,6 +632,40 @@
   /* =====================================================================
      RETURN — PATIENCE MARSH, before closing
      ===================================================================== */
+  /* =====================================================================
+     PYM, EARLY — a two-minute visit that exists to make the sweetener shelf
+     feel like a decision rather than a menu. He buys nothing. He looks.
+     ===================================================================== */
+  officer_early: {
+    enter: [
+      { narrate: 'The door opens on a neat man in a red coat with a small ledger under his arm. He does not sit down.' },
+      { say: "Don\u2019t get up. I\u2019m not stopping.", expr: 'neutral' },
+      { say: "Aldis Pym. His Majesty\u2019s {{customs|Customs}}. I\u2019ve been in this port eleven days and I\u2019m calling on every house on Union Street, so don\u2019t take it personally.", expr: 'neutral' }
+    ],
+    talk: [
+      { narrate: 'He opens the ledger, looks at a page, and turns it so you can see a column of figures you did not write.' },
+      { say: "Every keeper on this street buys sweetening. Sugar, honey, molasses. Molasses is what interests me, because there is a duty on the French sort and I cannot find one person in Boston who has paid it.", expr: 'thoughtful' },
+      { choose: [
+        { label: '"I keep an honest house, sir."',
+          then: [
+            { say: "Everyone says so. The books say so too — every barrel in this port is sworn to have come from a British island, which would be remarkable, since those islands do not grow that much cane.", expr: 'stern' } ] },
+        { label: '"What are you accusing me of?"',
+          then: [
+            { say: "Nothing whatever. Tonight I am only introducing myself. That is the courtesy. The uncourteous version comes later and involves a warrant.", expr: 'neutral' } ] },
+        { label: '"Nobody has ever asked me that before."',
+          then: [
+            { say: "No. They haven\u2019t. That is precisely the thing I was sent here to change.", expr: 'stern' } ] }
+      ]},
+      { say: "So. I\u2019ll come back at closing and ask you plainly what you\u2019ve been sweetening with tonight, and you will tell me, and I will write it here.", expr: 'neutral' },
+      { say: "You have all evening to decide what the answer is going to be. I find people appreciate the warning.", expr: 'thoughtful' }
+    ],
+    exit: [
+      { narrate: 'He closes the ledger, tucks it under his arm, and goes back out into the rain without ordering anything.' }
+    ],
+    journal: { title: 'Mr. Aldis Pym \u2014 first visit',
+      text: 'Came in only to introduce himself and to say he will ask at closing what we have been sweetening with. Notes that every barrel in the port is sworn to be British when the British islands do not grow that much cane. Gave us the rest of the evening to decide what to say.' }
+  },
+
   patience_return: {
     enter: [
       { narrate: 'She comes back in with her gloves already off, which she didn’t manage the first time.' },

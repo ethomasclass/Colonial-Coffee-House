@@ -35,6 +35,8 @@ dialogue for a definition; all sixteen are defined in-game.
 
 | Concept | Term | Who raises it | What a student should be able to say afterwards |
 |---|---|---|---|
+| Rights that come with being a person | *natural rights* | Cato | Life, liberty and property belong to you because you are a person, not because a king handed them out — so a king cannot take them back. The same argument reappears, nearly word for word, in 1776 |
+| Who gets to say what is true | *authority* | Cato, Thorne | **The thread joining the two movements.** A farmhand claiming God spoke to him directly and a book saying no one is born fit to rule are asking one question: *who told you so, and why should that settle it?* Thorne, who opposes both, is the character who states it most clearly |
 | The mind at birth | *John Locke* | Cato | If nothing is written in a person at birth, no one is born knowing more than another — and nobody is born fit to rule anybody else |
 | Government by consent | *John Locke* | Cato | Authority rests on the agreement of the governed, not on inheritance |
 | Reason and observation | — | Cato, Thorne, newspaper p.3 | Asking how a thing can be *shown* to be true rather than who said it — and Thorne wanting reason held alongside faith, not against it |
@@ -84,7 +86,9 @@ concept the game teaches is named by a character at the moment they explain it:
 *itinerant*, *New Light*, *Old Light*, *New Birth*, *enthusiasm*, *to testify*,
 the *Navigation Acts*, *enumerated goods*, the *Molasses Act of 1733*,
 *salutary neglect*, *smuggling*, the *Land Bank*, *customs officer*, *Bohea*,
-*the trade*, and *John Locke*. The same words are clickable in the newspaper
+*the trade*, *John Locke*, *natural rights*, and *authority*. Every definition
+is written in plain modern English for a teenager, not in the register of the
+period — the game's dialogue carries the 1741 voice, the glossary does not. The same words are clickable in the newspaper
 and in the order a patron gives you.
 
 ### The Great Awakening — carried by three people, not one
@@ -189,6 +193,19 @@ screen only names the concept *after* they have already lived it. Using French
 molasses also raises a suspicion count that the customs officer's closing scene
 reads back to them.
 
+**Pym calls twice.** He now appears once in the middle of the evening, buys
+nothing, and tells the keeper to his face that he will ask at closing what they
+have been sweetening with — *"you have all evening to decide what the answer is
+going to be."* Then he comes back and asks. The point is to convert the shelf
+from a menu into a decision with a named consequence attached, before most of
+the night's cups are poured. It costs about two minutes; drop `'officer_early'`
+from `ORDER` if you need them back.
+
+**The money notation is spelled out.** `d` and `s` mean nothing to a
+fifteen-year-old, so the shelf carries a key — *d = pence, s = shillings,
+12d = 1s, rent tonight is 5s 6d, which is 66d* — and the opening card states
+the gap in pence: thirty pence to find across six customers.
+
 **Expect this to be the moment worth teaching into.** The most productive
 classroom conversation is usually not *was smuggling wrong* but *what does it
 do to a law when nearly everyone breaks it and nearly no one is punished.*
@@ -218,14 +235,15 @@ Students who finish early should be sent back into the shelf to find recipes —
 
 ### Timing, honestly
 
+There are now **nine scenes**, not eight — Pym's early visit was added.
 The build runs **longer than one 50-minute period for a slow reader.** I have
 not timed it with real students; do that before you commit a class to it.
 
 To shorten, edit the `ORDER` array near the bottom of `js/data.js`:
 
 ```js
-var ORDER = ['convert', 'reader', 'minister', 'patience', 'captain',
-             'convert_return', 'patience_return', 'officer'];
+var ORDER = ['convert', 'reader', 'minister', 'officer_early', 'patience',
+             'captain', 'convert_return', 'patience_return', 'officer'];
 ```
 
 Delete any entry and nothing breaks — ledger, journal, closing screen and

@@ -344,6 +344,11 @@
       thread: 'What the Awakening cost him by Tuesday'
     },
     {
+      id: 'officer_early', art: 'officer', noOrder: true,
+      name: 'Mr. Aldis Pym', title: 'of His Majesty\u2019s Customs, making himself known',
+      thread: 'A warning, before it counts'
+    },
+    {
       id: 'patience_return', art: 'patience', noOrder: true,
       name: 'Patience Marsh', title: 'returned, with her mind made up',
       thread: 'What she decided about Thursday'
@@ -352,8 +357,8 @@
 
   /* Ezra opens the night and comes back near the end of it; Patience sits in
      the middle and returns after she has been home. Pym always closes. */
-  var ORDER = ['convert', 'reader', 'minister', 'patience', 'captain',
-               'convert_return', 'patience_return', 'officer'];
+  var ORDER = ['convert', 'reader', 'minister', 'officer_early', 'patience',
+               'captain', 'convert_return', 'patience_return', 'officer'];
 
   function runningOrder() {
     var all = CAST.concat(RETURNS);
@@ -451,23 +456,26 @@
      ======================================================================= */
 
   var GLOSSARY = {
-    itinerant:   { term: 'Itinerant preacher', def: 'A preacher who travels from town to town rather than serving one settled congregation. Settled ministers often resented them for preaching to their people without invitation.' },
-    newlight:    { term: 'New Light', def: 'Colonists who welcomed the revivals — who believed faith should be felt as a sudden, personal "new birth," not simply inherited and practiced quietly.' },
-    oldlight:    { term: 'Old Light', def: 'Colonists, usually the established clergy, who thought the revivals were disorderly emotional excess and a threat to church authority.' },
-    enthusiasm:  { term: 'Enthusiasm', def: 'In the 1700s this was an insult. It meant claiming direct inspiration from God — wild, irrational, and dangerous to public order.' },
-    newbirth:    { term: 'New Birth', def: 'The sudden conversion experience at the heart of the Great Awakening: knowing yourself saved, rather than hoping so.' },
-    testify:     { term: 'To testify', def: 'To stand and speak aloud about your own conversion. Revivals let women, the poor, and Black colonists testify — which is exactly what alarmed the Old Lights.' },
-    navigation:  { term: 'Navigation Acts', def: 'A series of English laws requiring colonial trade to move in English or colonial ships, and routing many colonial goods through England so English merchants and the Crown took a cut.' },
-    enumerated:  { term: 'Enumerated goods', def: 'Listed colonial products — sugar, tobacco, indigo and others — that by law could only be shipped to England, even if a better price waited elsewhere.' },
-    molassesact: { term: 'Molasses Act of 1733', def: 'Put a tax of sixpence a gallon on molasses imported from non-British colonies. It was meant to protect British West Indian planters. It was evaded almost universally.' },
-    neglect:     { term: 'Salutary neglect', def: 'Britain’s long habit of writing strict trade laws and then barely enforcing them. Colonists got used to the freedom — which made later enforcement feel like an outrage rather than a correction.' },
-    smuggling:   { term: 'Smuggling', def: 'Here it mostly meant landing French molasses without paying the duty. So many people did it that Boston’s rum industry — and much of its economy — depended on it.' },
-    landbank:    { term: 'Land Bank', def: 'A 1740 Massachusetts scheme to issue paper money backed by land, meant to relieve a shortage of coin. Parliament dissolved it in 1741, angering many country colonists.' },
-    customs:     { term: 'Customs officer', def: 'A Crown official who inspected cargo and collected duties. Many were bribable, which is a large part of why the trade laws went unenforced.' },
-    bohea:       { term: 'Bohea', def: 'A cheap black tea from China. In 1741 tea is ordinary and uncontroversial — the boycotts are still a generation away.' },
-    triangle:    { term: 'The trade', def: 'Molasses from Caribbean sugar plantations came to New England and was distilled into rum. That sugar was grown and cut by enslaved people, and some of that rum was traded for more of them.' },
-    lockeref:    { term: 'John Locke', def: 'English philosopher whose writing on natural rights, consent, and government by agreement circulated widely in the colonies and shaped how colonists argued about liberty.' }
+    itinerant:   { term: 'Itinerant preacher', def: 'A preacher who travels from town to town instead of running one church. Think of a touring act versus the same band playing one bar forever. Settled ministers hated it — these guys showed up uninvited and preached to their congregations.' },
+    newlight:    { term: 'New Light', def: 'People who were into the revivals. They believed real faith is something you FEEL happen to you, not something you inherit from your parents and go through the motions of.' },
+    oldlight:    { term: 'Old Light', def: 'People who thought the revivals were a mess — mostly the trained, official ministers. Their argument: crying and shouting is not proof of anything, and letting anyone claim God spoke to them wrecks the church.' },
+    enthusiasm:  { term: 'Enthusiasm', def: 'In the 1700s this was an insult, not a compliment. It meant claiming God talked to you personally — with no training, no job in the church, and nobody\u2019s permission. Roughly: "this person thinks they\u2019re special and they\u2019re going to get people hurt."' },
+    newbirth:    { term: 'New Birth', def: 'The moment at the center of the Great Awakening: suddenly KNOWING you\u2019re saved instead of just hoping so. People described it like a switch flipping.' },
+    testify:     { term: 'To testify', def: 'To stand up in front of people and describe your own conversion. This is the part that scared the authorities — in a field with no pulpit, servants, women, and Black colonists could stand up and speak, and no one could stop them.' },
+    navigation:  { term: 'Navigation Acts', def: 'English laws saying colonial goods had to travel in English or colonial ships, and that a lot of it had to stop in England first. England took a cut on the way through. That was the whole point.' },
+    enumerated:  { term: 'Enumerated goods', def: 'A specific list of colonial products — sugar, tobacco, indigo and others — that legally could only be shipped to England, even when someone closer was offering a better price.' },
+    molassesact: { term: 'Molasses Act of 1733', def: 'A tax of sixpence per gallon on molasses from non-British islands. It was passed to protect British sugar planters who couldn\u2019t compete with French prices. Almost nobody ever paid it.' },
+    neglect:     { term: 'Salutary neglect', def: 'Britain\u2019s habit of writing strict rules for the colonies and then not enforcing them. Colonists got used to the freedom. That\u2019s why later crackdowns felt like Britain taking something away, instead of Britain finally doing its job.' },
+    smuggling:   { term: 'Smuggling', def: 'Here it mostly means landing French molasses and not paying the tax on it. So many people did it that Boston\u2019s rum business — and a big chunk of the local economy — depended on it.' },
+    landbank:    { term: 'Land Bank', def: 'A 1740 Massachusetts plan to print paper money backed by farmland, because the colony had almost no actual coins. Parliament shut it down in 1741 from three thousand miles away, which made a lot of country farmers furious.' },
+    customs:     { term: 'Customs officer', def: 'A royal official whose job was to inspect cargo and collect the taxes on it. Plenty of them took bribes instead, which is a big reason the trade laws went uncollected for decades.' },
+    bohea:       { term: 'Bohea', def: 'A cheap black tea from China, pronounced "boh-HEE." In 1741 tea is just tea — totally normal, nothing political about it. The tea protests are still thirty years away.' },
+    triangle:    { term: 'The trade', def: 'Sugar was grown on Caribbean plantations by enslaved people. The leftover molasses came to New England and was distilled into rum. Some of that rum was then traded for more enslaved people. New England\u2019s economy sat on top of that loop.' },
+    lockeref:    { term: 'John Locke', def: 'An English philosopher whose books were being read all over the colonies. Two ideas that mattered most: you\u2019re born knowing nothing, so nobody is born better than anyone else — and a government only has power because the people agreed to give it, which means they can take it back.' },
+    rights:      { term: 'Natural rights', def: 'The idea that certain rights — life, liberty, property — belong to you just because you\u2019re a person, not because a king handed them out. If a king didn\u2019t give them to you, he can\u2019t take them away either. That argument shows up again, word for word, in 1776.' },
+    authority:   { term: 'Authority', def: 'Who gets to tell you what is true and what to do. This is the thread connecting everything tonight: the revivals let ordinary people claim religious authority without training, and the new philosophy said political authority only comes from the consent of the people. Same question, two subjects.' }
   };
+
 
   global.Data = {
     BASES: BASES, SWEETENERS: SWEETENERS, ADDITIONS: ADDITIONS,

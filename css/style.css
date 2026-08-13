@@ -653,3 +653,11 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
 .law-card p { margin: 0 0 .5rem; }
 .law-card p:first-child { color: var(--cream); }
 .law-card .ghost-btn { font-size: .78rem; padding: .25rem .7rem; }
+
+/* The money notation is not obvious to anybody who did not grow up with it,
+   and the whole mechanic is arithmetic, so it is spelled out on the shelf. */
+.coin-key {
+  margin: -.2rem 0 .4rem; font-size: .74rem; color: var(--dim);
+  letter-spacing: .01em;
+}
+.coin-key b { color: var(--amber-lit); font-weight: 600; }

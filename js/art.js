@@ -68,6 +68,7 @@
     buf.width = W; buf.height = H;
     bctx = buf.getContext('2d');
     bctx.imageSmoothingEnabled = false;
+    preloadAll();
     resize();
     global.addEventListener('resize', resize);
   }
@@ -1307,13 +1308,18 @@
     var ease = 1 - Math.pow(1 - t, 3);
 
     var dy = Math.round((1 - ease) * 30);           /* rises into the seat   */
-    dy += Math.round(Math.sin(f * 0.035));          /* breath                */
+    /* Breath. One cycle every five seconds or so, which is a person sitting
+       quietly — the old rate was a three-second cycle, closer to someone who
+       has just climbed the stairs. */
+    dy += Math.round(Math.sin(f * 0.021));
     if (motion.nudge > 0.15) {
       dy -= Math.round(motion.nudge);
       motion.nudge *= 0.82;
     } else motion.nudge = 0;
 
-    var dx = Math.round(Math.sin(f * 0.0115) * 1);  /* a slow shift of weight */
+    /* No sideways drift. On a drawn figure it read as a shift of weight; on a
+       painted one it reads as the whole person sliding along the bar. */
+    var dx = 0;
 
     /* Blink, if there is a frame for it — otherwise this costs nothing. */
     var blinking = false;
@@ -1453,6 +1459,16 @@
      asks for an image that hasn’t started downloading, and the character
      flashes to the built-in figure for a frame or two while it arrives. */
   var preloaded = {};
+
+  /* Fetch the whole cast up front. Loading a character's faces when they walk
+     in is too late: the images arrive a few frames after the figure does, and
+     for those frames the room shows the built-in drawn figure instead — which
+     looks like the wrong person flashing on screen before the right one. */
+  function preloadAll() {
+    var table = global.SPRITES || {};
+    Object.keys(table).forEach(preloadSprites);
+  }
+
   function preloadSprites(charId) {
     if (!charId || preloaded[charId]) return;
     preloaded[charId] = true;
@@ -1479,6 +1495,10 @@
         if (url) img = getSprite(url);
       }
       if (img) return drawSpriteImage(img, f, m);
+      /* Art is declared for this character and is still on its way. Draw
+         nothing rather than the built-in figure — an empty stool for two
+         frames is invisible; the wrong face is not. */
+      if (spriteUrl(charId, 'neutral')) return;
     }
 
     var pose = posePixels(charId || 'anon', cfg, exprName);

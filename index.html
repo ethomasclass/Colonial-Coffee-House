@@ -15,7 +15,7 @@
     <div class="hud-l">
       <span class="hud-label">Purse</span>
       <span id="purse" class="hud-val">3s</span>
-      <span class="hud-rent">of <b>5s 6d</b> rent<span id="rentGap" class="rent-gap"></span></span>
+      <span class="hud-rent" title="d = pence, s = shillings. 12 pence make 1 shilling.">of <b>5s 6d</b> rent<span id="rentGap" class="rent-gap"></span></span>
     </div>
     <div class="hud-c">
       <span class="sign">The Green Dragon &mdash; Union Street</span>
@@ -140,11 +140,19 @@
             </section>
             <section>
               <h4>Sweetener <span>and this is where the law lives</span></h4>
+              <p class="coin-key"><b>d</b> = pence &nbsp;&middot;&nbsp; <b>s</b> = shillings &nbsp;&middot;&nbsp;
+                 <b>12d = 1s</b> &nbsp;&middot;&nbsp; rent tonight is 5s 6d, which is <b>66d</b></p>
               <div id="lawCard" class="law-card" hidden>
                 <p><b>Three of these are lawful. The cheapest one is not.</b></p>
-                <p>French molasses costs a penny because the sixpence duty on it was
-                   never paid. Rent is <b>5s&nbsp;6d</b> tonight and your purse holds
-                   <b>3s</b>. Every cup you sell has to close that gap.</p>
+                <p>Money here is counted in <b>pence (d)</b> and <b>shillings (s)</b>.
+                   Twelve pence make one shilling.</p>
+                <p>French molasses costs <b>1d</b> because the sixpence duty on it was
+                   never paid. The lawful sweeteners cost <b>4d</b> and <b>6d</b>.
+                   Rent tonight is <b>5s&nbsp;6d — sixty-six pence</b> — and your purse
+                   holds <b>3s</b>, thirty-six. Every cup you sell has to close a
+                   thirty-penny gap, and you have six customers.</p>
+                <p>The man from the Customs will ask you at closing what you have been
+                   sweetening with.</p>
                 <button id="lawCardOk" class="ghost-btn">I understand</button>
               </div>
               <div id="sweetShelf" class="shelf"></div>
