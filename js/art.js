@@ -1388,7 +1388,20 @@
     return out;
   }
 
+  /* Fetch every face a character owns the moment they are first drawn. The
+     loader is lazy, so without this the first line that changes their mood
+     asks for an image that hasn’t started downloading, and the character
+     flashes to the built-in figure for a frame or two while it arrives. */
+  var preloaded = {};
+  function preloadSprites(charId) {
+    if (!charId || preloaded[charId]) return;
+    preloaded[charId] = true;
+    var set = (global.SPRITES || {})[charId] || {};
+    Object.keys(set).forEach(function (k) { if (set[k]) getSprite(set[k]); });
+  }
+
   function drawPerson(cfg, exprName, f, charId) {
+    preloadSprites(charId);
     var m = motionOffsets(f, charId || 'anon', exprName);
 
     /* hand-made art wins, when there is any */
