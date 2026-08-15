@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Green Dragon — Boston, 1741</title>
+<title>Colonial Coffee House — Boston, 1741</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -46,11 +46,13 @@
 
   <!-- ===================== TITLE ===================== -->
   <div id="title" class="overlay title-screen">
+    <canvas id="titleArt" class="title-art" width="384" height="216"></canvas>
     <div class="title-inner">
-      <div class="title-rule"></div>
-      <h1>The Green Dragon</h1>
-      <h2>A Coffee House in Boston, 1741</h2>
-      <div class="title-rule"></div>
+      <div class="title-mark">
+        <h1>Colonial<span>Coffee House</span></h1>
+        <div class="title-cup" aria-hidden="true"></div>
+      </div>
+      <p class="title-place">The Green Dragon &middot; Union Street &middot; Boston, 1741</p>
 
       <div class="slides">
 
@@ -294,6 +296,7 @@
 
 </div>
 
+<script src="js/titlecard.js"></script>
 <script src="js/sprites.js"></script>
 <script src="js/backdrop.js"></script>
 <script src="js/art.js"></script>

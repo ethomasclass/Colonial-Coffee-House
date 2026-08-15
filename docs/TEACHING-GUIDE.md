@@ -1,4 +1,4 @@
-# The Green Dragon — Teaching Guide
+# Colonial Coffee House — Teaching Guide
 
 A single-period visual novel set in a Boston coffee house on **Monday 14
 September 1741**. Students keep the house for one evening and serve six

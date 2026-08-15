@@ -988,6 +988,7 @@
     $('wordsBtn').onclick = openWords;
     $('wordsClose').onclick = function () { el.words.hidden = true; };
     setupSlides();
+    if (global.TitleCard) TitleCard.draw($('titleArt'));
     var lawOk = $('lawCardOk');
     if (lawOk) lawOk.onclick = function () {
       el.lawCard.hidden = true;

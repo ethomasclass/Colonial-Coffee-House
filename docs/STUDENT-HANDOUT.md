@@ -1,4 +1,4 @@
-# The Green Dragon — Student Handout
+# Colonial Coffee House — Student Handout
 
 *One double-sided sheet. Side 1 is filled in while playing; side 2 is answered
 after the shop closes.*

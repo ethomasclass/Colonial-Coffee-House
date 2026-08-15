@@ -1,4 +1,6 @@
-# The Green Dragon — A Coffee House in Boston, 1741
+# Colonial Coffee House
+
+*Boston, 1741. The house is the Green Dragon, on Union Street.*
 
 A *Coffee Talk*–style visual novel for one class period. Students keep the
 Green Dragon on Union Street for a single evening in September 1741, brewing

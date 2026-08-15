@@ -1,4 +1,4 @@
-# The Green Dragon — How to Play
+# Colonial Coffee House — How to Play
 
 *Boston, Monday 14 September 1741. You keep a coffee house on Union Street.
 It is raining. Six people are going to come in tonight.*
