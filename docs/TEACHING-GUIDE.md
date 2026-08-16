@@ -239,8 +239,9 @@ face one short panel at a time.
 |---|---|
 | 0–5 | Set the scene. *You are not a soldier or a founder. You run a shop.* |
 | 5–12 | Newspaper. **Insist they read it.** Everything else depends on it |
-| 12–50 | The eight scenes |
-| 50–58 | Closing ledger, and the confession count |
+| 12–50 | The scenes |
+| 50–56 | Closing ledger, and the confession count |
+| 56–58 | **Step outside** — the end card, and the years it opens onto |
 
 Students who finish early should be sent back into the shelf to find recipes —
 32 exist and 14 are known at the start — or to click the objects in the room.
@@ -298,6 +299,41 @@ stalled, and so you can tell at a glance whose confession a student missed.
 ---
 
 ## 5. Discussion and assessment
+
+### The end card — the bridge to your next unit
+
+At the foot of the closing ledger there is a button marked **Step outside**.
+It replaces the ledger with the same Boston skyline the game opened on, and
+carries the night forward:
+
+| | |
+|---|---|
+| **1741** | Tonight. The Molasses Act is eight years old and uncollected |
+| **1763** | The war with France ends; Britain is in debt and starts collecting |
+| **1764** | The **Sugar Act** — half the duty, actually enforced, no juries |
+| **1765** | The **Stamp Act** — a tax on the paper Cato sets type on |
+| **1770** | Five men die on King Street |
+| **1773** | The tea, a few minutes' walk from the shop door |
+| **1775** | Revere's watch on the troops, meeting **at the Green Dragon** |
+
+Two of those rows are marked with a diamond: they are the ones that happen in
+the student's own shop. That is the whole argument of the screen — the room
+they just worked a shift in is the room that turns up by name in the chapter
+you teach next.
+
+The card also names what tonight's arguments *were*, in a form students can
+carry into the Revolution unit: the price of sweetener, who gets to say what
+is true, and whether being born into a place makes anyone fit to rule it.
+
+**Two minutes on this screen is worth more than five more minutes of play.**
+If you are running short, cut a scene rather than cutting the end card — see
+*Timing, honestly* above. It also states plainly that the six patrons are
+invented and the world around them is not, which saves you a conversation
+later.
+
+**A question to put on the board while it is up:** *Nothing changed in Boston
+between 1741 and 1763. Why is 1763 the year everything changes?* The answer is
+on their own ledger — the arrangement worked because nobody enforced it.
 
 ### Immediately after play — five minutes, whole class
 

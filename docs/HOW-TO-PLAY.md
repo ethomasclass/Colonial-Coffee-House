@@ -66,6 +66,12 @@ window, the trade sign, the cupboard, the candle — for a note on what it was.
 **7. The ledger.** At the end you see every drink, what it cost, what it
 earned, and whether you made rent.
 
+**8. Step outside.** The button at the bottom of the ledger takes you back out
+onto Union Street and tells you what happened to this shop, this street and
+these arguments over the next thirty-four years — the Sugar Act, the Stamp
+Act, the tea in the harbour. **Read it.** It is the reason the evening was
+worth playing.
+
 ---
 
 ## The thing most people miss

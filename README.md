@@ -41,7 +41,7 @@ iPads, and anything else with a browser.
 | | |
 |---|---|
 | **Setting** | Boston, Monday 14 September 1741 |
-| **Length** | ~50–58 minutes: paper, eight scenes, closing ledger. **See the timing note below** |
+| **Length** | ~50–58 minutes: paper, nine scenes, closing ledger, end card. **See the timing note below** |
 | **Reading level** | Written for 10th grade. Contemporary American English and spelling, contractions throughout; only the period terms that *are* the content (New Light, enumerated goods, enthusiasm) are kept, and every one is glossed in-game |
 | **Drinks** | 32 recipes, all period-accurate, **none alcoholic**. Composing one in the brew panel discovers it — no need to serve it |
 | **Sound** | Synthesised in-browser, **off by default**, one toggle |
@@ -76,6 +76,10 @@ iPads, and anything else with a browser.
 7. **The closing ledger.** Every drink, what it cost, what it fetched, what got
    poured away, and whether rent got paid. Designed to be read off the screen
    while filling in a paper worksheet.
+8. **The end card.** *Step outside* returns to the Boston skyline the game
+   opened on and runs the clock forward — 1763, the Sugar Act, the Stamp Act,
+   the tea, and Revere's watch meeting at the Green Dragon itself. It is the
+   handover to whatever unit comes next.
 
 ### The cleaning game
 

@@ -947,11 +947,96 @@
 
     html += '<div class="jrn"><h3>Notes from the Evening</h3>';
     st.journal.forEach(function (j) { html += '<div class="note"><b>' + j.title + '</b><p>' + j.text + '</p></div>'; });
-    html += '</div><button id="againBtn" class="big-btn">Open again tomorrow night</button>';
+    html += '</div><button id="endNextBtn" class="big-btn">Step outside &#9654;</button>';
 
     el.closeBody.innerHTML = html;
     el.closing.hidden = false;
-    $('againBtn').onclick = function () { clearSave(); location.reload(); };
+    el.closing.scrollTop = 0;
+    buildEndCard(madeRent);
+    $('endNextBtn').onclick = showEndCard;
+  }
+
+  /* =======================================================================
+     END CARD — the same skyline the night opened on, twenty-four years on
+
+     The ledger answers "how did tonight go". This answers the question a
+     student is actually left holding, which is "so what was any of that
+     for". It is the only screen in the game that leaves 1741, and it exists
+     to hand the class its next three units: enforcement after the war, the
+     Stamp Act, and the road out of a coffee house and into a revolution.
+     ======================================================================= */
+
+  /* One line each. The house's own entries are marked, because the point
+     landing here is that the room the student just worked in is a room that
+     shows up later by name. */
+  var YEARS = [
+    { yr: 1741, ev: '<b>Tonight.</b> The Molasses Act is eight years old and has almost never been collected. Nobody in your house is thinking about independence. They are thinking about rent, a preacher, a cargo, and a posting to somewhere warmer.', here: true },
+    { yr: 1763, ev: 'Britain wins a very long war against France and comes out of it owing more money than it has ever owed. The Navy is ordered to start collecting the trade duties it has spent a lifetime ignoring. <b>Salutary neglect ends.</b>' },
+    { yr: 1764, ev: 'The <b>Sugar Act</b> cuts the molasses duty in half &mdash; and actually collects it. Accused smugglers are tried in courts that sit without a jury. The bargain your ledger ran on is gone.' },
+    { yr: 1765, ev: 'The <b>Stamp Act</b>: a tax on nearly every printed thing, newspapers and contracts and the paper Cato Bell sets type on. Boston answers with crowds in the street. The <b>Sons of Liberty</b> begin meeting in taverns.' },
+    { yr: 1770, ev: 'Soldiers sent to keep order in Boston fire into a crowd on King Street. Five men die. The printers call it a <b>massacre</b> before the week is out.' },
+    { yr: 1773, ev: 'Three hundred and forty-two chests of tea go into the harbour, a few minutes&rsquo; walk from your door. The men who did it had spent the autumn meeting in rooms like this one.' },
+    { yr: 1775, ev: 'Paul Revere writes that he and about thirty Boston tradesmen took turns watching the movements of British troops, and that they met <b>at the Green Dragon</b> &mdash; this house, this street.', here: true }
+  ];
+
+  function buildEndCard(madeRent) {
+    var h = '';
+
+    h += '<p>You have locked the door on a wet Monday in 1741. ' +
+      (madeRent ? 'The rent is on the table.' : 'The rent is not on the table.') +
+      ' Nothing about tonight felt like history. That is generally what history ' +
+      'feels like from the inside of it.</p>';
+
+    if (st.frenchUses > 0) {
+      h += '<p>You sweetened <b>' + st.frenchUses + '</b> ' +
+        (st.frenchUses === 1 ? 'cup' : 'cups') + ' with molasses no duty was ever ' +
+        'paid on, and the only person who could have stopped you asked politely and ' +
+        'then went home. That was the arrangement. Britain wrote the law; Boston ' +
+        'kept the harbour.</p>';
+    } else {
+      h += '<p>You bought lawful sweetener every single time, which put you in a very ' +
+        'small minority of this town. The French molasses came ashore anyway, on ' +
+        'somebody else&rsquo;s account. The duty simply went uncollected, year after ' +
+        'year, the way it had since 1733.</p>';
+    }
+
+    h += '<p>It held for another twenty-two years. Then it stopped holding.</p>';
+
+    h += '<div class="end-years">';
+    YEARS.forEach(function (y) {
+      h += '<div class="end-year' + (y.here ? ' here' : '') + '">' +
+        '<span class="yr">' + y.yr + '</span><span class="ev">' + y.ev + '</span></div>';
+    });
+    h += '</div>';
+
+    h += '<div class="end-coda">' +
+      '<p>The Green Dragon is remembered afterwards as &ldquo;the headquarters of the ' +
+      'Revolution&rdquo; &mdash; the phrase is usually credited to Daniel Webster, ' +
+      'writing long after the fact. In 1741 it was a room where a cooper argued about ' +
+      'a travelling preacher and a customs officer wanted a transfer.</p>' +
+      '<p>Nobody at your counter tonight was trying to start a country. The argument ' +
+      'that became one started as an argument about <b>the price of sweetener</b>, ' +
+      'about <b>who gets to say what is true</b>, and about <b>whether being born ' +
+      'into a place makes anyone fit to rule it</b>. You have already heard all ' +
+      'three.</p></div>';
+
+    h += '<p class="quiet">The six people at your counter are invented. Everything ' +
+      'they are standing in &mdash; the acts, the duties, the preaching, the dates ' +
+      'above &mdash; is not.</p>';
+
+    $('endBody').innerHTML = h;
+  }
+
+  function showEndCard() {
+    el.closing.hidden = true;
+    el.endcard.hidden = false;
+    el.endcard.scrollTop = 0;
+    if (global.TitleCard) TitleCard.draw($('endArt'));
+  }
+
+  function closeEndCard() {
+    el.endcard.hidden = true;
+    el.closing.hidden = false;
   }
 
   /* =======================================================================
@@ -965,7 +1050,7 @@
      'words', 'wordsBody', 'wordsCount',
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
-     'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'title',
+     'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'endcard', 'title',
      'between', 'choresNote', 'wipeBtn', 'polishBtn', 'betweenHint', 'settings',
      'bookCount', 'chore', 'choreTitle', 'choreBar', 'chorePct', 'choreDone',
      'cupCanvas', 'brewBookList', 'ingNote', 'paperPrev', 'paperNext',
@@ -987,6 +1072,8 @@
     el.tasteBtn.onclick = tasteCup;
     $('wordsBtn').onclick = openWords;
     $('wordsClose').onclick = function () { el.words.hidden = true; };
+    $('endBackBtn').onclick = closeEndCard;
+    $('againBtn').onclick = function () { clearSave(); location.reload(); };
     setupSlides();
     if (global.TitleCard) TitleCard.draw($('titleArt'));
     var lawOk = $('lawCardOk');
@@ -1067,6 +1154,9 @@
       if (ev.key === 'Escape') {
         el.book.hidden = true; el.gloss.hidden = true; el.settings.hidden = true;
         el.words.hidden = true;
+        /* the end card has nothing behind it but the empty room, so Esc puts
+           the accounts back rather than closing onto nothing */
+        if (!el.endcard.hidden) closeEndCard();
       }
     });
 

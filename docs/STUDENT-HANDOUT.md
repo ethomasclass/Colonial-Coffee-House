@@ -144,6 +144,8 @@ term **salutary neglect**.
 - Who did you believe, Ezra or Rev. Thorne? Why?
 - Was Capt. Bright a criminal? Say what you mean by the word.
 - Mr. Pym asked to be posted anywhere else before he ever reached Boston. Why?
+- The last screen says nothing much changed until **1763**, and then everything
+  did. Using your own ledger as evidence, why was 1763 the year it broke?
 
 `________________________________________________________________`
 

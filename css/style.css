@@ -825,3 +825,80 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   color: rgba(247,236,220,.72); margin: 0 0 1.1rem;
   text-shadow: 0 1px 3px rgba(0,0,0,.8);
 }
+
+/* ===========================================================================
+   END CARD
+   The night closes on the same skyline it opened on. Everything on the ledger
+   screen is about tonight; everything here is about the twenty-four years
+   after it, so it gets the sky back and the paper goes away.
+   =========================================================================== */
+/* Same note as the title screen: the overlay is already positioned. Do not
+   set `position` here or the card falls out from over the room. */
+/* The card is taller than a Chromebook window, so it scrolls — and the sky
+   canvas, being one screen tall, scrolls off with it. This is the colour the
+   skyline's own vignette ends on, so what you scroll onto is more night
+   rather than the empty room showing through. */
+.endcard { align-items: flex-start; background: #150f20; }
+
+.endcard-inner {
+  position: relative; z-index: 1;
+  max-width: 44rem; width: 100%; margin: auto;
+  background: rgba(14, 10, 20, .8);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(217,144,56,.28);
+  border-radius: 4px;
+  padding: 1.6rem 1.9rem 1.4rem;
+  color: var(--cream);
+}
+
+.end-kicker {
+  font-size: .74rem; letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(247,236,220,.6); margin: 0 0 .3rem;
+}
+.end-title {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(1.5rem, 4vw, 2.1rem); line-height: 1.1;
+  color: #f7ecdc; margin: 0 0 1rem; letter-spacing: .03em;
+  text-shadow: 0 2px 0 rgba(0,0,0,.5);
+}
+.end-body p { line-height: 1.62; margin: 0 0 .85rem; }
+.end-body p.quiet { color: var(--dim); font-size: .92rem; }
+.end-body b { color: var(--amber-lit); font-weight: normal; }
+
+/* the run of dates — the point of the whole card */
+.end-years { margin: 1.2rem 0 1.1rem; border-top: 1px solid rgba(217,144,56,.22); }
+.end-year {
+  display: grid; grid-template-columns: 4.2rem 1fr; gap: .9rem;
+  padding: .62rem 0; border-bottom: 1px solid rgba(217,144,56,.14);
+  align-items: baseline;
+}
+.end-year .yr {
+  font-family: var(--serif); font-size: 1.15rem; color: var(--amber-lit);
+  font-variant-numeric: tabular-nums; letter-spacing: .02em;
+}
+.end-year .ev { font-size: .93rem; line-height: 1.5; }
+.end-year .ev b { color: #f7ecdc; }
+/* the one that is this house, not just this town */
+.end-year.here .ev { color: #f7ecdc; }
+.end-year.here .yr::after {
+  content: "\00a0\25c6"; font-size: .6em; vertical-align: .25em;
+  color: var(--amber);
+}
+
+.end-coda {
+  border-left: 3px solid var(--amber); padding: .1rem 0 .1rem .9rem;
+  margin: 1.1rem 0 .4rem;
+}
+.end-coda p { margin: 0 0 .6rem; }
+.end-coda p:last-child { margin: 0; }
+
+.end-actions {
+  display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;
+  margin-top: 1.2rem;
+}
+.end-actions .big-btn { margin-top: 0; }
+
+@media (max-width: 560px) {
+  .end-year { grid-template-columns: 3.4rem 1fr; gap: .6rem; }
+  .end-year .yr { font-size: 1rem; }
+}
