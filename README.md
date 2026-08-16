@@ -10,6 +10,15 @@ the Enlightenment, and the Navigation and Molasses Acts.
 No install, no accounts, no student data collected. It is a folder of static
 files — open `index.html` and it runs.
 
+## ▶ Play it
+
+### **https://ethomasclass.github.io/Colonial-Coffee-House/**
+
+That is the link to give students. It opens straight into the game — nothing
+to install, nothing to sign in to, and it works on a school Chromebook. Every
+push to `claude/coffee-talk-classroom-game-3ek7i3` republishes it within about
+a minute.
+
 ---
 
 ## Documentation

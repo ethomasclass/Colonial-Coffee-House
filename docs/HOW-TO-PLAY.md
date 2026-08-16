@@ -3,6 +3,8 @@
 *Boston, Monday 14 September 1741. You keep a coffee house on Union Street.
 It is raining. Six people are going to come in tonight.*
 
+**Play here → https://ethomasclass.github.io/Colonial-Coffee-House/**
+
 ---
 
 ## What you are doing

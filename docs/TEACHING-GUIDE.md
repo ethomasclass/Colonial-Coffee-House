@@ -10,6 +10,8 @@ the Navigation and Molasses Acts.
 period to it.
 **Requirements:** a browser. Works on Chromebooks and tablets. No install, no
 accounts, no student data leaves the machine.
+**The link to give students:**
+**https://ethomasclass.github.io/Colonial-Coffee-House/**
 
 ---
 
