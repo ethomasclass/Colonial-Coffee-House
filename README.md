@@ -18,9 +18,14 @@ files — open `index.html` and it runs.
   or project it while they start.
 - **[docs/STUDENT-HANDOUT.md](docs/STUDENT-HANDOUT.md)** — one double-sided
   sheet. Filled in while playing, answered after closing.
+- **[docs/GUIDED-NOTES.md](docs/GUIDED-NOTES.md)** — the scaffolded alternative:
+  fill-in-the-blank notes, one block per scene, in the order the patrons
+  arrive. Two sheets. **Use this *or* the handout, not both.**
+  [`docs/print/guided-notes.html`](docs/print/guided-notes.html) is the same
+  thing laid out for the printer — open it and hit print.
 - **[docs/TEACHING-GUIDE.md](docs/TEACHING-GUIDE.md)** — what the game teaches,
-  the answer key, timing, discussion prompts, and what it deliberately leaves
-  out.
+  the answer key (including every guided-notes blank), timing, discussion
+  prompts, and what it deliberately leaves out.
 
 ---
 

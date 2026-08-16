@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Open this file in a browser and print it. Set up for Letter with
+     0.55in margins; it lands on four sides, i.e. two sheets duplexed. -->
+<title>Colonial Coffee House — Guided Notes</title>
+
+<style>
+/* ───────────────────────────────────────────────────────────────
+   Sibling to the two-sided handout, on purpose: same white stock,
+   same serif, same oxblood, same mono labels. A teacher printing
+   both should be holding one set of materials, not two designs.
+
+   What differs is the structure. This sheet follows the evening's
+   running order, so the numbers down the left edge are real —
+   they are the order the patrons sit down in, and a student can
+   find their place on the page from the person on the screen.
+   ─────────────────────────────────────────────────────────────── */
+:root {
+  --paper: #ffffff;
+  --ink:   #14181f;
+  --soft:  #4c5560;
+  --faint: #7b8490;
+  --rule:  #b9bfc7;
+  --hair:  #d9dde2;
+  --mark:  #8c2f23;
+  --tint:  #f3f2ef;
+  --serif: "Iowan Old Style", "Hoefler Text", Palatino, Georgia, serif;
+  --mono:  ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 15.5px;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.sheet { max-width: 7.9in; margin: 0 auto; padding: 0 0.5in 0.7in; }
+
+/* ── heading ───────────────────────────────────────────────── */
+.masthead { padding: 0.55in 0 0; }
+.eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .17em;
+  text-transform: uppercase; color: var(--mark); margin: 0 0 6px;
+}
+h1 { font-size: 1.65rem; font-weight: 600; margin: 0 0 2px; letter-spacing: -.01em; }
+.sub { font-style: italic; color: var(--soft); margin: 0 0 14px; font-size: .95rem; }
+
+.namebar {
+  display: flex; gap: 26px; flex-wrap: wrap;
+  border-top: 2px solid var(--ink); border-bottom: 1px solid var(--rule);
+  padding: 9px 0; margin-bottom: 10px;
+  font-family: var(--mono); font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--faint);
+}
+.namebar span { flex: 1 1 auto; }
+.namebar b { display: inline-block; border-bottom: 1px solid var(--rule);
+             min-width: 9rem; margin-left: .5rem; }
+
+.howto {
+  border-left: 3px solid var(--mark); background: var(--tint);
+  padding: 8px 12px; margin: 0 0 16px; font-size: .9rem;
+}
+.howto p { margin: 0 0 5px; }
+.howto p:last-child { margin: 0; }
+
+/* ── a scene block ─────────────────────────────────────────── */
+.scene {
+  display: grid; grid-template-columns: 2.1rem 1fr; column-gap: .85rem;
+  border-top: 2px solid var(--ink);
+  padding: 10px 0 12px;
+  break-inside: avoid; page-break-inside: avoid;
+}
+.scene.prelude, .scene.coda { border-top-color: var(--mark); }
+
+.num {
+  font-family: var(--mono); font-size: 1.3rem; color: var(--mark);
+  line-height: 1; padding-top: 2px; font-variant-numeric: tabular-nums;
+}
+.num small {
+  display: block; font-size: 8px; letter-spacing: .12em;
+  color: var(--faint); margin-top: 4px; text-transform: uppercase;
+}
+
+.who { margin: 0 0 1px; font-size: 1.06rem; font-weight: 600; }
+.who em { font-weight: 400; font-style: italic; color: var(--soft); font-size: .92em; }
+.thread {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .13em;
+  text-transform: uppercase; color: var(--mark); margin: 0 0 7px;
+}
+
+.body p { margin: 0 0 5px; }
+.body ol, .body ul { margin: 0 0 6px; padding-left: 1.15rem; }
+.body li { margin: 0 0 4px; }
+.ask { font-weight: 600; }
+.hint { color: var(--soft); font-size: .87rem; font-style: italic; }
+
+/* the write-in blank, the whole point of guided notes */
+.b {
+  display: inline-block; border-bottom: 1px solid var(--rule);
+  min-width: 5.6rem; height: 1.05em; vertical-align: baseline;
+}
+/* cue word + blank travel together to the next line, rather than the blank
+   wrapping alone and leaving the word that sets it up on the line above */
+.keep { white-space: nowrap; }
+.b.s  { min-width: 3.6rem; }
+.b.l  { min-width: 11rem; }
+.b.xl { min-width: 16rem; }
+.line { border-bottom: 1px solid var(--rule); height: 1.5rem; margin-bottom: 2px; }
+.line.short { width: 60%; }
+
+/* the one term each scene is really for */
+.term {
+  display: grid; grid-template-columns: 9.5rem 1fr; gap: .6rem;
+  align-items: end;
+  background: var(--tint); border: 1px solid var(--hair);
+  padding: 6px 9px; margin: 7px 0 0;
+}
+.term .k {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--soft);
+}
+.term .k b { display: block; font-family: var(--serif); font-size: 13.5px;
+             letter-spacing: 0; text-transform: none; color: var(--ink); }
+.term .v { border-bottom: 1px solid var(--rule); height: 1.35rem; }
+.term.two { grid-template-columns: 9.5rem 1fr; }
+
+/* the argument ladder — Cato's scene is a chain, so it looks like one */
+ol.ladder { counter-reset: rung; list-style: none; padding-left: 0; margin: 4px 0 6px; }
+ol.ladder li {
+  counter-increment: rung; position: relative;
+  padding: 3px 0 3px 1.6rem; border-left: 2px solid var(--hair);
+  margin-left: .35rem;
+}
+ol.ladder li::before {
+  content: counter(rung); position: absolute; left: -.62rem; top: 4px;
+  width: 1.15rem; height: 1.15rem; border-radius: 50%;
+  background: var(--mark); color: var(--paper);
+  font-family: var(--mono); font-size: 9px; line-height: 1.15rem;
+  text-align: center;
+}
+ol.ladder li:last-child { border-left-color: var(--mark); }
+
+/* the closing synthesis */
+.big {
+  border: 2px solid var(--ink); padding: 10px 12px; margin: 14px 0 0;
+  break-inside: avoid;
+}
+.big h3 {
+  font-family: var(--mono); font-size: 10px; letter-spacing: .16em;
+  text-transform: uppercase; margin: 0 0 6px; color: var(--mark);
+}
+.big p { margin: 0 0 6px; }
+
+table.years { border-collapse: collapse; width: 100%; margin: 4px 0 2px; }
+table.years td { border-bottom: 1px solid var(--hair); padding: 4px 6px 4px 0; vertical-align: baseline; }
+table.years td.yr {
+  width: 3.4rem; font-family: var(--mono); color: var(--mark);
+  font-variant-numeric: tabular-nums; font-size: .95rem;
+}
+
+.pagebreak { break-before: page; page-break-before: always; }
+
+footer {
+  margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--hair);
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--faint);
+  display: flex; justify-content: space-between; gap: 1rem;
+}
+
+@media print {
+  /* Measured against Letter at 0.55in margins. Four sides, two sheets. */
+  body { font-size: 9.7pt; line-height: 1.3; }
+  .sheet { max-width: none; padding: 0; }
+  .masthead { padding-top: 0; }
+  h1 { font-size: 1.4rem; }
+  .sub { margin-bottom: 8px; }
+  .namebar { padding: 6px 0; margin-bottom: 8px; }
+  .howto { padding: 5px 10px; margin-bottom: 10px; background: none; }
+  .scene { padding: 5px 0 6px; }
+  .thread { margin-bottom: 5px; }
+  .body p { margin: 0 0 3px; }
+  .line { height: 1.12rem; }
+  .term { padding: 3px 8px; margin-top: 5px; background: none; }
+  .term .v { height: 1.05rem; }
+  ol.ladder { margin: 3px 0 5px; }
+  ol.ladder li { padding-top: 2px; padding-bottom: 2px; }
+  .big { padding: 8px 10px; margin-top: 10px; }
+  footer { margin-top: 8px; padding-top: 5px; }
+  @page { margin: 0.55in; }
+}
+</style>
+</head>
+<body>
+
+<div class="sheet">
+
+<div class="masthead">
+  <p class="eyebrow">Union Street &middot; Boston &middot; Monday 14 September 1741</p>
+  <h1>Colonial Coffee House &mdash; Guided Notes</h1>
+  <p class="sub">One page-block for each person who sits at your counter, in the order they arrive.</p>
+  <div class="namebar">
+    <span>Name <b></b></span>
+    <span>Period <b></b></span>
+  </div>
+</div>
+
+<div class="howto">
+  <p><strong>Fill in each block while that person is still on screen.</strong> The
+  blanks are short on purpose &mdash; a word or two, not a sentence.</p>
+  <p>Some answers only appear if the drink you served <em>suited them</em>. If a
+  person leaves before you got theirs, write <em>missed it</em> and keep going.
+  You will still be able to answer the last box.</p>
+</div>
+
+<!-- ══════════════ PRELUDE ══════════════ -->
+<div class="scene prelude">
+  <div class="num">&#9733;<small>first</small></div>
+  <div class="body">
+    <p class="who">The <em>Boston Gazette</em> <em>&mdash; read before you open the shop</em></p>
+    <p class="thread">Everything tonight is explained here first</p>
+    <p>A preacher who travels town to town instead of staying with one congregation
+       is called <span class="keep">an <span class="b l"></span>.</span></p>
+    <p>Boston buys <strong>French</strong> molasses instead of British molasses because
+       <span class="keep">it is <span class="b l"></span>.</span></p>
+    <div class="term">
+      <div class="k">Write the definition<b>Great Awakening</b></div>
+      <div class="v"></div>
+    </div>
+    <p style="margin-top:6px">One thing in the paper you want to ask somebody about tonight:</p>
+    <div class="line"></div>
+  </div>
+</div>
+
+<!-- ══════════════ 1 ══════════════ -->
+<div class="scene">
+  <div class="num">1<small>scene</small></div>
+  <div class="body">
+    <p class="who">Mr. Aldis Pym <em>&mdash; His Majesty&rsquo;s Customs, before you have poured anything</em></p>
+    <p class="thread">The rule, stated out loud in advance</p>
+    <p>There is a duty owed on <span class="b"></span> molasses, and Pym cannot find
+       one person in Boston who has <span class="b"></span> it.</p>
+    <p>The customs books say every barrel came from a <span class="b"></span> island.
+       Why does Pym think that is impossible?</p>
+    <div class="line"></div>
+    <p class="hint">Circle one. Because he warned you first, every cup you pour tonight is
+       &mdash; <strong>an accident</strong> &nbsp;/&nbsp; <strong>a choice you made knowing</strong>.</p>
+  </div>
+</div>
+
+<!-- ══════════════ 2 ══════════════ -->
+<div class="scene">
+  <div class="num">2<small>scene</small></div>
+  <div class="body">
+    <p class="who">Ezra Hale <em>&mdash; a young barrel-maker, newly converted</em></p>
+    <p class="thread">The Great Awakening, from the inside</p>
+    <p>Ezra&rsquo;s own settled minister preaches <span class="keep">by <span class="b l"></span>.</span> The
+       travelling preacher <span class="b"></span> and <span class="b"></span>.</p>
+    <p>The question the revival preacher asks is not whether you attend church. It is
+       whether <span class="keep">you <span class="b xl"></span>.</span></p>
+    <p><span class="ask">Only if his drink suited him:</span> what is Ezra actually frightened of?</p>
+    <div class="line"></div>
+    <div class="term">
+      <div class="k">Write the definition<b>New Birth</b></div>
+      <div class="v"></div>
+    </div>
+    <div class="term">
+      <div class="k">An insult in 1741<b>enthusiasm</b></div>
+      <div class="v"></div>
+    </div>
+  </div>
+</div>
+
+<footer><span>Colonial Coffee House &mdash; Guided Notes</span><span>1 of 4</span></footer>
+
+<!-- ══════════════════════════ SIDE TWO ══════════════════════════ -->
+<div class="pagebreak"></div>
+
+<!-- ══════════════ 3 ══════════════ -->
+<div class="scene">
+  <div class="num">3<small>scene</small></div>
+  <div class="body">
+    <p class="who">Cato Bell <em>&mdash; a printer&rsquo;s apprentice</em></p>
+    <p class="thread">The Enlightenment &mdash; the most important block on this sheet</p>
+    <p>Cato is reading Locke and walks you through the argument one step at a time.
+       <strong>Fill in each step.</strong></p>
+    <ol class="ladder">
+      <li>We are born knowing <span class="b"></span>. Everything we know, we got from
+          what we saw, heard, and were <span class="b s"></span>.</li>
+      <li>So no person is born knowing <span class="b"></span> than another
+          &mdash; and therefore nobody is born <span class="b l"></span> anybody else.</li>
+      <li>There are <span class="b"></span> rights &mdash; being alive, being
+          <span class="b s"></span>, and keeping what you have worked for &mdash; and you
+          have them because you are a <span class="b s"></span>, not because a king
+          handed them to you.</li>
+      <li>A thing no king gave you is a thing no king <span class="keep">can <span class="b"></span>.</span></li>
+      <li>So a government holds its power <span class="keep">on <span class="b"></span></span> from the people
+          it governs.</li>
+    </ol>
+    <p>How does an apprentice in Boston get hold of ideas printed in London?
+       <span class="b xl"></span></p>
+    <p>Cato notices that men who quote Locke on liberty also <span class="b xl"></span>.
+       He adds: &ldquo;I&rsquo;m free. <span class="b l"></span>.&rdquo;</p>
+    <div class="term">
+      <div class="k">Write the definition<b>Enlightenment</b></div>
+      <div class="v"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 4 ══════════════ -->
+<div class="scene">
+  <div class="num">4<small>scene</small></div>
+  <div class="body">
+    <p class="who">Rev. Samuel Thorne <em>&mdash; a settled minister</em></p>
+    <p class="thread">The Great Awakening &mdash; the other half of the argument</p>
+    <p>Ministers who welcome the travelling preachers are called
+       <span class="b"></span> Lights. Thorne and most of the settled clergy are
+       <span class="b"></span> Lights.</p>
+    <p>His objection is <em>not</em> that the converts are lying. He says a person can be
+       completely sincere and completely <span class="b"></span> &mdash; and more
+       dangerous <em>because</em> of the sincerity.</p>
+    <p><span class="ask">Only if his drink suited him:</span> Thorne says he thinks he is
+       losing &mdash; not the argument, but the thing underneath it. What is the thing
+       underneath?</p>
+    <div class="line"></div>
+    <p><strong>Put his best argument in one sentence, as fairly as you can.</strong></p>
+    <div class="line"></div>
+    <div class="term">
+      <div class="k">Write the definition<b>Old Light / New Light</b></div>
+      <div class="v"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ 5 ══════════════ -->
+<div class="scene">
+  <div class="num">5<small>scene</small></div>
+  <div class="body">
+    <p class="who">Patience Marsh <em>&mdash; a shipping merchant&rsquo;s daughter</em></p>
+    <p class="thread">Where the revival and the trade land on one family</p>
+    <p>Patience has been asked to <span class="b"></span> &mdash; to stand up and speak
+       about what happened to her, in front of a room of women.</p>
+    <p>Why does that alarm her father? He is a <span class="b"></span>, and a merchant is
+       only worth what people <span class="b l"></span> about him.</p>
+    <p>Her father&rsquo;s molasses and sugar are on a list of <span class="b"></span> goods,
+       which by law must go through <span class="b"></span> first &mdash; even when the
+       buyer is nearer.</p>
+    <p><span class="ask">Only if her drink suited her:</span> what is she privately afraid of?</p>
+    <div class="line"></div>
+    <p class="hint">Notice what just happened. <em>Who is allowed to speak about God?</em> and
+       <em>who is allowed to make the rules for our harbour?</em> are sitting at the same
+       kitchen table.</p>
+  </div>
+</div>
+
+<footer><span>Colonial Coffee House &mdash; Guided Notes</span><span>2 of 4</span></footer>
+
+<!-- ══════════════════════════ SIDE THREE ══════════════════════════ -->
+<div class="pagebreak"></div>
+
+<!-- ══════════════ 6 ══════════════ -->
+<div class="scene">
+  <div class="num">6<small>scene</small></div>
+  <div class="body">
+    <p class="who">Capt. Jonas Bright <em>&mdash; master of the sloop</em> Dolphin</p>
+    <p class="thread">The trade laws, from the person who breaks them</p>
+    <p>The <span class="b"></span> Acts: cargo moves in English or colonial ships,
+       through English ports, and certain goods &mdash; called <span class="b"></span>
+       goods &mdash; must touch England first.</p>
+    <p>The <strong>Molasses Act of <span class="b s"></span></strong> charges
+       <span class="b s"></span> per gallon on molasses <em>not</em> grown in a British island.</p>
+    <p>Who asked Parliament for that law, and why?</p>
+    <div class="line"></div>
+    <p>How much of that duty actually gets paid? <span class="b"></span> &nbsp;
+       Why is French molasses so much cheaper? <span class="b xl"></span></p>
+    <p>Bright names what he does out loud. The word <span class="keep">is <span class="b"></span>.</span></p>
+    <p>He also says the part nobody in Boston says out loud: the sugar cane in that
+       barrel was cut by</p>
+    <div class="line"></div>
+    <p>The unwritten deal, in his words: &ldquo;They leave us <span class="b"></span>,
+       we stay <span class="b"></span>, and everybody eats.&rdquo;</p>
+    <p><span class="ask">Only if his drink suited him:</span> what did the customs man ask
+       Capt. Bright to do?</p>
+    <div class="line"></div>
+  </div>
+</div>
+
+<!-- ══════════════ 7 ══════════════ -->
+<div class="scene">
+  <div class="num">7<small>scene</small></div>
+  <div class="body">
+    <p class="who">Ezra Hale, again <em>&mdash; back, and not any calmer</em></p>
+    <p class="thread">What the Awakening cost him by Tuesday</p>
+    <p>What did his master do, and why? <span class="b xl"></span></p>
+    <p>Three weeks ago Ezra knew none of them. He now has about
+       <span class="b s"></span> people from the meeting who would open a door to him.</p>
+    <p><strong>Here is the political part.</strong> That new group does not answer to
+       <span class="b l"></span>. Why might a colony full of groups like that be harder
+       to govern?</p>
+    <div class="line"></div>
+    <div class="line"></div>
+  </div>
+</div>
+
+<!-- ══════════════ 8 ══════════════ -->
+<div class="scene">
+  <div class="num">8<small>scene</small></div>
+  <div class="body">
+    <p class="who">Patience Marsh, again <em>&mdash; with her mind made up</em></p>
+    <p class="thread">What she decided about Thursday</p>
+    <p>Her father did not forbid her. What did he do instead?</p>
+    <div class="line"></div>
+    <p>She says she is not certain &mdash; but she has stopped
+       <span class="b l"></span> to be, &ldquo;and that turns out to be a different thing
+       and quite enough.&rdquo;</p>
+  </div>
+</div>
+
+<!-- ══════════════ 9 ══════════════ -->
+<div class="scene">
+  <div class="num">9<small>scene</small></div>
+  <div class="body">
+    <p class="who">Mr. Aldis Pym <em>&mdash; back at closing, with his book open</em></p>
+    <p class="thread">The Navigation Acts, and your own accounts</p>
+    <p>He has read two years of Boston shipping records. Every single barrel is entered
+       as coming from a <span class="b"></span> island, which is
+       <em>perfectly lawful</em> and also <span class="b"></span>.</p>
+    <p><strong>His trap has two jaws. Write both.</strong></p>
+    <p>If he enforces the Act as written:</p>
+    <div class="line"></div>
+    <p>If he does <em>not</em> enforce it:</p>
+    <div class="line"></div>
+    <p>What did you tell him you had been sweetening with? <span class="b l"></span>
+       &nbsp; Why?</p>
+    <div class="line"></div>
+    <div class="term">
+      <div class="k">Write the definition<b>salutary neglect</b></div>
+      <div class="v"></div>
+    </div>
+  </div>
+</div>
+
+<footer><span>Colonial Coffee House &mdash; Guided Notes</span><span>3 of 4</span></footer>
+
+<!-- ══════════════════════════ SIDE FOUR ══════════════════════════ -->
+<div class="pagebreak"></div>
+
+<!-- ══════════════ CODA ══════════════ -->
+<div class="scene coda">
+  <div class="num">&#9670;<small>after</small></div>
+  <div class="body">
+    <p class="who">Step outside <em>&mdash; the last screen, after the accounts</em></p>
+    <p class="thread">Where tonight was going the whole time</p>
+    <table class="years">
+      <tr><td class="yr">1763</td><td>The war with France ends. Britain is deep in debt and orders the Navy to <span class="b l"></span>.</td></tr>
+      <tr><td class="yr">1764</td><td>The <span class="b"></span> Act &mdash; half the duty, and actually collected.</td></tr>
+      <tr><td class="yr">1765</td><td>The <span class="b"></span> Act &mdash; a tax on printed things, including the paper Cato sets type on.</td></tr>
+      <tr><td class="yr">1773</td><td><span class="b xl"></span>, a few minutes&rsquo; walk from your door.</td></tr>
+      <tr><td class="yr">1775</td><td>Paul Revere&rsquo;s watch on the British troops meets at <span class="b l"></span>.</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="big">
+  <h3>Pull it together &mdash; 1</h3>
+  <p><strong>The Great Awakening and the Enlightenment were not the same movement.</strong>
+     One was about religion; the other was about reason and government. But Cato says
+     the preacher shouting in a field and the man in his book are asking the
+     <em>same question</em>. Write that question in your own words, then explain what
+     each of them is asking it about.</p>
+  <div class="line"></div><div class="line"></div>
+  <div class="line"></div><div class="line"></div>
+</div>
+
+<div class="big">
+  <h3>Pull it together &mdash; 2</h3>
+  <p><strong>Use your own ledger as evidence.</strong> The Molasses Act had been law for
+     eight years and had almost never been collected. Explain <em>why</em> &mdash; not
+     "because colonists were lawless," but what the arithmetic on your counter actually
+     did to an honest shopkeeper. Use the term <strong>salutary neglect</strong>.</p>
+  <div class="line"></div><div class="line"></div>
+  <div class="line"></div><div class="line"></div>
+</div>
+
+<div class="big">
+  <h3>Pull it together &mdash; 3</h3>
+  <p><strong>Nothing much changed in Boston between 1741 and 1763. Then everything did.</strong>
+     Why was 1763 the year the arrangement broke? Answer with what you saw at your own
+     counter, not just the date.</p>
+  <div class="line"></div><div class="line"></div>
+  <div class="line"></div><div class="line"></div>
+</div>
+
+<div class="big">
+  <h3>One person, one sentence</h3>
+  <p>Pick the person you served best. Write the one sentence you would use to explain
+     <em>what they were afraid of</em> to somebody who never played.</p>
+  <p style="margin-top:6px">Who: <span class="b xl"></span></p>
+  <div class="line"></div><div class="line"></div>
+</div>
+
+<footer><span>Colonial Coffee House &mdash; Guided Notes</span><span>4 of 4</span></footer>
+
+</div>
+</body>
+</html>

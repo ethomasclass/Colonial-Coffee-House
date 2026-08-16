@@ -222,6 +222,21 @@ do to a law when nearly everyone breaks it and nearly no one is punished.*
 
 ## 3. Running it
 
+### Which student sheet
+
+| | `STUDENT-HANDOUT.md` | `GUIDED-NOTES.md` |
+|---|---|---|
+| Paper | 1 sheet, 2 sides | 2 sheets, 4 sides |
+| Shape | A table plus essay prompts | Fill-in-the-blank, one block per scene |
+| Written during play | Partly | Almost all of it |
+| Best for | One 50-minute period, confident readers | Two periods, or a class that needs the scaffold |
+
+**Hand out one or the other, not both.** They cover the same content; the
+guided notes carry the student through it sentence by sentence, and the handout
+asks them to produce it themselves. The guided-notes blocks are numbered in the
+order the patrons arrive, so a student can find their place on the page from
+whoever is on the screen.
+
 ### Before the period
 
 1. Play the first two patrons yourself — about ten minutes. You need to have
@@ -295,6 +310,84 @@ earned. Every other answer is already in the book on page one.
 **Do not hand this list out.** The whole design depends on students reading a
 person and inferring a drink. It is here so you can rescue a student who has
 stalled, and so you can tell at a glance whose confession a student missed.
+
+### Guided Notes — filled in
+
+Answers for `docs/GUIDED-NOTES.md`, block by block. Where a blank has more than
+one defensible answer, the alternatives are given.
+
+**★ The *Boston Gazette*** — *itinerant* · *cheaper* (about half the price, and
+better besides).
+
+**1 · Pym, early** — *French* · *paid* · *British* · because those islands do
+not grow anywhere near that much cane, so the books cannot be true · **a choice
+you made knowing**.
+
+**2 · Ezra** — *reading quietly off a written page* · *shouted* · *wept* ·
+whether you **know, in your heart, that you are saved** · **Afraid of:** that
+the feeling will wear off — on Tuesday he knew it the way you know your own
+name, and by this morning it was thinner. *New Birth:* a sudden, complete
+conversion rather than slow inherited faith. *enthusiasm:* religious excitement
+judged to be out of control — in 1741 the word is an accusation, not a
+compliment.
+
+**3 · Cato** — the ladder: *nothing at all* · *told* · *more* · *fit to rule* ·
+*natural* · *free* · *person* · *take back* · *loan* (on their say-so, and no
+other). *Where the ideas come from:* a book off a ship from London that his
+master hasn't sold yet; the press; newspapers, almanacs, and rooms like this
+one. *What he notices:* the men quoting Locke on liberty own shares in the
+trade — they quote him before dinner and sign for a cargo after it. *He adds:*
+"I'm free. **Not everyone I know is.**"
+
+**4 · Thorne** — *New* Lights · *Old* Lights · completely *wrong* — and more
+dangerous because of the sincerity. **The thing underneath:** that people would
+rather be **moved** than **instructed**, and he has spent forty years
+instructing. *His best argument, fairly put:* a feeling cannot be checked
+against anything outside itself, so a church built on feeling has no way to
+tell a true conversion from a persuasive evening.
+
+**5 · Patience** — *testify* · *merchant* · *assume* · *enumerated* ·
+*England*. **Afraid of:** that she will stand up on Thursday and feel nothing
+at all — and never be able to check whether she made the whole thing up.
+
+**6 · Bright** — *Navigation* Acts · *enumerated* goods · Molasses Act of
+*1733* · *sixpence* (6d) the gallon. *Who asked for it:* the British sugar
+planters of Barbados and Antigua, who have friends in Parliament and cannot
+undersell the French — "It was never about the money. It was about *them*."
+*How much gets paid:* essentially none. *Why French molasses is cheap:* France
+forbids its islands to distil rum, to protect the brandy trade at home, so
+their molasses is nearly worthless to them. *The word:* **smuggling**. *The
+cane:* cut by people carried there in chains, who are not paid and did not
+choose it — Bright says it is in the barrel as much as the molasses is. *The
+deal:* "They leave us **alone**, we stay **loyal**, and everybody eats."
+**Asked to do:** inform — name which coves were busy, in exchange for smooth
+entries.
+
+**7 · Ezra returns** — his master turned him out: three days of meetings and a
+fourth spent arguing about them, and "he runs a workshop, not a church" ·
+*thirty* · does not answer to **his master** (nor to the settled church, nor
+the town). *Why harder to govern:* people now belong to something that the
+existing authority did not create, does not staff, and cannot discipline.
+
+**8 · Patience returns** — he gave her the choice and the bill for it in the
+same breath: do as you think right, understand what it will cost this house,
+and don't pretend afterwards you didn't know · she has stopped **waiting** to
+be certain.
+
+**9 · Pym at closing** — *British* · *impossible*. **If he enforces:** he
+closes the distilleries, which closes the port, which ruins a loyal colony over
+a law nobody has kept since it was written. **If he doesn't:** the law is
+decoration, and everybody learns that an act of Parliament is something you can
+look at and step over.
+
+**◆ Step outside** — *start collecting the trade duties it had been ignoring* ·
+*Sugar* Act · *Stamp* Act · *the tea went into the harbour* · *the Green
+Dragon*.
+
+**Pull it together — 1.** The question is Cato's own: **"Who told you so, and
+why should that settle it?"** The preacher asks it about the church; the book
+asks it about the king. A strong answer says the movements are different in
+subject and similar in method, and does not collapse them into one thing.
 
 ---
 
