@@ -408,41 +408,107 @@
       [
         { head: 'The Preachers Who Travel',
           art: 'preaching',
-          body: 'For as long as anyone can remember, a New England town has had ONE minister. The town chooses him, the town pays him, and he stays until he dies. He reads his sermon calmly from a written page, and everybody sits still.\n\nSomething else is now happening. Preachers have begun to TRAVEL — town to town, parish to parish, preaching in fields and barns when no pulpit will have them. They don’t read calmly. They shout, they weep, and they ask each person present a single question: not whether you attend church, but whether you KNOW, in your heart, that you’re saved.\n\nLast autumn Mr. George Whitefield preached on Boston Common and, it’s said, twenty thousand people came to hear him. There aren’t twenty thousand people living in Boston. They walked in from everywhere.',
-          plain: 'A new kind of traveling preacher is drawing enormous crowds by making religion something you FEEL rather than something you attend.',
-          gloss: ['itinerant', 'newbirth'] },
+          body: 'For as long as anyone can remember, a New England town has had ONE minister. The town chooses him, the town pays him, and he stays until he dies. He reads his sermon calmly from a written page, and everybody sits still.\n\nSomething else is now happening. Preachers have begun to TRAVEL — town to town, parish to parish, preaching in fields and barns when no pulpit will have them. They don’t read calmly. They shout, they weep, and they ask each person present a single question: not whether you attend church, but whether you KNOW, in your heart, that you’re saved.\n\nLast autumn Mr. George Whitefield preached on Boston Common and, it’s said, twenty thousand people came to hear him. There aren’t twenty thousand people living in Boston. They walked in from everywhere.\n\nSome are calling it a great awakening of religion in these colonies. Whatever it is to be called, it is not confined to one town, and it shows no sign of stopping.',
+          plain: 'This is the {{awakening|GREAT AWAKENING}} — a wave of revivals in which traveling preachers drew enormous crowds by making religion something you FEEL rather than something you attend.',
+          gloss: ['itinerant', 'newbirth'],
+          q: {
+            ask: 'What made these traveling preachers different from a town’s own settled minister?',
+            options: [
+              'They traveled from town to town, preached in fields and barns, and asked whether you FELT you were saved',
+              'They read their sermons more carefully from a written page',
+              'They were paid more by the towns they visited',
+              'They preached only inside official church buildings'
+            ],
+            answer: 0,
+            why: 'The settled minister stayed in one town and read calmly while everyone sat still. These men traveled, shouted, wept, and asked each person one question about their own heart.'
+          } },
 
         { head: 'And the Quarrel It Has Started',
           art: 'press',
           body: 'Not everyone is pleased. The settled ministers have spent their lives studying, and they didn’t invite these men into their parishes.\n\nThose who welcome the revivals are called {{newlight|NEW LIGHT}}, as though a fresh flame had been found. Those who hold to the old order are called {{oldlight|OLD LIGHT}}, and they answer that the shouting and crying is chaos dressed up as real faith. They have a word for it: {{enthusiasm|ENTHUSIASM}} — someone claiming God spoke to him personally — with no training, no official position, and nobody’s permission.\n\nWhy does this alarm them so much? Because in a field there’s no pulpit to defend. Servants speak. Women speak. Black colonists speak. And nobody can stop them.\n\nWhole congregations have already split in half over it. Two in this county alone.',
-          plain: 'The revivals are splitting churches, because they let people with no rank or education claim religious authority.',
-          gloss: ['newlight', 'oldlight', 'enthusiasm', 'testify'] }
+          plain: 'The {{awakening|GREAT AWAKENING}} is splitting churches, because it lets people with no rank or education claim religious authority.',
+          gloss: ['awakening', 'newlight', 'oldlight', 'enthusiasm', 'testify'],
+          q: {
+            ask: 'Why did the settled ministers find the revivals so alarming?',
+            options: [
+              'In a field there is no pulpit to defend — servants, women and Black colonists could stand up and speak',
+              'The traveling preachers charged money to attend',
+              'The revivals were held in Latin, which few people could understand',
+              'Parliament had made outdoor preaching illegal'
+            ],
+            answer: 0,
+            why: 'That is what Old Lights meant by ENTHUSIASM: somebody claiming God spoke to them directly, with no training, no office, and nobody’s permission. Whole congregations had already split over it.'
+          } }
       ],
       [
         { head: 'How a Barrel of Molasses Reaches Boston',
           art: 'shipping',
           body: 'Sugar cane is grown on islands in the Caribbean, on plantations worked by {{triangle|enslaved people}} who didn’t choose the labor and aren’t paid for it. When the cane is boiled for sugar, a thick dark syrup is left over. That’s MOLASSES.\n\nNew England buys it by the shipload and distils most of it into rum. Rum is this colony’s largest manufacture — some sixty distilleries in Massachusetts — and the whole trade rests on molasses being CHEAP.\n\nBritain’s own islands can’t supply enough of it, and charge more for what they have. The FRENCH islands sell at half the price, because France forbids its colonies to distil rum and so has little use for the stuff.\n\nSo Boston buys French. Every captain in this harbor knows it. So does everyone who drinks anything sweet.',
           plain: 'Boston’s biggest industry runs on cheap French molasses — and on the labor of enslaved people in the Caribbean.',
-          gloss: ['triangle', 'smuggling'] },
+          gloss: ['triangle', 'smuggling'],
+          q: {
+            ask: 'Where does molasses come from, and who does the work?',
+            options: [
+              'It is left over from boiling sugar cane, grown on Caribbean plantations worked by enslaved people who were not paid and did not choose it',
+              'It is pressed from apples grown in the Massachusetts countryside',
+              'It is made in Boston’s sixty distilleries and shipped south',
+              'It is imported ready-made from London warehouses'
+            ],
+            answer: 0,
+            why: 'Boston’s largest industry is rum, rum is made from molasses, and molasses is a by-product of sugar. The whole trade rests on that labor.'
+          } },
 
         { head: 'What the Law Says About It',
           art: 'customs',
           body: 'Parliament sits in London, three thousand miles away, and it has written a great deal of law about what colonists may buy and from whom.\n\nThe {{navigation|NAVIGATION ACTS}} require that colonial goods travel in English or colonial ships, and that certain listed products — {{enumerated|ENUMERATED GOODS}} — be carried to England FIRST, even when a better price waits somewhere nearer. England takes its cut on the way through. That’s the point of the detour.\n\nThen in 1733 came the {{molassesact|MOLASSES ACT}}: sixpence duty on every gallon of molasses from a non-British island. It wasn’t written to raise money. It was written because British sugar planters have friends in Parliament and couldn’t match the French price.\n\nThe Act has stood for eight years. It has almost never been collected.',
           plain: 'The law says buy British and pay the duty. Almost nobody does, and until now almost nobody has been made to.',
-          gloss: ['navigation', 'enumerated', 'molassesact', 'neglect'] }
+          gloss: ['navigation', 'enumerated', 'molassesact', 'neglect'],
+          q: {
+            ask: 'The Molasses Act of 1733 charges sixpence a gallon on molasses from non-British islands. Why was it written?',
+            options: [
+              'British sugar planters had friends in Parliament and could not match the cheaper French price',
+              'To raise money to pay for the defense of the colonies',
+              'To discourage colonists from drinking rum',
+              'Because French molasses had been found to be unsafe'
+            ],
+            answer: 0,
+            why: 'It was not written to raise revenue — it was written to protect one group of planters. And in eight years it has almost never been collected.'
+          } }
       ],
       [
         { head: 'Why There Is No Money',
           art: 'money',
           body: 'Massachusetts isn’t permitted to coin money. What silver reaches us is spent on English goods and sails straight back across the Atlantic, so there’s never enough of it here to buy and sell with.\n\nLast year a group of country men proposed a remedy: a LAND BANK, issuing paper notes backed by the value of their farms. Boston merchants disliked it, believing the notes would lose value. Country debtors welcomed it, because paper is easier to come by than silver.\n\nWord is now come from London that Parliament has voided the scheme entirely. Those holding its notes must answer for them, and there’s much bitterness in the country towns — where the want of good money was the whole occasion of the thing.',
           plain: 'The colony tried to solve a money shortage by printing its own, and Parliament simply cancelled it from London.',
-          gloss: ['landbank'] },
+          gloss: ['landbank'],
+          q: {
+            ask: 'Why did country farmers want a Land Bank?',
+            options: [
+              'There was almost no silver in the colony, and paper notes backed by farmland were easier to come by',
+              'They wanted to stop Boston merchants from trading at all',
+              'Parliament had ordered every colony to create one',
+              'They planned to use the notes to buy land in England'
+            ],
+            answer: 0,
+            why: 'Massachusetts was not allowed to coin money, and what silver arrived sailed back to England for goods. Parliament then voided the whole scheme from London.'
+          } },
 
         { head: 'Books Lately Come Over',
           art: 'goods',
-          body: 'A new manner of thinking is arriving from Europe by every ship, and it’s argued over in rooms like this one.\n\nIts habit’s to trust REASON and OBSERVATION rather than authority — to ask how a thing may be shown to be true, instead of who said it. Mr. Newton has explained the motions of the heavens by a few plain rules. Mr. {{lockeref|Locke}} argues that we’re born knowing nothing at all, and gather every idea we have from what we see and hear.\n\nFollow that where it leads. If nothing is written in a man at birth, then no man is born knowing more than another, and none is born fit to rule another. Mr. Locke says as much: a government holds its power only by the agreement of the governed.\n\nWe have no university full of philosophers here. We have newspapers, almanacs, printers, and coffee houses. It’s turning out to be enough.',
-          plain: 'European ideas about reason, evidence, and government by consent are reaching ordinary colonists through cheap print and coffee-house argument.',
-          gloss: ['lockeref'] }
+          body: 'A new manner of thinking is arriving from Europe by every ship, and it’s argued over in rooms like this one. ENLIGHTENED, they are calling it — as though every age before this one had sat in the dark.\n\nIts habit’s to trust REASON and OBSERVATION rather than authority — to ask how a thing may be shown to be true, instead of who said it. Mr. Newton has explained the motions of the heavens by a few plain rules. Mr. {{lockeref|Locke}} argues that we’re born knowing nothing at all, and gather every idea we have from what we see and hear.\n\nFollow that where it leads. If nothing is written in a man at birth, then no man is born knowing more than another, and none is born fit to rule another. Mr. Locke says as much: a government holds its power only by the agreement of the governed.\n\nWe have no university full of philosophers here. We have newspapers, almanacs, printers, and coffee houses. It’s turning out to be enough.',
+          plain: 'This is the {{enlightenment|ENLIGHTENMENT}} — ideas about reason, evidence, and government by consent, reaching ordinary colonists through cheap print and coffee-house argument.',
+          gloss: ['enlightenment', 'lockeref', 'rights'],
+          q: {
+            ask: 'Locke argues we are born knowing nothing at all. What does the paper say follows from that?',
+            options: [
+              'If nothing is written in us at birth, nobody is born knowing more — and nobody is born fit to rule anybody else',
+              'That children should not be taught to read until they are older',
+              'That only educated gentlemen should be permitted to vote',
+              'That a king receives his authority directly from God'
+            ],
+            answer: 0,
+            why: 'That is the ENLIGHTENMENT argument in one move, and it is the one that matters most for what comes later: a government holds its power only by the agreement of the governed.'
+          } }
       ]
     ]
   };

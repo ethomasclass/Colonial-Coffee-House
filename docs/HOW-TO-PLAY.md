@@ -20,12 +20,19 @@ much people tell you.**
 
 ## The evening, in order
 
-**1. Read the newspaper first.**
-The *Boston Gazette* opens the night — six stories over three pages, with a
-**Turn the page** button at the bottom. Every story ends with an **In plain
-terms** box that says the whole thing in one sentence.
+**1. The newspaper comes in three parts.**
+The *Boston Gazette* has six stories over three pages, and you do **not** get
+them all at once. You read two stories, answer **two questions on them**, and
+then the night carries on. The next two stories arrive a couple of patrons
+later.
 
-Read it. Everything the patrons argue about tonight is explained here first,
+Every story ends with an **In plain terms** box that says the whole thing in
+one sentence. The questions are answerable straight out of the story you just
+read — and **you cannot get them wrong in any way that matters.** Pick the
+wrong one and it tells you why it is wrong and lets you try again. The only
+way past is to actually read.
+
+Everything the patrons argue about tonight is explained in the paper first,
 and there is no other place to catch up.
 
 **Click every underlined word.**
@@ -62,7 +69,7 @@ Every dialogue choice is just a *tone* — kind, blunt, curious. None of them is
 wrong. They change how much the person opens up.
 
 **6. Between patrons**, the room is empty. You can wipe down the bar, polish
-the pewter, re-read the paper, or click anything in the room — the hearth, the
+the pewter, re-read any part of the paper you have already been given, or click anything in the room — the hearth, the
 window, the trade sign, the cupboard, the candle — for a note on what it was.
 
 **7. The ledger.** At the end you see every drink, what it cost, what it

@@ -23,6 +23,9 @@ a minute.
 
 ## Documentation
 
+- **[audio/README.md](audio/README.md)** — drop an mp3 in `audio/` named
+  `theme.mp3` and it loops as background music. With no file there, the game
+  falls back to the tune it synthesises in the browser.
 - **[docs/HOW-TO-PLAY.md](docs/HOW-TO-PLAY.md)** — student directions. Printable,
   or project it while they start.
 - **[docs/STUDENT-HANDOUT.md](docs/STUDENT-HANDOUT.md)** — one double-sided
@@ -58,16 +61,22 @@ iPads, and anything else with a browser.
 | **Length** | ~50–58 minutes: paper, nine scenes, closing ledger, end card. **See the timing note below** |
 | **Reading level** | Written for 10th grade. Contemporary American English and spelling, contractions throughout; only the period terms that *are* the content (New Light, enumerated goods, enthusiasm) are kept, and every one is glossed in-game |
 | **Drinks** | 32 recipes, all period-accurate, **none alcoholic**. Composing one in the brew panel discovers it — no need to serve it |
-| **Sound** | Synthesised in-browser, **off by default**, one toggle |
+| **Sound** | Synthesised in-browser, **off by default**, one toggle. Drop an mp3 in `audio/` to use your own background music |
 | **Fail state** | None. Every cup is accepted and paid for |
 
 ### The loop
 
-1. **Read the morning *Boston Gazette*.** Landscape, two columns, a pixel
-   woodcut on every story, and three pages you turn. Six stories, each written
-   for somebody who has never heard of any of it — what the thing is, why it is
+1. **Read the *Boston Gazette*, two stories at a time.** Landscape, two
+   columns, a pixel woodcut on every story. Six stories, each written for
+   somebody who has never heard of any of it — what the thing is, why it is
    happening, what it means for an ordinary person — and each ending with an
    **In plain terms** box that puts the whole story in one sentence.
+
+   The paper is **handed over in three parts**, each followed by **two
+   multiple-choice questions** that have to be answered before the night goes
+   on. It is a gate, not a test: a wrong answer explains itself and lets you
+   try again, so the only cost of guessing is looking at the story a second
+   time. The ledger reports how many were right first try.
 2. **Eight scenes, six of which want a drink.** Each patron gives an order as a
    *mood*, not a menu item. The brewing bench has the **recipe book open on the
    left** and **the cup on the right**: click a jar on the shelf and you watch

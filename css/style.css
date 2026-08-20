@@ -902,3 +902,62 @@ table.totals tr.rule td { border-top: 2px solid #241a12; padding-top: .4rem; }
   .end-year { grid-template-columns: 3.4rem 1fr; gap: .6rem; }
   .end-year .yr { font-size: 1rem; }
 }
+
+/* ===========================================================================
+   PAPER QUESTIONS
+   Same newsprint as the Gazette, because they are part of reading it rather
+   than a quiz bolted on afterwards. There is no score and no way to fail —
+   a wrong answer says why it is wrong and leaves the others live, so the
+   only thing the gate costs is another look at the story.
+   =========================================================================== */
+.quiz-body {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto;
+  text-align: left;
+  display: flex; flex-direction: column; gap: 1.1rem;
+}
+
+.qcard { border-top: 2px solid #241a12; padding-top: .7rem; }
+.qcard .qfrom {
+  font-size: .7rem; letter-spacing: .13em; text-transform: uppercase;
+  color: #6b4a12; margin: 0 0 .25rem;
+}
+.qcard .qask {
+  margin: 0 0 .6rem; font-size: 1.02rem; line-height: 1.45; font-weight: bold;
+}
+
+.qopts { display: flex; flex-direction: column; gap: .35rem; }
+.qopt {
+  font-family: inherit; font-size: .92rem; line-height: 1.4;
+  text-align: left; padding: .5rem .7rem;
+  background: #d8caa8; color: #241a12;
+  border: 1px solid #b8a887; border-radius: 2px; cursor: pointer;
+  display: flex; gap: .6rem; align-items: baseline;
+}
+.qopt:hover:not(:disabled) { background: #c8b894; }
+.qopt:disabled { cursor: default; }
+.qopt .qletter {
+  flex: 0 0 auto; font-weight: bold; letter-spacing: .06em; color: #6b4a12;
+}
+.qopt.wrong { background: #d9bdb4; border-color: #9c3a2a; color: #6d2419; }
+.qopt.wrong .qletter { color: #9c3a2a; }
+.qopt.right { background: #c2ceac; border-color: #3f6b2c; }
+.qopt.right .qletter { color: #3f6b2c; }
+.qopt.spent { opacity: .55; }
+
+.qwhy {
+  margin: .55rem 0 0; padding: .5rem .8rem;
+  background: #d8caa8; border-left: 4px solid #3f6b2c;
+  font-size: .9rem; line-height: 1.45;
+}
+.qwhy.nudge { border-left-color: #9c3a2a; }
+.qwhy b {
+  display: block; letter-spacing: .06em; text-transform: uppercase;
+  font-size: .72rem; color: #6b4a12; margin-bottom: .1rem;
+}
+
+.quiz .paper-foot .big-btn:disabled { opacity: .45; cursor: not-allowed; }
+
+@media (max-width: 720px) {
+  .qcard .qask { font-size: .96rem; }
+  .qopt { font-size: .88rem; }
+}

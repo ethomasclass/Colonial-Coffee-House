@@ -9,9 +9,10 @@ after the shop closes.*
 
 ## SIDE 1 — While you play
 
-### Before you open the shop
+### From the newspaper
 
-Read the newspaper first. Two answers, a few words each.
+The paper arrives in three parts across the evening, with two questions after
+each part. Two answers here, a few words each.
 
 **1.** A traveling preacher is doing something new. What is it?
 

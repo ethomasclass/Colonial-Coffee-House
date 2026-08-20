@@ -224,6 +224,42 @@ do to a law when nearly everyone breaks it and nearly no one is punished.*
 
 ## 3. Running it
 
+### The paper, and the questions that gate it
+
+The Gazette is not handed over in one lump. It arrives in three parts, and
+each part is followed by **two multiple-choice questions — one per story**
+that must be answered before the evening continues:
+
+| | |
+|---|---|
+| Page 1 | The revivals, and the quarrel they started → **questions** → the shop opens |
+| Page 2 | Where molasses comes from, and what the law says → **questions** → back to the counter |
+| Page 3 | The money shortage, and the books lately come over → **questions** → back to the counter |
+
+Page 2 arrives after Pym's warning and Ezra; page 3 after Cato and Thorne.
+
+**The questions are a gate, not a test.** Nothing is scored against a student
+and nothing can be failed. A wrong answer says why it is wrong and leaves every
+other option live, so the only cost of guessing is having to look at the story
+again — which is exactly the behaviour the gate exists to produce. The correct
+option is written first in `js/data.js` so you can audit it at a glance, and
+shuffled on screen so nobody works out that the top one always wins.
+
+The closing ledger reports **questions right first try**, out of six. That is
+your evidence about who actually read and who clicked through — treat a low
+number as a reading-comprehension signal, not a grade.
+
+**To change where the paper interrupts,** edit one line near the top of
+`js/game.js`:
+
+```js
+var PAPER_GATE = [-1, 1, 3];
+```
+
+Each entry is the patron index after which that page is handed over; `-1`
+means before the shop opens. `[-1, -1, -1]` gives you the old behaviour — the
+whole paper up front, all six questions at once, before anybody sits down.
+
 ### Which student sheet
 
 | | `STUDENT-HANDOUT.md` | `GUIDED-NOTES.md` |
@@ -255,8 +291,8 @@ face one short panel at a time.
 | Minutes | |
 |---|---|
 | 0–5 | Set the scene. *You are not a soldier or a founder. You run a shop.* |
-| 5–12 | Newspaper. **Insist they read it.** Everything else depends on it |
-| 12–50 | The scenes |
+| 5–10 | Gazette page 1, and its two questions |
+| 10–50 | The scenes, with pages 2 and 3 of the Gazette folded in between them |
 | 50–56 | Closing ledger, and the confession count |
 | 56–58 | **Step outside** — the end card, and the years it opens onto |
 
@@ -312,6 +348,24 @@ earned. Every other answer is already in the book on page one.
 **Do not hand this list out.** The whole design depends on students reading a
 person and inferring a drink. It is here so you can rescue a student who has
 stalled, and so you can tell at a glance whose confession a student missed.
+
+### The paper questions — answers
+
+One per story, in order. Every one is answerable from the story directly above
+it; the on-screen order is shuffled, so go by the text.
+
+| # | Story | The answer |
+|---|---|---|
+| 1 | The Preachers Who Travel | They traveled town to town, preached in fields and barns, and asked whether you **felt** you were saved |
+| 2 | And the Quarrel It Has Started | In a field there is no pulpit to defend — servants, women and Black colonists could stand up and speak |
+| 3 | How a Barrel of Molasses Reaches Boston | It is left over from boiling sugar cane, grown on plantations worked by enslaved people who were not paid and did not choose it |
+| 4 | What the Law Says About It | British sugar planters had friends in Parliament and could not match the cheaper French price |
+| 5 | Why There Is No Money | There was almost no silver in the colony, and paper notes backed by farmland were easier to come by |
+| 6 | Books Lately Come Over | If nothing is written in us at birth, nobody is born knowing more — and nobody is born fit to rule anybody else |
+
+Question 3 is the one that carries the slavery content, deliberately: it is put
+in a question so that it cannot be skimmed past, and it is one question of six
+so that it does not become the whole lesson.
 
 ### Guided Notes — filled in
 
@@ -515,3 +569,29 @@ Worth knowing before you plan around it:
   in the glossary term *the trade*.
 - Religious disagreement is portrayed with sympathy on both sides. Thorne is
   not a villain and the game does not let him be one.
+
+### One deliberate anachronism, so you are not caught out by it
+
+Nobody in 1741 said **"the Great Awakening"** or **"the Enlightenment."** Both
+labels were applied later — *Great Awakening* by historians in the 1800s, and
+*the Enlightenment* likewise, though people at the time did describe their own
+age as "enlightened."
+
+The game handles this by keeping the two registers apart, and it is worth
+pointing out to a sharp student who notices:
+
+- **The period voice never uses the modern label.** The Gazette's own prose
+  says *"some are calling it a great awakening of religion in these colonies"*
+  — lowercase, a description rather than a name — and *"ENLIGHTENED, they are
+  calling it."* Cato says the same thing at the counter: *"There's a name going
+  about for this way of thinking — enlightened, they say."*
+- **The "In plain terms" box does use it.** That box is explicitly the game's
+  modern voice explaining the story in one sentence, so **THE GREAT AWAKENING**
+  and **THE ENLIGHTENMENT** are named there, in capitals, as clickable glossary
+  terms.
+
+That split is doing real work: a student can see, on one screen, what people at
+the time said about the thing and what we call it now. If you want the point
+made out loud, *"why do we have a name for this that nobody living through it
+used?"* is a good three-minute discussion about how historians label periods
+after the fact.

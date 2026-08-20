@@ -1,9 +1,13 @@
 /* ===========================================================================
    audio.js — rain, hearth, and a slow tune, all synthesised in the browser.
 
-   There are no sound files here and nothing is fetched. Everything is built
-   from noise buffers and oscillators through the Web Audio API, which keeps
-   the game a self-contained folder that runs offline.
+   Rain, hearth and every effect are built from noise buffers and oscillators
+   through the Web Audio API — no files, nothing fetched, works offline.
+
+   Music is the one exception. If mp3s are present in audio/ they are used for
+   the background track; if they are missing, or fail to load, the synthesised
+   tune below plays instead and nothing else changes. The game therefore still
+   runs as a bare folder with no audio files in it at all.
 
    It defaults to OFF. Thirty Chromebooks all playing rain is not a mood, it
    is a fire alarm. One toggle in the corner turns it on for whoever has
@@ -150,6 +154,78 @@
     step = (step + 1) % 16;
   }
 
+  /* --- recorded music, if any has been added -----------------------------
+
+     Drop mp3s into audio/ and list them here; they play in order and the
+     list loops. Anything that 404s or refuses to decode is skipped, and if
+     nothing at all plays the synthesised tune above just keeps going.
+
+     Deliberately a plain <audio> element rather than a MediaElementSource
+     through the graph above: element audio needs no AudioContext, survives
+     being opened straight off the disk as a file:// page, and cannot taint
+     the context if a file is served oddly. It costs the shared master fade,
+     so the fade is done by hand on .volume instead.
+     ----------------------------------------------------------------------- */
+
+  var TRACKS = ['audio/theme.mp3'];
+  var MUSIC_VOL = 0.30;              /* under the rain, never over dialogue */
+
+  var track = null, trackIx = 0, fadeTimer = null, recorded = false;
+
+  function nextTrack() {
+    if (!TRACKS.length) return;
+    trackIx = (trackIx + 1) % TRACKS.length;
+    track.src = TRACKS[trackIx];
+    track.play().catch(function () {});
+  }
+
+  function buildMusic() {
+    if (!TRACKS.length) return;
+    track = new Audio();
+    track.preload = 'auto';
+    track.volume = 0;
+    /* One track loops itself; several run as a playlist that wraps. */
+    track.loop = TRACKS.length === 1;
+    track.addEventListener('ended', nextTrack);
+
+    track.addEventListener('canplay', function () {
+      if (recorded) return;
+      recorded = true;
+      clearInterval(stepTimer);       /* the synth tune stands down */
+      stepTimer = null;
+      if (on) fadeTrack(MUSIC_VOL);
+    });
+
+    /* Missing or unplayable: leave the synth tune running and say so once,
+       quietly, so a teacher who expected music knows where to look. */
+    track.addEventListener('error', function () {
+      if (recorded) return;
+      track = null;
+      if (global.console && console.info) {
+        console.info('No music file at ' + TRACKS[trackIx] +
+                     ' — using the built-in tune instead.');
+      }
+    });
+
+    track.src = TRACKS[0];
+  }
+
+  function fadeTrack(to) {
+    if (!track) return;
+    clearInterval(fadeTimer);
+    if (to > 0 && track.paused) track.play().catch(function () {});
+    fadeTimer = setInterval(function () {
+      var d = to - track.volume;
+      if (Math.abs(d) < 0.012) {
+        track.volume = to;
+        clearInterval(fadeTimer);
+        if (to === 0) track.pause();
+        return;
+      }
+      track.volume = Math.max(0, Math.min(1, track.volume + (d > 0 ? 0.012 : -0.012)));
+    }, 40);
+  }
+
   /* --- control ----------------------------------------------------------- */
   function start() {
     if (started) return;
@@ -166,6 +242,7 @@
     buildRain();
     buildFire();
     stepTimer = setInterval(tick, 1050);          /* ~57 to the minute */
+    buildMusic();                                 /* may replace the tune */
     started = true;
   }
 
@@ -179,7 +256,9 @@
       master.gain.cancelScheduledValues(ctx.currentTime);
       master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
       master.gain.linearRampToValueAtTime(0.85, ctx.currentTime + 0.8);
+      if (recorded) fadeTrack(MUSIC_VOL);
     } else if (ctx) {
+      if (recorded) fadeTrack(0);
       master.gain.cancelScheduledValues(ctx.currentTime);
       master.gain.setValueAtTime(master.gain.value, ctx.currentTime);
       master.gain.linearRampToValueAtTime(0, ctx.currentTime + 0.4);

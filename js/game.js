@@ -38,6 +38,9 @@
     discovered: {},
     journal: [],
     seenRoom: {},
+    paperRead: 0,        /* pages of the Gazette handed over so far */
+    quizRight: 0,        /* questions answered correctly first try */
+    quizAsked: 0,
     sel: { base: null, sweet: null, add: null }
   };
 
@@ -45,6 +48,25 @@
 
   var frame = 0, el = {}, SAVE = 'greendragon.save';
   var paperPage = 0, paperReturns = false;
+
+  /* -----------------------------------------------------------------------
+     THE PAPER, HANDED OUT IN PIECES
+
+     Reading three pages up front is a wall of text before anything has
+     happened, and it is the part students skip. So the paper arrives two
+     stories at a time, each pair followed by its two questions, and the
+     night opens up between them:
+
+         page 1 → questions → Pym's warning → Ezra
+         page 2 → questions → Cato → Thorne
+         page 3 → questions → the rest of the evening
+
+     PAPER_GATE[p] is the patron index after which page p is handed over.
+     -1 means before the shop opens at all. Every page must be read and
+     answered before the game moves past its gate, which is the whole point.
+     ----------------------------------------------------------------------- */
+  var PAPER_GATE = [-1, 1, 3];
+  var quizPage = 0, quizState = null;
 
   function $(id) { return document.getElementById(id); }
 
@@ -217,6 +239,8 @@
             st.patron = null;
             st.servedCup = null;
             if (st.patronIndex >= ORDER.length - 1) return nextPatron();
+            var due = paperDue();
+            if (due >= 0) return openPaperStep(due);
             openInterstitial();
           });
         });
@@ -787,6 +811,7 @@
         frenchUses: st.frenchUses, britishUses: st.britishUses, wasted: st.wasted,
         confessions: st.confessions, chores: st.chores, patronIndex: st.patronIndex,
         seenWords: st.seenWords, opened: st.opened,
+        paperRead: st.paperRead, quizRight: st.quizRight, quizAsked: st.quizAsked,
         log: st.log, discovered: st.discovered, journal: st.journal
       }));
     } catch (e) {}
@@ -815,6 +840,15 @@
      THE BROADSHEET
      ======================================================================= */
 
+  /* Which page is owed right now, or -1 if the evening may carry on. Called
+     both before the shop opens and after each patron leaves. */
+  function paperDue() {
+    for (var p = 0; p < D.BROADSHEET.pages.length; p++) {
+      if (st.paperRead <= p && PAPER_GATE[p] <= st.patronIndex) return p;
+    }
+    return -1;
+  }
+
   function renderPaper() {
     var pages = D.BROADSHEET.pages;
     paperPage = Math.max(0, Math.min(pages.length - 1, paperPage));
@@ -834,8 +868,12 @@
       Ico.woodcut(cv, it.art);            /* after it’s in the document */
     });
     el.paperPageNum.textContent = 'Page ' + (paperPage + 1) + ' of ' + pages.length;
+    /* Paging only exists when re-reading. On a fresh page there is one way
+       out, and it is through the questions. */
+    el.paperPrev.hidden = !paperReturns;
+    el.paperNext.hidden = !paperReturns;
     el.paperPrev.disabled = paperPage === 0;
-    el.paperNext.disabled = paperPage === pages.length - 1;
+    el.paperNext.disabled = paperPage >= st.paperRead - 1;
   }
 
   function turnPage(by) {
@@ -844,13 +882,148 @@
     renderPaper();
   }
 
+  /* A new page, delivered at its gate. No paging, no skipping. */
+  function openPaperStep(page) {
+    st.phase = 'paper';
+    paperReturns = false;
+    paperPage = page;
+    st.paperRead = Math.max(st.paperRead, page + 1);
+    renderPaper();
+    el.dialogue.hidden = true;
+    el.between.hidden = true;
+    el.broadsheet.hidden = false;
+    el.title.hidden = true;
+    $('openShopBtn').textContent = 'Two questions on this ▸';
+    save();
+  }
+
+  /* Re-reading, from the counter. Everything handed over so far, no gate. */
   function openBroadsheet(fromShift) {
     paperReturns = !!fromShift;
-    paperPage = 0;
+    paperPage = Math.max(0, st.paperRead - 1);
     renderPaper();
     el.broadsheet.hidden = false;
     el.title.hidden = true;
-    $('openShopBtn').textContent = fromShift ? 'Put the paper down' : 'Open the shop';
+    $('openShopBtn').textContent = 'Put the paper down';
+  }
+
+  /* =======================================================================
+     THE QUESTIONS
+
+     A gate, not a test. Nothing is scored against the student and nothing
+     can be failed: a wrong answer explains itself and leaves every other
+     option live. The only cost of guessing is having to look again, which
+     is precisely the behaviour the gate exists to produce.
+     ======================================================================= */
+
+  function openQuiz(page) {
+    st.phase = 'quiz';
+    quizPage = page;
+    quizState = { need: 0, got: 0 };
+    el.broadsheet.hidden = true;
+    el.quiz.hidden = false;
+    el.quizBody.innerHTML = '';
+    el.quizBody.scrollTop = 0;
+    $('quizWhich').textContent = 'On page ' + (page + 1) + ' of tonight’s Gazette';
+
+    D.BROADSHEET.pages[page].forEach(function (story) {
+      if (!story.q) return;
+      quizState.need++;
+      el.quizBody.appendChild(buildQuestion(story));
+    });
+    updateQuizFoot();
+  }
+
+  function buildQuestion(story) {
+    var q = story.q;
+    var card = document.createElement('div');
+    card.className = 'qcard';
+
+    var from = document.createElement('p');
+    from.className = 'qfrom';
+    from.textContent = story.head;
+    card.appendChild(from);
+
+    var ask = document.createElement('p');
+    ask.className = 'qask';
+    ask.innerHTML = markup(q.ask);
+    card.appendChild(ask);
+
+    var opts = document.createElement('div');
+    opts.className = 'qopts';
+
+    /* The right answer is written first in data.js so the source stays
+       auditable at a glance. Shuffle it here, or a student works out in
+       thirty seconds that the top one is always correct. */
+    var order = q.options.map(function (text, i) { return { text: text, ok: i === q.answer }; });
+    for (var i = order.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), t = order[i];
+      order[i] = order[j]; order[j] = t;
+    }
+
+    var answered = false, firstTry = true;
+    order.forEach(function (opt, i) {
+      var b = document.createElement('button');
+      b.className = 'qopt';
+      b.type = 'button';
+      b.innerHTML = '<span class="qletter">' + 'ABCD'[i] + '</span><span>' +
+                    markup(opt.text) + '</span>';
+      b.onclick = function () {
+        if (answered) return;
+        if (opt.ok) {
+          answered = true;
+          b.classList.add('right');
+          st.quizAsked++;
+          if (firstTry) st.quizRight++;
+          Array.prototype.forEach.call(opts.children, function (c) {
+            c.disabled = true;
+            if (c !== b) c.classList.add('spent');
+          });
+          explain(card, q.why, false);
+          quizState.got++;
+          if (Snd) Snd.chime();
+          updateQuizFoot();
+          save();
+        } else {
+          firstTry = false;
+          b.classList.add('wrong');
+          b.disabled = true;
+          explain(card, 'Not that one. The answer is in the story above &mdash; ' +
+                    'scroll back up and look again.', true);
+          if (Snd) Snd.knock(220, 0.05);
+        }
+      };
+      opts.appendChild(b);
+    });
+    card.appendChild(opts);
+    return card;
+  }
+
+  /* One explanation slot per question, replaced rather than stacked. */
+  function explain(card, text, nudge) {
+    var why = card.querySelector('.qwhy');
+    if (!why) {
+      why = document.createElement('div');
+      card.appendChild(why);
+    }
+    why.className = 'qwhy' + (nudge ? ' nudge' : '');
+    why.innerHTML = '<b>' + (nudge ? 'Try again' : 'Why') + '</b>' + markup(text);
+  }
+
+  function updateQuizFoot() {
+    var done = quizState.got >= quizState.need;
+    var btn = $('quizGoBtn');
+    btn.disabled = !done;
+    $('quizProgress').textContent = quizState.got + ' of ' + quizState.need + ' answered';
+    btn.textContent = !done ? 'Answer both to carry on'
+      : quizPage === 0 ? 'Open the shop' : 'Back to the counter';
+  }
+
+  function finishQuiz() {
+    el.quiz.hidden = true;
+    save();
+    if (quizPage === 0) return startNight();
+    openInterstitial();
   }
 
   /* =======================================================================
@@ -898,7 +1071,9 @@
       '<div><span class="big">' + st.confessions + '/6</span>told you something private</div>' +
       '<div><span class="big">' + Object.keys(st.discovered).length + '/' + D.RECIPES.length + '</span>recipes discovered</div>' +
       '<div><span class="big">' + Object.keys(st.seenRoom).length + '/' + Object.keys(D.ROOM).length + '</span>things looked at</div>' +
-      '<div><span class="big">' + st.chores + '</span>times you cleaned up</div></div>';
+      '<div><span class="big">' + st.chores + '</span>times you cleaned up</div>' +
+      '<div><span class="big">' + st.quizRight + '/' + st.quizAsked +
+      '</span>paper questions right first try</div></div>';
 
     var verdict;
     if (madeRent && st.frenchUses === 0) {
@@ -1051,6 +1226,7 @@
      'serveBtn', 'pourBtn', 'pourNote', 'orderEcho', 'orderWho', 'purse',
      'suspicion', 'progress', 'book', 'bookBody', 'gloss', 'glossTerm',
      'glossDef', 'broadsheet', 'paperBody', 'closing', 'closeBody', 'endcard', 'title',
+     'quiz', 'quizBody',
      'between', 'choresNote', 'wipeBtn', 'polishBtn', 'betweenHint', 'settings',
      'bookCount', 'chore', 'choreTitle', 'choreBar', 'chorePct', 'choreDone',
      'cupCanvas', 'brewBookList', 'ingNote', 'paperPrev', 'paperNext',
@@ -1059,13 +1235,14 @@
 
     A.init($('stage'));
 
-    $('beginBtn').onclick = function () { openBroadsheet(false); };
+    $('beginBtn').onclick = function () { openPaperStep(0); };
     el.paperPrev.onclick = function () { turnPage(-1); };
     el.paperNext.onclick = function () { turnPage(1); };
     $('openShopBtn').onclick = function () {
       if (paperReturns) { el.broadsheet.hidden = true; return; }
-      startNight();
+      openQuiz(paperPage);
     };
+    $('quizGoBtn').onclick = finishQuiz;
     $('bookBtn').onclick = openBook;
     $('bookClose').onclick = function () { el.book.hidden = true; };
     $('glossClose').onclick = function () { el.gloss.hidden = true; };

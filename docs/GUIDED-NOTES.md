@@ -30,9 +30,11 @@ and the blank only asks for the term.
 
 ---
 
-## ★ First — the *Boston Gazette*, before you open the shop
+## ★ The *Boston Gazette*
 
-*Everything tonight is explained here first.*
+*The paper arrives in three parts across the evening — two stories, then two
+questions on them, then back to the counter. Fill this block in as each part
+comes. The second question below is from the part that arrives after Ezra.*
 
 A preacher who travels town to town instead of staying with one congregation
 is called an `______________`.
