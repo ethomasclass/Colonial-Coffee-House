@@ -156,74 +156,120 @@
 
   /* --- recorded music, if any has been added -----------------------------
 
-     Drop mp3s into audio/ and list them here; they play in order and the
-     list loops. Anything that 404s or refuses to decode is skipped, and if
-     nothing at all plays the synthesised tune above just keeps going.
+     Drop mp3s into audio/ and list them here. Anything that 404s or refuses
+     to decode is skipped, and if nothing at all plays the synthesised tune
+     above just keeps going.
 
-     Deliberately a plain <audio> element rather than a MediaElementSource
+     Deliberately plain <audio> elements rather than MediaElementSources
      through the graph above: element audio needs no AudioContext, survives
      being opened straight off the disk as a file:// page, and cannot taint
      the context if a file is served oddly. It costs the shared master fade,
      so the fade is done by hand on .volume instead.
+
+     TWO elements, not one, because almost no music file loops cleanly. A
+     track written as a piece of music ends: it fades, or it stops, and often
+     there is a half-second of digital silence sitting after the last note.
+     Loop that and the room hears the song die and restart every few minutes.
+     So the two decks hand off — as one comes within XFADE of its end, the
+     other starts from the top and the pair cross-fade, which lays the head of
+     the track over its own tail and buries the seam. With several tracks
+     listed it cross-fades into the next one instead of back into itself.
      ----------------------------------------------------------------------- */
 
   var TRACKS = ['audio/theme.mp3'];
   var MUSIC_VOL = 0.30;              /* under the rain, never over dialogue */
+  var XFADE = 4.0;                   /* seconds of overlap at the hand-off */
 
-  var track = null, trackIx = 0, fadeTimer = null, recorded = false;
+  var decks = [], live = 0, trackIx = 0, recorded = false;
+  var musicNow = 0, musicWant = 0, mixTimer = null, handing = false;
 
-  function nextTrack() {
-    if (!TRACKS.length) return;
-    trackIx = (trackIx + 1) % TRACKS.length;
-    track.src = TRACKS[trackIx];
-    track.play().catch(function () {});
+  function makeDeck() {
+    var a = new Audio();
+    a.preload = 'auto';
+    a.volume = 0;
+    a.gain = 0;                      /* our own cross-fade gain, 0..1 */
+    return a;
   }
 
   function buildMusic() {
     if (!TRACKS.length) return;
-    track = new Audio();
-    track.preload = 'auto';
-    track.volume = 0;
-    /* One track loops itself; several run as a playlist that wraps. */
-    track.loop = TRACKS.length === 1;
-    track.addEventListener('ended', nextTrack);
+    decks = [makeDeck(), makeDeck()];
 
-    track.addEventListener('canplay', function () {
+    decks[0].addEventListener('canplay', function () {
       if (recorded) return;
       recorded = true;
       clearInterval(stepTimer);       /* the synth tune stands down */
       stepTimer = null;
-      if (on) fadeTrack(MUSIC_VOL);
+      decks[0].gain = 1;
+      startMix();
+      if (on) { musicWant = MUSIC_VOL; decks[0].play().catch(function () {}); }
     });
 
     /* Missing or unplayable: leave the synth tune running and say so once,
        quietly, so a teacher who expected music knows where to look. */
-    track.addEventListener('error', function () {
+    decks[0].addEventListener('error', function () {
       if (recorded) return;
-      track = null;
+      decks = [];
       if (global.console && console.info) {
-        console.info('No music file at ' + TRACKS[trackIx] +
+        console.info('No music file at ' + TRACKS[0] +
                      ' — using the built-in tune instead.');
       }
     });
 
-    track.src = TRACKS[0];
+    decks[0].addEventListener('timeupdate', watchForEnd);
+    decks[1].addEventListener('timeupdate', watchForEnd);
+    decks[0].src = TRACKS[0];
+  }
+
+  /* The hand-off. Fires off whichever deck is currently the live one. */
+  function watchForEnd(ev) {
+    if (handing || !recorded || ev.target !== decks[live]) return;
+    var a = decks[live];
+    if (!isFinite(a.duration) || a.duration <= XFADE * 2) return;
+    if (a.duration - a.currentTime > XFADE) return;
+
+    handing = true;
+    var other = decks[1 - live];
+    trackIx = (trackIx + 1) % TRACKS.length;
+    /* Re-assigning the same src re-fetches from cache; a different one moves
+       the playlist along. Either way the incoming deck starts from the top. */
+    other.src = TRACKS[trackIx];
+    other.currentTime = 0;
+    other.gain = 0;
+    other.play().catch(function () {});
+    live = 1 - live;
+  }
+
+  /* One ticker drives both the on/off fade and the cross-fade, so the two
+     never fight over .volume. */
+  function startMix() {
+    clearInterval(mixTimer);
+    mixTimer = setInterval(function () {
+      var d = musicWant - musicNow;
+      if (Math.abs(d) < 0.006) musicNow = musicWant;
+      else musicNow += d > 0 ? 0.006 : -0.006;
+
+      var stepG = 1 / (XFADE * 25);          /* 40ms ticks → XFADE seconds */
+      decks.forEach(function (a, i) {
+        var want = (i === live) ? 1 : 0;
+        if (Math.abs(want - a.gain) <= stepG) a.gain = want;
+        else a.gain += a.gain < want ? stepG : -stepG;
+        a.volume = Math.max(0, Math.min(1, musicNow * a.gain));
+        /* Stop anything that has gone fully silent: the faded-out deck after
+           a hand-off, and both of them when the sound is switched off. */
+        if (a.volume === 0 && !a.paused) a.pause();
+      });
+      if (handing && decks[1 - live].gain === 0) handing = false;
+    }, 40);
   }
 
   function fadeTrack(to) {
-    if (!track) return;
-    clearInterval(fadeTimer);
-    if (to > 0 && track.paused) track.play().catch(function () {});
-    fadeTimer = setInterval(function () {
-      var d = to - track.volume;
-      if (Math.abs(d) < 0.012) {
-        track.volume = to;
-        clearInterval(fadeTimer);
-        if (to === 0) track.pause();
-        return;
-      }
-      track.volume = Math.max(0, Math.min(1, track.volume + (d > 0 ? 0.012 : -0.012)));
-    }, 40);
+    if (!recorded) return;
+    musicWant = to;
+    if (to > 0) {
+      var a = decks[live];
+      if (a && a.paused) a.play().catch(function () {});
+    }
   }
 
   /* --- control ----------------------------------------------------------- */
@@ -358,8 +404,36 @@
     });
   }
 
+  /* `Sound.musicInfo()` in the browser console says whether the mp3 was
+     found and what it is doing. Handy when music does not come on and you
+     want to know if it is the file, the toggle, or the browser. */
+  function musicInfo() {
+    if (!recorded) {
+      return { source: 'synthesised tune', file: TRACKS[0] || '(none listed)',
+               loaded: false };
+    }
+    var a = decks[live];
+    return {
+      source: 'file', file: TRACKS[trackIx],
+      loaded: true,
+      playing: !a.paused,
+      seconds: Math.round(a.currentTime) + ' / ' + Math.round(a.duration || 0),
+      volume: Math.round(a.volume * 100) / 100,
+      crossFading: handing,
+      deckGains: decks.map(function (d) { return Math.round(d.gain * 100) / 100; })
+    };
+  }
+
+  /* Jump the live deck to a given time. Exists so the cross-fade can be
+     exercised without sitting through the whole track — the hand-off is
+     otherwise untestable in under three minutes. Not used by the game. */
+  function _seek(t) {
+    if (recorded && decks[live]) decks[live].currentTime = t;
+  }
+
   global.Sound = {
     setEnabled: setEnabled, isOn: isOn, preference: preference,
+    musicInfo: musicInfo, _seek: _seek,
     knock: knock, scrub: scrub, chime: chime, bell: bell, coin: coin
   };
 

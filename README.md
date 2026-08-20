@@ -23,9 +23,9 @@ a minute.
 
 ## Documentation
 
-- **[audio/README.md](audio/README.md)** — drop an mp3 in `audio/` named
-  `theme.mp3` and it loops as background music. With no file there, the game
-  falls back to the tune it synthesises in the browser.
+- **[audio/README.md](audio/README.md)** — the background music. `theme.mp3`
+  is in place and cross-faded into itself so the loop has no seam; it is only
+  downloaded if a student turns sound on. Swap the file to change the music.
 - **[docs/HOW-TO-PLAY.md](docs/HOW-TO-PLAY.md)** — student directions. Printable,
   or project it while they start.
 - **[docs/STUDENT-HANDOUT.md](docs/STUDENT-HANDOUT.md)** — one double-sided
@@ -61,7 +61,7 @@ iPads, and anything else with a browser.
 | **Length** | ~50–58 minutes: paper, nine scenes, closing ledger, end card. **See the timing note below** |
 | **Reading level** | Written for 10th grade. Contemporary American English and spelling, contractions throughout; only the period terms that *are* the content (New Light, enumerated goods, enthusiasm) are kept, and every one is glossed in-game |
 | **Drinks** | 32 recipes, all period-accurate, **none alcoholic**. Composing one in the brew panel discovers it — no need to serve it |
-| **Sound** | Synthesised in-browser, **off by default**, one toggle. Drop an mp3 in `audio/` to use your own background music |
+| **Sound** | Rain, hearth and effects synthesised in-browser; music from `audio/theme.mp3`, cross-faded so the loop has no seam. **Off by default**, one toggle, and the mp3 is only fetched if it is switched on |
 | **Fail state** | None. Every cup is accepted and paid for |
 
 ### The loop
